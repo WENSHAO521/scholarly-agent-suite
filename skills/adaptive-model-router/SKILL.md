@@ -27,7 +27,7 @@ Use only steps that can change the decision. For detailed selection or a residua
 6. **Execute and validate:** select checks tied to the deliverable and risk. Record evidence, not an invented probability. A critical failure blocks a clean `PASS`.
 7. **Repair the residual:** classify its cause before buying more reasoning. Normally at most two targeted GPT-5-family repair cycles, each followed by relevant validation. For reasoning failure, consider higher supported effort on the same capable model before moving up a tier. Skip unhelpful intermediate levels. Missing sources, tool/permission failures, and context overflow need source/workflow/context repair.
 8. **Expert gate:** except explicit GPT-6 or Expert selection, require a real GPT-5-family attempt, meaningful validation, a concrete material reasoning failure, targeted repair, and a reason further GPT-5.6 effort is inefficient. Eligibility is not a mandatory call. Default maximum: one successful Astra dispatch per task; one additional attempt only for invalid expert output, tool execution failure, materially new evidence, or explicit instruction. Count attempts separately and stop repeated infrastructure failures. No GPT-6 self-review loop.
-9. **Deliver:** stop when required checks pass. State material unresolved limitations; do not conceal blocked evidence or claim unperformed validation.
+9. **Deliver:** apply the [stop rule](#stop-rule) below. State material unresolved limitations; do not conceal blocked evidence or claim unperformed validation.
 
 ## Validation states
 
@@ -38,9 +38,13 @@ Use only steps that can change the decision. For detailed selection or a residua
 - `BLOCKED_BY_TOOL_FAILURE`: tools or permissions prevent a required check/action; preserve the precise cause.
 - `ESCALATION_CANDIDATE`: a material reasoning failure meets the expert gate; budget and dispatch still apply.
 
+## Stop rule
+
+STOP when all hold: the required deliverable exists and matches explicit constraints; objective validation reached `PASS`, or a `PASS_WITH_LIMITATIONS` whose disclosed gaps are noncritical; and no unresolved critical issue remains (a critical gap keeps the state at `REPAIR_REQUIRED` or a `BLOCKED_BY_*` state, never a relabeled `PASS_WITH_LIMITATIONS`). Do not keep repairing, delegating, or escalating once STOP applies merely because further polish, another check, or another opinion is possible. Do not cycle between repair and escalation past the repair-cycle and expert-call budgets in [routing-policy.md](references/routing-policy.md#budget-controller); at exhaustion, report the unmet requirement and its cause instead of repeating the loop.
+
 ## Load only relevant detail
 
 - [Paper workflow](references/paper-workflow.md): evidence-intensive manuscripts, methods, empirical studies, or reviews. Preserve the ordinary, empirical, systematic-review, and bounded sentence-polishing branches; never fabricate sources or results.
-- [Records](references/records.md): compact decisions, failure taxonomy, source provenance, and telemetry when requested or operationally useful. Do not generate logs for tiny tasks or write persistent user memory without explicit authorization.
+- [Records](references/records.md): compact decisions, failure taxonomy, source provenance, task state, and telemetry when requested or operationally useful. Do not generate logs for tiny tasks or write persistent user memory without explicit authorization.
 
 Describe observable decisions and validation evidence; do not expose private deliberation.

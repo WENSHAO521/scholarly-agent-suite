@@ -9,10 +9,10 @@
       "source_commit": "n/a"
     },
     "adaptive-model-router": {
-      "version": "0.2.0",
+      "version": "0.3.0",
       "role": "execution",
       "source_repository": "https://github.com/WENSHAO521/adaptive-model-router.git",
-      "source_commit": "3c441a708faf92c2f5687878d826ecf7ee29a0ec"
+      "source_commit": "de79826a1d63dff4253a6f63f62a08de0096fda4"
     },
     "scholarly-corpus-builder": {
       "version": "0.9.0",

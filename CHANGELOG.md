@@ -42,6 +42,13 @@ Initial integration/distribution release.
 - CI (`.github/workflows/validate.yml`) running the validator, tests, and a
   packaging dry run on every push/PR.
 
+### Changed
+
+- Synced `adaptive-model-router` from its published `v0.3.0` release
+  (commit `de79826`, was the unpublished `v0.2.0` working state at commit
+  `3c441a7`). See that repository's own CHANGELOG for the budget
+  controller, task state, stop rule, and escalation reason codes it adds.
+
 ### Fixed
 
 - Removed machine-specific absolute local paths (`repo_path`) from the

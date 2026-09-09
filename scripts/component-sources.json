@@ -5,8 +5,9 @@
       "name": "adaptive-model-router",
       "role": "execution",
       "repo_url": "https://github.com/WENSHAO521/adaptive-model-router.git",
-      "ref": "3c441a708faf92c2f5687878d826ecf7ee29a0ec",
-      "version": "0.2.0",
+      "ref": "de79826a1d63dff4253a6f63f62a08de0096fda4",
+      "tag": "v0.3.0",
+      "version": "0.3.0",
       "include": ["SKILL.md", "agents", "references", "LICENSE"]
     },
     {

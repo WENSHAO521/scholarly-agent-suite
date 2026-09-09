@@ -116,6 +116,38 @@ Default maximum: one successful Astra dispatch across root/leaves per user task;
 
 Send only a residual-question packet: objective, latest state, exact constraints/IDs/source pointers, previous GPT-5 result, validation evidence, failed repairs, unresolved issue, required output. Preserve uncertainty and conclusion-changing evidence. Root checks the result against the same acceptance criteria.
 
+### Escalation reason codes
+
+Record why escalation was sought, using exactly one:
+
+| Code | Meaning |
+|---|---|
+| `REASONING_FAILURE` | A concrete residual reasoning failure survived targeted repair on a capable GPT-5-family model. |
+| `EVIDENCE_GAP` | Required evidence stayed missing after retrieval attempts. |
+| `TOOL_FAILURE` | A tool or permission failure blocked a required check/action after repair attempts. |
+| `CONTEXT_LIMIT` | Material could not fit or be reduced enough for a required check even after the context gates above. |
+| `VALIDATION_FAILURE` | A defined check itself could not run, or produced an inconclusive result, after investigation. |
+| `USER_EXPERT_REQUEST` | Explicit user selection of Expert mode or a named expert model. |
+
+These are the only permitted `gpt6_reason` values (see [records](records.md)); this is a coarser, escalation-specific label, not a replacement for the failure types above. Only `REASONING_FAILURE` and `USER_EXPERT_REQUEST` by themselves authorize the expert gate: an unresolved `EVIDENCE_GAP`, `TOOL_FAILURE`, `CONTEXT_LIMIT`, or `VALIDATION_FAILURE` is reported as its matching `BLOCKED_BY_*` or `REPAIR_REQUIRED` state instead, not escalated as if more reasoning would fix a missing input, broken tool, oversized context, or broken check. Never assign a reason after the fact merely to justify a call already made.
+
+## Budget controller
+
+A compact, named view of the caps already enforced above; it groups existing limits under [task state](records.md#task-state-reuse-before-recompute) fields, it does not add new ones.
+
+| Field | Default | Kind | Enforced above in |
+|---|---|---|---|
+| `max_delegates` | 2 (exceptionally 3) | soft | Routing kernel step 5; [delegation policy](delegation-policy.md#caps-and-isolation) |
+| `max_repair_cycles` | 2 | soft | Objective validation and bounded repair |
+| `max_expert_calls` | 2 (1 by default, 1 exception) | hard | GPT-6 gate and call budget |
+| `max_expensive_calls` | unset | soft | Policy modes (narrower under Economy) |
+
+`soft` means exceeding it requires a stated reason and still passes through that field's own gate above; `hard` means it is never exceeded regardless of stated reason. `priority` selects a policy mode (Economy/Balanced/Deep/Expert) and narrows soft defaults; it cannot loosen `max_expert_calls`. An explicit user instruction overrides these defaults for that task only: a lower explicit limit always applies, a higher one is honored only for a soft field. This table is bookkeeping, not a numeric optimizer; do not report a fabricated precision it does not have (for example, a claimed percentage of budget remaining).
+
+### Optional EXECUTION_POLICY_V1 interoperability
+
+When a host or orchestrator (for example scholarly-agent-suite) supplies an `EXECUTION_POLICY_V1` object, map its coarse `mode` to the closest policy mode above (`conservative`→Economy, `balanced`→Balanced, `aggressive`→Deep) and treat its `context_policy`/`delegation_policy`/`validation_policy` fields as additional soft inputs to the budget controller above, never below `max_expert_calls`. Absent such an object, use the defaults above unchanged. This skill fully operates standalone and never requires that protocol or any Suite file to function.
+
 ## Examples (conditional preferences)
 
 | Task | Route and check |

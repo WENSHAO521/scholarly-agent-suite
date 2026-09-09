@@ -57,6 +57,8 @@ States and transitions are defined in the [kernel](../SKILL.md) and [routing pol
 
 Failure types: none, reasoning, retrieval, tool, permission, context_overflow, instruction_mismatch, evidence_gap, implementation, validation, unknown. Use failure_detail for invalid assumptions and secondary causes; see routing policy for repair mapping. Missing permission uses BLOCKED_BY_TOOL_FAILURE plus permission as the cause. A critical error blocks both clean PASS and an attempt to relabel incomplete core work as PASS_WITH_LIMITATIONS.
 
+`gpt6_reason` uses only the [escalation reason codes](routing-policy.md#escalation-reason-codes) (REASONING_FAILURE, EVIDENCE_GAP, TOOL_FAILURE, CONTEXT_LIMIT, VALIDATION_FAILURE, USER_EXPERT_REQUEST); it is a coarser, escalation-specific label, not a second copy of the failure types above.
+
 No quality-score thresholds, confidence probabilities, allocation quotas, or necessity scores govern escalation.
 
 ## Optional measured telemetry
@@ -65,7 +67,23 @@ When runtime measurements exist, collect tasks by model, attempts/successes, rep
 
 Cost per successfully validated task is total measured execution, repair, validation, delegation, and escalation cost for the cohort (including failed tasks) divided by tasks reaching PASS under the declared acceptance criteria. Report PASS_WITH_LIMITATIONS separately unless a different success definition was declared before evaluation. Missing costs or zero validated successes make that metric unavailable. Include cache and context pricing rules when known. Never infer exact usage from prose length or claim savings without a comparable baseline.
 
-Keep rolling task state compact: objective, exact constraints, confirmed facts, decisions, completed work, open questions, recent changes, source pointers.
+## Task state (reuse before recompute)
+
+Compact rolling state one task may carry across its own steps/turns so already-done work is reused instead of recomputed. This is task-scoped bookkeeping, not long-term user memory; discard it when the task ends unless the host has its own persistence with explicit authorization.
+
+```json
+{
+  "objective": "",
+  "completed_stages": [],
+  "files_read": [],
+  "sources_verified": [],
+  "reusable_results": [],
+  "failed_attempts": [],
+  "unresolved_issues": []
+}
+```
+
+Populate only fields that matter for the current task; omit rather than fabricate. `sources_verified` holds `source_key` values from [paper evidence records](#paper-evidence-records) rather than duplicating them. `failed_attempts` records cause (a failure type above) and what was tried, for repair-cycle accounting, not blame. `reusable_results` are prior task-scoped outputs (a retrieval, a computed diff, a passed check) safe to reuse verbatim while their inputs are unchanged; drop or recompute an entry the moment its input changes. Prefer pointers to originals over inlined content, and remove resolved entries rather than accumulate history.
 
 ## Paper evidence records
 
