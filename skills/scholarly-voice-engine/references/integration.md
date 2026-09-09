@@ -81,6 +81,52 @@ not something to serialize or expose in an ordinary user-facing reply; see
 `scripts/voice/profile_schema.py` for a lightweight validator over these
 shapes. `quality-audit.md` defines the `integrity_status` states in full.
 
+## Optional scholarly-agent-suite protocol compatibility
+
+This Skill's own conceptual interface above is authoritative and works fully
+standalone. `scripts/voice/profile_schema.py` additionally provides
+`from_voice_request_v1()` and `to_voice_output_v1()`: an optional, additive
+translation layer for a host speaking the Suite's narrower orchestration
+envelopes (`VOICE_REQUEST_V1`, `VOICE_OUTPUT_V1` —
+`scholarly-agent-suite/protocols/`). This Skill never requires the Suite or
+these protocols; a direct/standalone caller uses this Skill's own richer
+fields instead.
+
+Known, audited compatibility state (2026-09):
+
+- **VOICE_REQUEST_V1 / VOICE_OUTPUT_V1** — bridged by the adapters above.
+  `VOICE_REQUEST_V1`'s `task` enum maps onto this Skill's own `OUTPUT_MODES`
+  (adding `audit` as a mode: a read-only quality-audit pass, distinct from
+  the audit step every other mode already runs before returning text). This
+  Skill's two citation/argument-specific `integrity_status` values collapse
+  onto the nearest `VOICE_OUTPUT_V1` `validation_state`, recorded in
+  `limitations` so nothing is silently lost.
+- **SCHOLARLY_PROFILE_V1** — `profile_schema.py`'s `CONFIDENCE_LEVELS` uses
+  `high | moderate | low`, matching both this protocol and
+  `scholarly-corpus-builder`'s actual output (an earlier `medium` value here
+  was a real defect: it would have rejected genuine corpus-builder profiles).
+- **VOICE_CONTEXT_V1** — compatible in substance (`discipline`/`genre`/
+  `research_design` align); the protocol's `author_voice` field name maps to
+  this Skill's `author_profile`.
+- **JOURNAL_STYLE_CONTEXT_V1** — **not yet reconciled.** This protocol
+  separates a journal's `official_requirements` from `observed_patterns`;
+  this Skill's own `journal_context` (`validate_journal_target()`) instead
+  expects `journal-fit-engine`'s compact/full *adaptation-target* shape
+  (`contribution_position`, `theory_density`, etc. — already-derived writing
+  guidance, not raw official/observed evidence). These describe different
+  stages of the same pipeline and are not simply interchangeable; closing
+  this gap needs a decision, made alongside `journal-fit-engine`'s own
+  still-pending fit-logic implementation, about whether that Skill emits
+  `JOURNAL_STYLE_CONTEXT_V1` directly or this Skill derives an adaptation
+  target from it. Until then, `journal_context` continues to accept only its
+  existing adaptation-target shape.
+- **CONTINUITY_STATE_V1** — **not yet implemented.** `scripts/voice/
+  continuity.py`'s `ContinuityLedger` is in-memory only (no
+  serialization), so it cannot yet be saved as, or restored from, a
+  `CONTINUITY_STATE_V1` object for cross-session book/monograph continuity as
+  that protocol's own description requires. Tracked as follow-up work, not
+  silently assumed to work.
+
 ## Out of scope for this Skill
 
 - Acquiring, retrieving, or caching corpus material (that's Corpus Builder).

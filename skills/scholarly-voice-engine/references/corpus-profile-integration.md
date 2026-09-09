@@ -35,7 +35,7 @@ PROFILE               the structured feature profile (see that Skill's
                        style-feature-schema.md: sentence/paragraph/argument/
                        evidence/section/claim-calibration/rhythm features)
 PROVENANCE SUMMARY     compact source list with verification state
-CONFIDENCE             high | medium | low — never a fabricated percentage
+CONFIDENCE             high | moderate | low — never a fabricated percentage
 LIMITATIONS            explicit caveats (sample size, bias, staleness)
 REFRESH STATUS         CURRENT | AGING | STALE | INCOMPLETE
 ```

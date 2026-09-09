@@ -21,16 +21,16 @@
       "source_commit": "e1043b3f1c25fcd3aaf213551f2bf2104ee83483"
     },
     "scholarly-voice-engine": {
-      "version": "1.0.0",
+      "version": "1.0.1",
       "role": "writing-intelligence",
       "source_repository": "https://github.com/WENSHAO521/scholarly-voice-engine.git",
-      "source_commit": "0a020b91462698b725d1b42646e9548de67e188d"
+      "source_commit": "f8d5d6745d0206c3d9d9bf16c14090421d588a2b"
     },
     "journal-fit-engine": {
       "version": "0.1.0",
       "role": "publication-intelligence",
       "source_repository": "https://github.com/WENSHAO521/journal-fit-engine.git",
-      "source_commit": "f0729e00f73e4db9593d94d77521966b8b50d632"
+      "source_commit": "45573f62537f3cbdb3eb7d9c282c864f2e9e62c2"
     }
   },
   "compatibility": {
