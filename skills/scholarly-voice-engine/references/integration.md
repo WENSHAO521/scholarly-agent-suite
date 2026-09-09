@@ -120,12 +120,16 @@ Known, audited compatibility state (2026-09):
   `JOURNAL_STYLE_CONTEXT_V1` directly or this Skill derives an adaptation
   target from it. Until then, `journal_context` continues to accept only its
   existing adaptation-target shape.
-- **CONTINUITY_STATE_V1** — **not yet implemented.** `scripts/voice/
-  continuity.py`'s `ContinuityLedger` is in-memory only (no
-  serialization), so it cannot yet be saved as, or restored from, a
-  `CONTINUITY_STATE_V1` object for cross-session book/monograph continuity as
-  that protocol's own description requires. Tracked as follow-up work, not
-  silently assumed to work.
+- **CONTINUITY_STATE_V1** — implemented (2026-09). `scripts/voice/
+  continuity.py`'s `ContinuityLedger.to_dict()`/`from_dict()` serialize to
+  and restore from a `CONTINUITY_STATE_V1` envelope, so it can genuinely be
+  saved and passed between chapter-drafting sessions. `concept_ledger`/
+  `claim_ledger` round-trip through this class's own active
+  redefinition/contradiction checking (a restored ledger still raises
+  `ContinuityConflict` the same way); `voice_contract`/`evidence_ledger`/
+  `chapter_ledger`/`terminology`/`open_questions` round-trip opaquely --
+  stored and returned unchanged, not yet validated or acted on by this
+  class.
 
 ## Out of scope for this Skill
 

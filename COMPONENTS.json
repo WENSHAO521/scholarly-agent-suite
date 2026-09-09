@@ -21,10 +21,10 @@
       "source_commit": "e1043b3f1c25fcd3aaf213551f2bf2104ee83483"
     },
     "scholarly-voice-engine": {
-      "version": "1.0.1",
+      "version": "1.0.2",
       "role": "writing-intelligence",
       "source_repository": "https://github.com/WENSHAO521/scholarly-voice-engine.git",
-      "source_commit": "f8d5d6745d0206c3d9d9bf16c14090421d588a2b"
+      "source_commit": "859aa757a6204407607b81a8793633a95d7857c6"
     },
     "journal-fit-engine": {
       "version": "0.2.0",

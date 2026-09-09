@@ -48,13 +48,14 @@ Initial integration/distribution release.
   (commit `de79826`, was the unpublished `v0.2.0` working state at commit
   `3c441a7`). See that repository's own CHANGELOG for the budget
   controller, task state, stop rule, and escalation reason codes it adds.
-- Synced `scholarly-voice-engine` to `v1.0.1` (commit `f8d5d67`, was
-  `v1.0.0` at commit `0a020b9`): a compatibility audit against this Suite's
-  own protocol schemas that fixed a real `SCHOLARLY_PROFILE_V1` confidence-
-  vocabulary mismatch (`medium` vs. the correct `moderate`) and added
-  optional `VOICE_REQUEST_V1`/`VOICE_OUTPUT_V1` adapters. See that
-  repository's CHANGELOG for the two compatibility gaps left deliberately
-  open (`JOURNAL_STYLE_CONTEXT_V1`, `CONTINUITY_STATE_V1`).
+- Synced `scholarly-voice-engine` to `v1.0.2` (commit `859aa75`, was
+  `v1.0.0` at commit `0a020b9`): a compatibility audit (`v1.0.1`) that
+  fixed a real `SCHOLARLY_PROFILE_V1` confidence-vocabulary mismatch
+  (`medium` vs. the correct `moderate`) and added optional
+  `VOICE_REQUEST_V1`/`VOICE_OUTPUT_V1` adapters, then (`v1.0.2`)
+  implemented `CONTINUITY_STATE_V1` serialization for
+  `ContinuityLedger`. `JOURNAL_STYLE_CONTEXT_V1` remains an open
+  compatibility gap -- see that repository's CHANGELOG.
 - Synced `journal-fit-engine` to its published `v0.2.0` release (commit
   `35bca33`, was `v0.1.0` at commit `f0729e0`): first working code
   (`jfe/`) for live journal-evidence lookup, APC/OA classification, hard
