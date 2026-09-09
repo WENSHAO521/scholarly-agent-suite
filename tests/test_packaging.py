@@ -56,6 +56,44 @@ def test_package_is_byte_deterministic_across_two_builds(tmp_path, monkeypatch):
     assert hash1 == hash2
 
 
+def test_zip_entries_never_contain_carriage_returns(tmp_path, monkeypatch):
+    """Regression guard for a real bug (found 2026-09-09): package_suite.py
+    used to write file_path.read_bytes() directly, so a component file
+    checked out with CRLF line endings (as scholarly-corpus-builder's own
+    scb/manifest.py was, on a Windows checkout) produced a ZIP whose bytes
+    differed from the same commit packaged on Linux CI (LF checkout) --
+    silently breaking the "identical bytes across builds/machines" claim
+    this module's own docstring makes. normalized_bytes() now decodes with
+    universal-newline translation and re-encodes as LF; assert that
+    directly rather than only checking two same-machine builds match,
+    which passed even with the bug present."""
+    monkeypatch.setattr(package_suite, "DIST_DIR", tmp_path)
+    version = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
+    files = package_suite.iter_runtime_files()
+    zip_path = package_suite.build_zip(files, version)
+    with zipfile.ZipFile(zip_path) as zf:
+        for info in zf.infolist():
+            data = zf.read(info)
+            assert b"\r" not in data, f"{info.filename} contains a carriage return -- CRLF leaked into the ZIP"
+
+
+def test_zip_uses_stored_not_deflated_compression(tmp_path, monkeypatch):
+    """Regression guard for a real bug (found 2026-09-09): ZIP_DEFLATED
+    compression is not guaranteed byte-identical across zlib versions/
+    builds even for identical input, so a Windows-local build (with the
+    CRLF fix already applied) still didn't match the Linux-CI-published
+    v1.0.0 ZIP until compression was switched to ZIP_STORED -- the same
+    tradeoff adaptive-model-router/scholarly-corpus-builder/
+    journal-fit-engine's own packagers already made for the same reason."""
+    monkeypatch.setattr(package_suite, "DIST_DIR", tmp_path)
+    version = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
+    files = package_suite.iter_runtime_files()
+    zip_path = package_suite.build_zip(files, version)
+    with zipfile.ZipFile(zip_path) as zf:
+        for info in zf.infolist():
+            assert info.compress_type == zipfile.ZIP_STORED, info.filename
+
+
 def test_release_manifest_has_no_private_machine_paths(tmp_path, monkeypatch):
     monkeypatch.setattr(package_suite, "DIST_DIR", tmp_path)
     version = (ROOT / "VERSION").read_text(encoding="utf-8").strip()

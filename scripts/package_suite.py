@@ -16,8 +16,15 @@ Packages exactly the runtime allowlist from the spec (rule 81):
 
 Explicitly excludes tests/, evals/, .github/, scripts/, dist/, .git, and any
 __pycache__ (rule 83). The ZIP itself is built deterministically (sorted
-entries, fixed per-entry timestamp) so identical source content produces
-identical bytes across builds/machines (rule 86); the human-readable build
+entries, fixed per-entry timestamp, UTF-8 text normalized to LF, stored
+uncompressed) so identical source content produces identical bytes across
+builds/machines (rule 86), including across a Windows checkout (CRLF) and
+Linux CI (LF) of the same commit, and across different zlib versions --
+verified 2026-09-09 after finding two real cross-platform mismatches: one
+synced component file with CRLF line endings, and DEFLATE compression not
+being byte-identical across zlib builds even for identical input (the same
+tradeoff adaptive-model-router's/scholarly-corpus-builder's/
+journal-fit-engine's own packagers already made). The human-readable build
 timestamp instead lives in release-manifest.json, written alongside the ZIP
 (not inside it), so it never perturbs the ZIP's own checksum.
 
@@ -66,17 +73,31 @@ def iter_runtime_files() -> list[Path]:
     return sorted(files, key=lambda p: p.relative_to(ROOT).as_posix())
 
 
+def normalized_bytes(file_path: Path) -> bytes:
+    """Decode as UTF-8 text with universal-newline translation (any of
+    \\r\\n, \\r, \\n becomes \\n on read) and re-encode with LF, so the same
+    committed content produces identical bytes regardless of the checking-
+    out platform's line-ending conversion (Windows CRLF vs Linux LF).
+    Every file in RUNTIME_ALLOWLIST is text (.md/.py/.json/.yaml/.svg/
+    extensionless LICENSE-style files); this would need reconsidering if a
+    genuinely binary file were ever added to the allowlist. Path.read_text()
+    only gained a `newline` parameter in Python 3.13; open() supports it on
+    every supported version, so this uses open() directly."""
+    with open(file_path, "r", encoding="utf-8", newline=None) as handle:
+        return handle.read().encode("utf-8")
+
+
 def build_zip(files: list[Path], version: str) -> Path:
     DIST_DIR.mkdir(exist_ok=True)
     zip_path = DIST_DIR / f"scholarly-agent-suite-v{version}.zip"
     root_prefix = "scholarly-agent-suite/"
-    with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_DEFLATED, compresslevel=6) as zf:
+    with zipfile.ZipFile(zip_path, "w", zipfile.ZIP_STORED) as zf:
         for file_path in files:
             arcname = root_prefix + file_path.relative_to(ROOT).as_posix()
             info = zipfile.ZipInfo(arcname, date_time=FIXED_ZIP_TIMESTAMP)
-            info.compress_type = zipfile.ZIP_DEFLATED
+            info.compress_type = zipfile.ZIP_STORED
             info.external_attr = 0o644 << 16
-            zf.writestr(info, file_path.read_bytes())
+            zf.writestr(info, normalized_bytes(file_path))
     return zip_path
 
 

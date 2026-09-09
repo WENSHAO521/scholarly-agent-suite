@@ -5,9 +5,36 @@ Suite versioning follows `README.md#component-versioning` /
 `shared/protocol-versioning.md`; component versions are tracked separately in
 `COMPONENTS.json`.
 
+## v1.0.1 -- 2026-09-09
+
+v1.0.1 PUBLISHED
+
+### Fixed
+
+- `scripts/package_suite.py` claimed the built ZIP was "byte-identical
+  across builds/machines" but only same-machine rebuilds were ever
+  actually tested. Publishing v1.0.0 exposed two real bugs: (1) it read
+  `file_path.read_bytes()` directly, so a synced component file checked
+  out with CRLF line endings (a Windows checkout of
+  `scholarly-corpus-builder`'s own `scb/manifest.py`) produced different
+  bytes than the same commit packaged on Linux CI; (2) `ZIP_DEFLATED`
+  compression is not guaranteed byte-identical across zlib versions/
+  builds even for identical input. Fixed by normalizing every packaged
+  file to UTF-8/LF on read and switching to `ZIP_STORED` (uncompressed) --
+  the same tradeoff `adaptive-model-router`'s, `scholarly-corpus-builder`'s,
+  and `journal-fit-engine`'s own packagers already made for the same
+  reason. Two new regression tests assert directly on the fixed
+  properties (no `\r` in any packaged entry; `ZIP_STORED` compression),
+  not only that two same-machine builds match, which passed even with
+  both bugs present.
+- The already-published `v1.0.0` GitHub Release is left as-is (never
+  overwrite a published tag/release) -- its file *contents* were correct;
+  only the cross-platform-reproducibility guarantee was overstated. This
+  is documented here rather than silently fixed with no record.
+
 ## v1.0.0 -- 2026-09-09
 
-v1.0.0 PREPARED -- NOT PUBLISHED
+v1.0.0 PUBLISHED
 
 Initial integration/distribution release.
 
