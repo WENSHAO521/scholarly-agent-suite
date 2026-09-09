@@ -8,7 +8,33 @@ for the ecosystem-level relationship.
 
 ## What journal-fit-engine sends
 
-Either the compact form:
+As of journal-fit-engine v0.3.0, the primary handoff is a
+`JOURNAL_STYLE_CONTEXT_V1` envelope (`jfe.style_context`,
+`scholarly-agent-suite/protocols/journal-style-context.schema.json`),
+consumed here via `scripts/voice/journal_context.py`:
+
+```yaml
+protocol: JOURNAL_STYLE_CONTEXT_V1
+journal_name: Journal of Example Studies
+official_requirements: { word_limit: 8000, citation_style: APA7 }
+observed_patterns: { tone: formal, contribution_placement_observed: early }
+freshness: current | aging | stale
+```
+
+`official_requirements` becomes a `hard_requirements` block: apply it as
+stated, never confidence-gated, never silently dropped or overridden by
+anything else in this reference. `observed_patterns` is fed into the
+existing author→discipline→journal→historical precedence resolution
+(`corpus-profile-integration.md`) as the "journal" layer, with its
+confidence set from `freshness` — a `stale` or absent freshness gates it
+down to low confidence exactly as an already-low-confidence journal
+profile would be gated (`corpus-profile-integration.md` §Conflict
+resolution), so it yields to a lower-precedence layer rather than silently
+winning on stale evidence.
+
+Older callers (or a caller that has already derived writing-level
+adjustments itself, e.g. from its own reasoning over a
+`JOURNAL_STYLE_CONTEXT_V1`) may instead hand over the compact form:
 
 ```yaml
 target_voice_adjustment:

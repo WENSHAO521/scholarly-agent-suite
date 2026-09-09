@@ -1,0 +1,30 @@
+name: Component drift
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Weekly, informational -- see scripts/check_component_drift.py's
+    # docstring for what each status means. This never fails the whole
+    # workflow just because a newer component release exists (that is
+    # NEW_RELEASE_AVAILABLE / UNRELEASED_COMMITS_AHEAD, both informational);
+    # it fails only on an actually broken pin (PIN_UNREACHABLE,
+    # VERSION_TAG_MISMATCH, SOURCE_VERSION_MISMATCH).
+    - cron: "0 6 * * 1"
+
+permissions:
+  contents: read
+
+jobs:
+  drift:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Check component drift (report only -- never auto-repins)
+        run: python scripts/check_component_drift.py --fetch

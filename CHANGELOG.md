@@ -5,6 +5,110 @@ Suite versioning follows `README.md#component-versioning` /
 `shared/protocol-versioning.md`; component versions are tracked separately in
 `COMPONENTS.json`.
 
+## v1.1.0 -- 2026-09-09
+
+v1.1.0 PREPARED -- NOT PUBLISHED (committed and tagged locally in every
+repository below; not pushed to any remote, and no GitHub Release was
+created for any of them -- see the accompanying implementation report for
+what was and was not executed).
+
+The 1.1 line closes the `JOURNAL_STYLE_CONTEXT_V1` producer/consumer loop
+(the one cross-Skill protocol handoff that was still schema-only through
+v1.0.3), adds component drift detection, replaces routing-only "E2E"
+coverage with a real cross-repo protocol-handoff integration test, and
+moves CI to a Python 3.10-3.13 compatibility matrix.
+
+### Added
+
+- **`JOURNAL_STYLE_CONTEXT_V1` closed end to end.** `journal-fit-engine`
+  v0.3.0 adds `jfe.style_context` (the producer: builds and validates the
+  envelope, structurally rejects official/observed-pattern cross-
+  contamination, never derives either bucket from its own index evidence)
+  plus an 11-dimension fit model, an integrity screen, and an indexing
+  evidence assessor. `scholarly-voice-engine` v1.1.0 adds
+  `scripts/voice/journal_context` (the consumer: `official_requirements`
+  becomes a `hard_requirements` block, never confidence-gated;
+  `observed_patterns` feeds the existing author→discipline→journal→
+  historical precedence resolution as the "journal" layer, gated by
+  `freshness`). See `workflows/target-journal-adaptation.md`'s new
+  "Implementation" section.
+- `tests/test_e2e_protocol_handoff.py` — imports both components' *actual
+  code* from the synced `skills/` tree and drives a real handoff: official
+  requirement survives, observed pattern survives and correctly outranks a
+  lower-precedence layer at `current` freshness, a `stale` (or absent)
+  freshness correctly yields instead, limitations survive, and corpus-
+  derived evidence never lands in `official_requirements` (or vice versa)
+  after a full round trip. This is the first Suite-level test that
+  exercises a real protocol handoff rather than only an orchestration-
+  routing decision or a standalone schema round-trip.
+- `scripts/check_component_drift.py` + `.github/workflows/
+  component-drift.yml` (weekly + `workflow_dispatch`) — reports each
+  component's pin state (`CURRENT` / `UNRELEASED_COMMITS_AHEAD` /
+  `NEW_RELEASE_AVAILABLE` / `PIN_NOT_TAGGED` / `PIN_UNREACHABLE` /
+  `VERSION_TAG_MISMATCH` / `SOURCE_VERSION_MISMATCH` / `NO_LOCAL_SOURCE`).
+  Detect-and-report only: never edits `component-sources.json` or
+  `COMPONENTS.json`, never re-pins, never releases. Only a broken pin
+  fails the scheduled workflow; a newer available release is informational.
+  9 new tests build real temporary git repositories to exercise every
+  status path.
+- `protocols/journal-style-context.schema.json` gained optional
+  `journal_identifiers`, `article_type`, `evidence`, `limitations`, and
+  `generated_at` fields (all backward compatible -- `freshness` and the
+  original two required fields are unchanged) to match what the new
+  producer/consumer actually read and write.
+- `.github/workflows/validate.yml` now runs a `compatibility` matrix job
+  (Python 3.10, 3.11, 3.12, 3.13: `validate_suite.py` + `pytest`) ahead of
+  a single canonical `package` job (Python 3.11 only) that does the
+  deterministic-packaging build and artifact upload -- packaging
+  correctness doesn't vary by interpreter version, so it isn't rebuilt
+  four times over.
+
+### Fixed
+
+- **Real, pre-existing packaging gap**: `component-sources.json`'s include
+  allowlist for `scholarly-voice-engine` never listed anything under
+  `scripts/`, so that component's actual runtime Python package
+  (`scripts/voice/`: `profile_merge`, `continuity`, `audit`,
+  `profile_schema`) was silently absent from every packaged Suite release
+  through v1.0.3, despite CHANGELOG entries in that component describing
+  code (e.g. `CONTINUITY_STATE_V1` serialization) as shipped. Fixed at the
+  sync step (`component-sources.json` now names `scripts/__init__.py` and
+  `scripts/voice` precisely, not that component's dev-only
+  `validate_skill.py`/`package_runtime.py`) and at the packager
+  (`package_suite.py`'s `EXCLUDE_DIR_NAMES` used to blanket-exclude any
+  path component literally named `scripts` anywhere in the tree, which
+  would have silently stripped the fix back out even after the include
+  list was corrected). Two new regression tests in `tests/
+  test_packaging.py` assert the runtime package is present and the
+  dev-only scripts are not.
+
+### Changed
+
+- `scholarly-corpus-builder` pinned at `0.9.1` (documentation/evidence
+  patch on `0.9.0` -- cross-disciplinary live-acquisition demonstrations
+  extended from one discipline to five, and a stale eval-fixture count in
+  its README corrected; no `scb/` code or schema change).
+- `scholarly-voice-engine` pinned at `1.1.0`, `journal-fit-engine` pinned
+  at `0.3.0` (see above).
+- `adaptive-model-router` remains pinned at `0.3.0` -- unchanged, no real
+  issue to fix this round, so its version was not bumped just for
+  uniformity.
+
+### Known limitations
+
+- Only `JOURNAL_STYLE_CONTEXT_V1` has a real cross-repo protocol-handoff
+  test (`test_e2e_protocol_handoff.py`); the other nine protocols in
+  `protocols/` still have schema-validity and (for several) standalone
+  round-trip coverage, but not this same depth of producer-code-into-
+  consumer-code integration testing yet.
+- `check_component_drift.py` depends on locally reachable git history
+  (an override or a `.cache/components/` clone) -- it does not query
+  GitHub's API directly, so a component with neither present locally
+  reports `NO_LOCAL_SOURCE`, not a live check.
+- This release's git tags exist only in each repository's local clone;
+  see the implementation report's "Release readiness" section for exactly
+  what has and has not been pushed/published.
+
 ## v1.0.3 -- 2026-09-09
 
 v1.0.3 PUBLISHED

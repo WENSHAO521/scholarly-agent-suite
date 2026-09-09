@@ -8,6 +8,12 @@
   "properties": {
     "protocol": { "const": "JOURNAL_STYLE_CONTEXT_V1" },
     "journal_name": { "type": "string" },
+    "journal_identifiers": {
+      "type": "object",
+      "description": "Identity metadata (ISSN, publisher) -- not a style requirement, not observed evidence. Populated by journal-fit-engine's own index evidence lookup (see jfe.style_context.journal_identifiers_from_evidence).",
+      "additionalProperties": true
+    },
+    "article_type": { "type": "string" },
     "official_requirements": {
       "type": "object",
       "description": "Stated in the journal's author guidelines: word limits, citation style, structure mandates, blinding rules.",
@@ -18,7 +24,18 @@
       "description": "Style regularities observed by scholarly-corpus-builder across a sampled corpus of published articles. Descriptive, not mandatory.",
       "additionalProperties": true
     },
-    "freshness": { "type": "string", "enum": ["current", "aging", "stale"] }
+    "evidence": {
+      "type": "array",
+      "description": "Provenance entries for official_requirements/observed_patterns (see provenance.schema.json's PROVENANCE_RECORD_V1 -- this is a plain list of sources, not a second provenance schema).",
+      "items": { "type": "object" }
+    },
+    "freshness": { "type": "string", "enum": ["current", "aging", "stale"] },
+    "limitations": {
+      "type": "array",
+      "description": "Evidence gaps and honesty flags (e.g. 'no official_requirements supplied', 'stale freshness') that must be preserved by every downstream consumer, never silently dropped.",
+      "items": { "type": "string" }
+    },
+    "generated_at": { "type": "string" }
   },
   "additionalProperties": false
 }

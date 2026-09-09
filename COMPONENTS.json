@@ -1,9 +1,9 @@
 {
   "suite": "scholarly-agent-suite",
-  "suite_version": "1.0.3",
+  "suite_version": "1.1.0",
   "components": {
     "scholarly-agent": {
-      "version": "1.0.3",
+      "version": "1.1.0",
       "role": "orchestration",
       "source_repository": "in-tree (scholarly-agent-suite)",
       "source_commit": "n/a"
@@ -15,22 +15,22 @@
       "source_commit": "de79826a1d63dff4253a6f63f62a08de0096fda4"
     },
     "scholarly-corpus-builder": {
-      "version": "0.9.0",
+      "version": "0.9.1",
       "role": "research-intelligence",
       "source_repository": "https://github.com/WENSHAO521/scholarly-corpus-builder.git",
-      "source_commit": "e1043b3f1c25fcd3aaf213551f2bf2104ee83483"
+      "source_commit": "ec802366624b5b5fc2179bea27784a05009a4eef"
     },
     "scholarly-voice-engine": {
-      "version": "1.0.2",
+      "version": "1.1.0",
       "role": "writing-intelligence",
       "source_repository": "https://github.com/WENSHAO521/scholarly-voice-engine.git",
-      "source_commit": "859aa757a6204407607b81a8793633a95d7857c6"
+      "source_commit": "dab8a6743ca77fb28d94d308084efd963fd54e33"
     },
     "journal-fit-engine": {
-      "version": "0.2.0",
+      "version": "0.3.0",
       "role": "publication-intelligence",
       "source_repository": "https://github.com/WENSHAO521/journal-fit-engine.git",
-      "source_commit": "35bca3301a8610b29db1b3291794eab3e39bb19c"
+      "source_commit": "cbb77a80812ae37dc80a80e5f0db375dbc7739d5"
     }
   },
   "compatibility": {

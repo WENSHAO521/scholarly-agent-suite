@@ -108,18 +108,25 @@ Known, audited compatibility state (2026-09):
 - **VOICE_CONTEXT_V1** — compatible in substance (`discipline`/`genre`/
   `research_design` align); the protocol's `author_voice` field name maps to
   this Skill's `author_profile`.
-- **JOURNAL_STYLE_CONTEXT_V1** — **not yet reconciled.** This protocol
-  separates a journal's `official_requirements` from `observed_patterns`;
-  this Skill's own `journal_context` (`validate_journal_target()`) instead
-  expects `journal-fit-engine`'s compact/full *adaptation-target* shape
-  (`contribution_position`, `theory_density`, etc. — already-derived writing
-  guidance, not raw official/observed evidence). These describe different
-  stages of the same pipeline and are not simply interchangeable; closing
-  this gap needs a decision, made alongside `journal-fit-engine`'s own
-  still-pending fit-logic implementation, about whether that Skill emits
-  `JOURNAL_STYLE_CONTEXT_V1` directly or this Skill derives an adaptation
-  target from it. Until then, `journal_context` continues to accept only its
-  existing adaptation-target shape.
+- **JOURNAL_STYLE_CONTEXT_V1** — **reconciled (2026-09).** `journal-fit-engine`
+  v0.3.0 now emits this protocol directly (`jfe.style_context`); this Skill
+  consumes it via `scripts/voice/journal_context.py`
+  (`from_journal_style_context_v1()` / `apply_journal_style_context()`),
+  rather than deriving an adaptation-target shape from it. The two buckets
+  are handled on two different paths, matching
+  `corpus-profile-integration.md`'s precedence order exactly:
+  `official_requirements` becomes `hard_requirements` — returned verbatim,
+  never confidence-gated, never merged into the layered voice-precedence
+  resolution; `observed_patterns` is fed into
+  `profile_merge.resolve_voice_precedence()` as the existing "journal"
+  layer, confidence-gated by the envelope's `freshness`
+  (`current`→high, `aging`→moderate, `stale`/absent→low — never silently
+  treated as current). See `journal-style-adaptation.md` for the full
+  consumption rules. This Skill's older `journal_context`
+  (`validate_journal_target()`, the compact/full adaptation-target shape)
+  remains supported unchanged for a caller that has already derived
+  writing-level adjustments itself and wants to hand those over directly —
+  the two input shapes are not mutually exclusive.
 - **CONTINUITY_STATE_V1** — implemented (2026-09). `scripts/voice/
   continuity.py`'s `ContinuityLedger.to_dict()`/`from_dict()` serialize to
   and restore from a `CONTINUITY_STATE_V1` envelope, so it can genuinely be

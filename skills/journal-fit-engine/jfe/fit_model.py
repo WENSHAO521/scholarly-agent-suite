@@ -9,7 +9,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 
 from jfe.journal_evidence import JournalEvidence
-from jfe.manuscript_profile import STOPWORDS, ManuscriptProfile
+from jfe.manuscript_profile import ManuscriptProfile, tokenize
 
 EXCELLENT_FIT = "EXCELLENT FIT"
 STRONG_FIT = "STRONG FIT"
@@ -40,10 +40,7 @@ def _topic_overlap(manuscript_keywords: list[str], journal_topics: list[str]) ->
         return 0.0, []
     topic_words: set[str] = set()
     for topic in journal_topics:
-        for token in topic.lower().replace("-", " ").split():
-            cleaned = "".join(ch for ch in token if ch.isalnum())
-            if len(cleaned) > 2 and cleaned not in STOPWORDS:
-                topic_words.add(cleaned)
+        topic_words |= tokenize(topic)
     matched = sorted(set(manuscript_keywords) & topic_words)
     if not manuscript_keywords:
         return 0.0, matched

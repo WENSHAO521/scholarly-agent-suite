@@ -11,6 +11,7 @@ SKILL.md's Evidence discipline -- this class never blurs the two.
 """
 from __future__ import annotations
 
+import datetime
 from dataclasses import dataclass, field
 from typing import Optional
 
@@ -24,6 +25,10 @@ DEFAULT_MAILTO = "research@example.com"
 
 class EvidenceLookupError(Exception):
     """Raised when neither adapter could resolve the journal."""
+
+
+def _now_iso() -> str:
+    return datetime.datetime.now(datetime.timezone.utc).isoformat()
 
 
 @dataclass
@@ -102,7 +107,9 @@ def lookup_by_name(client: HttpClient, query: str, mailto: str = DEFAULT_MAILTO)
         data = client.get_json(openalex_url)
         results = data.get("results") or []
         if results:
-            return _openalex_to_evidence(results[0])
+            evidence = _openalex_to_evidence(results[0])
+            evidence.checked_at = _now_iso()
+            return evidence
     except HttpError:
         pass
 
@@ -112,7 +119,9 @@ def lookup_by_name(client: HttpClient, query: str, mailto: str = DEFAULT_MAILTO)
         data = client.get_json(crossref_url)
         items = (data.get("message") or {}).get("items") or []
         if items:
-            return _crossref_to_evidence(items[0])
+            evidence = _crossref_to_evidence(items[0])
+            evidence.checked_at = _now_iso()
+            return evidence
     except HttpError:
         pass
 
@@ -127,7 +136,9 @@ def lookup_by_issn(client: HttpClient, issn: str, mailto: str = DEFAULT_MAILTO) 
     try:
         record = client.get_json(url)
         if record.get("id"):
-            return _openalex_to_evidence(record)
+            evidence = _openalex_to_evidence(record)
+            evidence.checked_at = _now_iso()
+            return evidence
     except HttpError:
         pass
     raise EvidenceLookupError(f"no journal found for ISSN: {issn!r}")

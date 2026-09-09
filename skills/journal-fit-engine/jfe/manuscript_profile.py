@@ -30,6 +30,22 @@ class ProfileError(ValueError):
     """Raised when a profile field has an invalid shape/value."""
 
 
+def tokenize(text: Optional[str]) -> set[str]:
+    """Lowercase, alnum-only, stopword-filtered, length>2 tokens. Shared by
+    ManuscriptProfile.keywords() and jfe.fit_model's/jfe.fit_dimensions's
+    topic-overlap matchers so the same honest bag-of-words rule (no fake
+    NLP/embedding) is applied on both the manuscript and journal-topic side.
+    """
+    if not text:
+        return set()
+    words: set[str] = set()
+    for token in text.lower().replace("-", " ").split():
+        cleaned = "".join(ch for ch in token if ch.isalnum())
+        if len(cleaned) > 2 and cleaned not in STOPWORDS:
+            words.add(cleaned)
+    return words
+
+
 @dataclass
 class ManuscriptProfile:
     discipline: Optional[str] = None
@@ -58,12 +74,7 @@ class ManuscriptProfile:
                        self.theory)
         words: set[str] = set()
         for text in text_fields:
-            if not text:
-                continue
-            for token in text.lower().replace("-", " ").split():
-                cleaned = "".join(ch for ch in token if ch.isalnum())
-                if len(cleaned) > 2 and cleaned not in STOPWORDS:
-                    words.add(cleaned)
+            words |= tokenize(text)
         return sorted(words)
 
     def validate(self) -> list[str]:

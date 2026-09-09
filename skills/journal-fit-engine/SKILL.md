@@ -119,16 +119,28 @@ submission where prohibited, or salami slicing. See
 `jfe/` is a real, tested, live-verified Python implementation of the
 mechanical parts of this workflow -- live journal evidence lookup
 (OpenAlex Sources, Crossref Journals), APC/OA classification, hard
-filters, and a categorical topic-overlap fit dimension. It supplements
+filters, an 11-dimension categorical fit assessment (`fit_dimensions.py`:
+scope, topic, article-type, method, audience, activity, APC constraint, OA
+model, journal integrity, indexing evidence, requirement compatibility),
+an evidence-based integrity screen (`integrity.py`:
+VERIFIED/WARNING/CANNOT_VERIFY, never a predatory-probability score), an
+honest indexing/quartile assessor (`indexing.py`: only DOAJ is actually
+checkable from this Skill's free adapters; Scopus/Web of
+Science/SCIE/SSCI/AHCI/ESCI/JCR/CiteScore are always `cannot_verify`, never
+inferred), and a `JOURNAL_STYLE_CONTEXT_V1` protocol builder
+(`style_context.py`) for the Scholarly Voice Engine handoff (see
+[references/integration.md](references/integration.md)). It supplements
 this SKILL.md's reasoning workflow; it does not replace the LLM's own
-judgment on soft fit beyond topic overlap, candidate generation,
-integrity screening, indexing/quartile verification, or submission
-strategy, none of which are implemented in code yet (see CHANGELOG's
-"Still not implemented"). Where `jfe/` cannot verify something (e.g.
-accepted article types, language policy), it returns `CANNOT_VERIFY`
-honestly rather than guessing -- the LLM's own reasoning is still
-required to fill those gaps from other evidence. See
-`references/evidence-policy.md` for how CANNOT_VERIFY should be handled.
+judgment on candidate generation or submission strategy, and it never
+derives `official_requirements` (author guidelines) or `observed_patterns`
+(corpus-measured style) from its own index evidence -- those come from the
+LLM's own guideline retrieval and from scholarly-corpus-builder,
+respectively (see CHANGELOG's "Still not implemented"). Where `jfe/`
+cannot verify something (e.g. accepted article types, language policy,
+Scopus/WoS status), it returns `CANNOT_VERIFY` honestly rather than
+guessing -- the LLM's own reasoning is still required to fill those gaps
+from other evidence. See `references/evidence-policy.md` for how
+CANNOT_VERIFY should be handled.
 
 ## Reference index
 

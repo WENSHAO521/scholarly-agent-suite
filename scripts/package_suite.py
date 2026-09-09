@@ -53,7 +53,19 @@ RUNTIME_ALLOWLIST = [
     "COMPONENTS.json",
 ]
 
-EXCLUDE_DIR_NAMES = {"__pycache__", ".git", "tests", "evals", "dist", ".github", "scripts"}
+EXCLUDE_DIR_NAMES = {"__pycache__", ".git", "tests", "evals", "dist", ".github"}
+# "scripts" was previously in this set as a blanket exclusion, on the
+# (until now correct) assumption that no component ever needs a directory
+# literally named "scripts" in its packaged runtime tree -- the Suite's own
+# dev-only scripts/ isn't walked at all (it's not in RUNTIME_ALLOWLIST).
+# scholarly-voice-engine's runtime package legitimately lives under
+# scripts/voice/ (see component-sources.json's include list, which already
+# excludes that component's own dev-only scripts/validate_skill.py and
+# scripts/package_runtime.py at the sync step) -- a blanket "scripts" match
+# on any path component would silently strip that runtime package back out
+# here regardless of what sync_components.json chose to include, so this
+# exclusion is now handled precisely at the sync step's include allowlist
+# instead of by directory name here.
 FIXED_ZIP_TIMESTAMP = (2026, 1, 1, 0, 0, 0)
 
 

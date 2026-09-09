@@ -116,8 +116,8 @@ dropped on the way to a "complete" result.
 ## Component versioning
 
 Component Skills are **not** forced to share the Suite's version number. A
-valid release can (and does) bundle `scholarly-corpus-builder` at `0.9.0`
-alongside `scholarly-voice-engine` at `1.0.0` -- see `COMPONENTS.json` for the
+valid release can (and does) bundle `scholarly-corpus-builder` at `0.9.1`
+alongside `scholarly-voice-engine` at `1.1.0` -- see `COMPONENTS.json` for the
 exact versions and `compatibility` for the declared-compatible ranges. This is
 a declaration, not a dependency resolver: the Suite does not automatically
 install or upgrade components.
@@ -152,6 +152,28 @@ component to sync from a local working copy instead of the network -- the
 pinned `ref` must still be reachable from that local copy; it is a faster
 source of the same bytes, not a way to sync a different revision.
 
+## Component drift detection
+
+`python scripts/check_component_drift.py` compares what's pinned in
+`scripts/component-sources.json` against each component repository's actual
+current state (its own tags, its own default-branch tip) and reports one of:
+`CURRENT`, `UNRELEASED_COMMITS_AHEAD`, `NEW_RELEASE_AVAILABLE`,
+`PIN_NOT_TAGGED`, `PIN_UNREACHABLE`, `VERSION_TAG_MISMATCH`,
+`SOURCE_VERSION_MISMATCH`, or `NO_LOCAL_SOURCE`. It only detects and
+reports -- it never edits `component-sources.json` or `COMPONENTS.json`,
+never re-pins, and never triggers a release; bumping a pin is always a
+deliberate maintainer action driven by `RELEASE_CHECKLIST.md`. A weekly
+`.github/workflows/component-drift.yml` run surfaces drift as an
+informational report; only a genuinely broken pin (`PIN_UNREACHABLE`,
+`VERSION_TAG_MISMATCH`, `SOURCE_VERSION_MISMATCH`) fails that workflow.
+
+**A newer component HEAD does not automatically mean the Suite is
+outdated.** The Suite pins published, integration-tested source states
+(see "Development model" above) -- `NEW_RELEASE_AVAILABLE` or
+`UNRELEASED_COMMITS_AHEAD` on a component is a prompt to evaluate whether
+picking that up is worth a new sync + integration test pass, not a
+standing failure.
+
 ## Standalone compatibility
 
 Every bundled Skill still works if installed by itself, outside this Suite --
@@ -167,7 +189,16 @@ domain directly inside its own `SKILL.md`.
 - `tests/` -- suite-level tests: plugin manifest, component presence/
   frontmatter/uniqueness, protocol schema validity and cross-schema
   compatibility, workflow references, orchestration trigger tests (positive
-  and negative), and packaging tests.
+  and negative), packaging tests, and component-drift-detector tests.
+- `tests/test_e2e_protocol_handoff.py` -- true cross-Skill integration tests
+  that import each component's *actual code* from the synced `skills/` tree
+  (not a mock, not a routing-only check) and exercise a real protocol
+  handoff end to end -- currently `journal-fit-engine`'s
+  `JOURNAL_STYLE_CONTEXT_V1` producer feeding `scholarly-voice-engine`'s
+  consumer, asserting that official requirements, observed patterns,
+  freshness, and limitations all survive the full round trip, and that
+  corpus-derived evidence can never land in an official-requirement field
+  (or vice versa).
 - `evals/` -- end-to-end orchestration fixtures (component selection,
   negative triggers, cross-disciplinary and multilingual scenarios).
 - Component-level correctness (adapters, analytics, validators) is owned by
@@ -175,7 +206,12 @@ domain directly inside its own `SKILL.md`.
   does not duplicate them.
 
 Run `python scripts/validate_suite.py` for the acceptance-criteria checker,
-and `pytest tests/` for the full test suite.
+and `pytest tests/` for the full test suite. CI (`.github/workflows/
+validate.yml`) runs validation and tests across a Python 3.10-3.13
+compatibility matrix; the deterministic packaging build itself runs once,
+on the canonical Python 3.11 job, since packaging correctness doesn't vary
+by interpreter version and rebuilding it four times over would just be
+wasted CI time.
 
 ## Runtime package
 
@@ -197,10 +233,19 @@ protocol versions, file list, and a SHA-256 checksum.
   a Suite major version.
 - Live/network-dependent evidence retrieval (current journal metrics, current
   APC policy) depends entirely on each component's own tool access at
-  runtime; the Suite adds no additional connectors in v1.0.0 (see rule 60,
-  "optional future connectors").
-- Suite-level end-to-end evals exercise orchestration/routing decisions, not
-  the full correctness of each specialist's domain logic.
+  runtime; the Suite adds no additional connectors (see rule 60, "optional
+  future connectors").
+- Suite-level end-to-end evals (`evals/`) exercise orchestration/routing
+  decisions, not the full correctness of each specialist's domain logic.
+  `tests/test_e2e_protocol_handoff.py` goes one level deeper for the
+  `JOURNAL_STYLE_CONTEXT_V1` handoff specifically (real producer code into
+  real consumer code, not routing-only), but that coverage does not yet
+  extend to every protocol in `protocols/` -- see "Protocol compatibility"
+  in the release report for which handoffs currently have this level of
+  test versus schema-only round-trip coverage versus declared-only.
+- `check_component_drift.py` requires each component's git history to be
+  locally reachable (a local override or a `.cache/components/` clone); it
+  is not itself a network service and does not run against GitHub's API.
 
 ## Roadmap
 

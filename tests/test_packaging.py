@@ -22,6 +22,40 @@ def test_runtime_allowlist_excludes_pycache():
     assert not any("__pycache__" in f.parts for f in files)
 
 
+def test_runtime_allowlist_includes_voice_engine_runtime_package():
+    """Regression guard for a real, pre-existing gap (found while closing
+    JOURNAL_STYLE_CONTEXT_V1): scholarly-voice-engine's actual runtime
+    Python package lives under scripts/voice/ (profile_merge, continuity,
+    audit, journal_context, ...), but component-sources.json's include
+    allowlist for it never listed "scripts" at all -- so this executable
+    package was silently absent from every packaged Suite release through
+    v1.0.3, even though its own CHANGELOG entries (e.g. CONTINUITY_STATE_V1
+    serialization) were advertised as shipped. Also guards the packager
+    side of the same bug: EXCLUDE_DIR_NAMES used to blanket-exclude any
+    path component literally named "scripts", which would have silently
+    stripped this package back out even after the include allowlist was
+    fixed."""
+    files = package_suite.iter_runtime_files()
+    rel = {f.relative_to(ROOT).as_posix() for f in files}
+    assert "skills/scholarly-voice-engine/scripts/voice/profile_merge.py" in rel
+    assert "skills/scholarly-voice-engine/scripts/voice/journal_context.py" in rel
+    assert "skills/scholarly-voice-engine/scripts/voice/continuity.py" in rel
+
+
+def test_runtime_allowlist_excludes_voice_engine_dev_only_scripts():
+    """The other half of the guard above: scripts/voice/ is runtime code
+    and must ship, but scripts/validate_skill.py and
+    scripts/package_runtime.py are that component's own dev-only tooling
+    and must not -- component-sources.json's include list for
+    scholarly-voice-engine names scripts/__init__.py and scripts/voice
+    specifically, not the whole scripts/ directory, to keep this
+    distinction precise."""
+    files = package_suite.iter_runtime_files()
+    rel = {f.relative_to(ROOT).as_posix() for f in files}
+    assert "skills/scholarly-voice-engine/scripts/validate_skill.py" not in rel
+    assert "skills/scholarly-voice-engine/scripts/package_runtime.py" not in rel
+
+
 def test_runtime_allowlist_includes_all_skill_md():
     files = package_suite.iter_runtime_files()
     rel = {f.relative_to(ROOT).as_posix() for f in files}

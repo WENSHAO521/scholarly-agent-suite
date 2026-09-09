@@ -33,9 +33,35 @@ profile, recent sample). Reuse cached profiles when `CURRENT` (see
 
 ## Scholarly Voice Engine integration
 
-When the manuscript has a strong target journal, Journal Fit Engine may
-return a compact adaptation-target profile for the Voice Engine to act on —
-it does not perform the rewrite itself:
+When the manuscript has a strong target journal, Journal Fit Engine hands
+the Voice Engine a `JOURNAL_STYLE_CONTEXT_V1` envelope (see
+`jfe/style_context.py`, `scholarly-agent-suite/protocols/
+journal-style-context.schema.json`) — it does not perform the rewrite
+itself:
+
+```yaml
+protocol: JOURNAL_STYLE_CONTEXT_V1
+journal_name: Journal of Example Studies
+journal_identifiers: { issn: [...], issn_l: ..., publisher: ... }
+official_requirements: { word_limit: 8000, citation_style: APA7, ... }  # from the journal's own guidelines, never inferred
+observed_patterns: { mean_paragraph_length: 120, ... }                  # from scholarly-corpus-builder, descriptive only
+freshness: current | aging | stale
+limitations: [ ... ]
+```
+
+`official_requirements` and `observed_patterns` are kept structurally
+separate and never populated from this Skill's own index evidence
+(OpenAlex/Crossref are bibliographic indexes, not an author-guideline
+source or a corpus sample) — `official_requirements` comes from the host's
+own retrieval of the journal's actual guidelines page; `observed_patterns`
+is forwarded from a Corpus Builder journal profile when one exists. Either
+may legitimately be empty, in which case `limitations` says so rather than
+silently proceeding as if both were verified.
+
+The older compact/full adaptation-target shapes below remain valid for a
+caller that has already derived writing-level adjustments (e.g. from an
+LLM's own reasoning over a `JOURNAL_STYLE_CONTEXT_V1`) and wants to hand
+those over directly instead:
 
 ```yaml
 target_voice_adjustment:

@@ -14,26 +14,28 @@
       "name": "scholarly-corpus-builder",
       "role": "research-intelligence",
       "repo_url": "https://github.com/WENSHAO521/scholarly-corpus-builder.git",
-      "ref": "e1043b3f1c25fcd3aaf213551f2bf2104ee83483",
-      "tag": "v0.9.0",
-      "version": "0.9.0",
+      "ref": "ec802366624b5b5fc2179bea27784a05009a4eef",
+      "tag": "v0.9.1",
+      "version": "0.9.1",
       "include": ["SKILL.md", "agents", "references", "scb", "LICENSE"]
     },
     {
       "name": "scholarly-voice-engine",
       "role": "writing-intelligence",
       "repo_url": "https://github.com/WENSHAO521/scholarly-voice-engine.git",
-      "ref": "859aa757a6204407607b81a8793633a95d7857c6",
-      "version": "1.0.2",
-      "include": ["SKILL.md", "agents", "references", "disciplines", "assets", "LICENSE"]
+      "ref": "dab8a6743ca77fb28d94d308084efd963fd54e33",
+      "tag": "v1.1.0",
+      "version": "1.1.0",
+      "include": ["SKILL.md", "agents", "references", "disciplines", "assets",
+                  "scripts/__init__.py", "scripts/voice", "LICENSE"]
     },
     {
       "name": "journal-fit-engine",
       "role": "publication-intelligence",
       "repo_url": "https://github.com/WENSHAO521/journal-fit-engine.git",
-      "ref": "35bca3301a8610b29db1b3291794eab3e39bb19c",
-      "tag": "v0.2.0",
-      "version": "0.2.0",
+      "ref": "cbb77a80812ae37dc80a80e5f0db375dbc7739d5",
+      "tag": "v0.3.0",
+      "version": "0.3.0",
       "include": ["SKILL.md", "agents", "references", "disciplines", "jfe", "LICENSE"]
     }
   ]

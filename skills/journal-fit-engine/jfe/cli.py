@@ -15,11 +15,15 @@ import sys
 from pathlib import Path
 
 from jfe.apc_oa import classify as classify_apc_oa
+from jfe.fit_dimensions import assess_all as assess_fit_dimensions
 from jfe.fit_model import compute_fit
 from jfe.hard_filters import apply_all as apply_hard_filters, eliminated
 from jfe.http_client import HttpClient, HttpError
+from jfe.indexing import assess_indexing
+from jfe.integrity import screen as integrity_screen
 from jfe.journal_evidence import EvidenceLookupError, lookup_by_issn, lookup_by_name
 from jfe.manuscript_profile import ManuscriptProfile, ProfileError
+from jfe.style_context import StyleContextError, from_journal_evidence
 
 
 def _to_jsonable(obj):
@@ -79,6 +83,9 @@ def cmd_evaluate_fit(args: argparse.Namespace) -> int:
     filters = apply_hard_filters(manuscript, evidence, apc.state)
     is_eliminated = eliminated(filters)
     fit = compute_fit(manuscript, evidence, is_eliminated)
+    dimensions = assess_fit_dimensions(manuscript, evidence)
+    integrity = integrity_screen(evidence)
+    indexing = assess_indexing(evidence)
 
     _print_json({
         "manuscript_keywords": manuscript.keywords(),
@@ -86,7 +93,35 @@ def cmd_evaluate_fit(args: argparse.Namespace) -> int:
         "apc_classification": apc,
         "hard_filters": filters,
         "fit": fit,
+        "fit_dimensions": dimensions,
+        "integrity": integrity,
+        "indexing": indexing.as_dict(),
     })
+    return 0
+
+
+def cmd_build_style_context(args: argparse.Namespace) -> int:
+    client = _client()
+    try:
+        evidence = _resolve_evidence(client, args)
+    except (EvidenceLookupError, HttpError) as exc:
+        print(json.dumps({"error": str(exc)}))
+        return 1
+
+    official = (json.loads(Path(args.official_requirements_json).read_text(encoding="utf-8"))
+                if args.official_requirements_json else None)
+    observed = (json.loads(Path(args.observed_patterns_json).read_text(encoding="utf-8"))
+                if args.observed_patterns_json else None)
+    try:
+        context = from_journal_evidence(
+            evidence, official_requirements=official, observed_patterns=observed,
+            article_type=args.article_type,
+        )
+    except StyleContextError as exc:
+        print(json.dumps({"error": str(exc)}))
+        return 1
+
+    _print_json(context)
     return 0
 
 
@@ -104,6 +139,17 @@ def build_parser() -> argparse.ArgumentParser:
     fit_p.add_argument("--query")
     fit_p.add_argument("--issn")
     fit_p.set_defaults(func=cmd_evaluate_fit)
+
+    style_p = sub.add_parser("build-style-context",
+                              help="Build a JOURNAL_STYLE_CONTEXT_V1 envelope for scholarly-voice-engine")
+    style_p.add_argument("--query")
+    style_p.add_argument("--issn")
+    style_p.add_argument("--official-requirements-json",
+                          help="Path to a JSON file of caller-verified official author-guideline facts")
+    style_p.add_argument("--observed-patterns-json",
+                          help="Path to a JSON file of corpus-derived observed style patterns")
+    style_p.add_argument("--article-type")
+    style_p.set_defaults(func=cmd_build_style_context)
 
     return parser
 
