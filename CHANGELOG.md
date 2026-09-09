@@ -7,7 +7,7 @@ Suite versioning follows `README.md#component-versioning` /
 
 ## v1.2.0 -- 2026-09-09
 
-v1.2.0 PREPARED -- NOT PUBLISHED
+v1.2.0 PUBLISHED
 
 **Protocol Closure Phase**: `TARGET_JOURNAL_PROFILE_V1` moves from a
 schema-validated producer with no consumer (`PARTIAL`, as of v1.1.1) to a
