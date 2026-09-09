@@ -31,9 +31,10 @@
       "name": "journal-fit-engine",
       "role": "publication-intelligence",
       "repo_url": "https://github.com/WENSHAO521/journal-fit-engine.git",
-      "ref": "45573f62537f3cbdb3eb7d9c282c864f2e9e62c2",
-      "version": "0.1.0",
-      "include": ["SKILL.md", "agents", "references", "disciplines", "LICENSE"]
+      "ref": "35bca3301a8610b29db1b3291794eab3e39bb19c",
+      "tag": "v0.2.0",
+      "version": "0.2.0",
+      "include": ["SKILL.md", "agents", "references", "disciplines", "jfe", "LICENSE"]
     }
   ]
 }

@@ -27,10 +27,10 @@
       "source_commit": "f8d5d6745d0206c3d9d9bf16c14090421d588a2b"
     },
     "journal-fit-engine": {
-      "version": "0.1.0",
+      "version": "0.2.0",
       "role": "publication-intelligence",
       "source_repository": "https://github.com/WENSHAO521/journal-fit-engine.git",
-      "source_commit": "45573f62537f3cbdb3eb7d9c282c864f2e9e62c2"
+      "source_commit": "35bca3301a8610b29db1b3291794eab3e39bb19c"
     }
   },
   "compatibility": {

@@ -55,9 +55,14 @@ Initial integration/distribution release.
   optional `VOICE_REQUEST_V1`/`VOICE_OUTPUT_V1` adapters. See that
   repository's CHANGELOG for the two compatibility gaps left deliberately
   open (`JOURNAL_STYLE_CONTEXT_V1`, `CONTINUITY_STATE_V1`).
-- Synced `journal-fit-engine` to commit `45573f6` (still `v0.1.0`): adds
-  VERSION, a test suite, CI, and runtime packaging that the pinned commit
-  previously had none of. No functional/policy change.
+- Synced `journal-fit-engine` to its published `v0.2.0` release (commit
+  `35bca33`, was `v0.1.0` at commit `f0729e0`): first working code
+  (`jfe/`) for live journal-evidence lookup, APC/OA classification, hard
+  filters, and a topic-overlap fit dimension -- previously the entire
+  engine was prose only. `jfe` added to this Suite's `include` allowlist
+  for the component (178 packaged files, was 170). See that repository's
+  CHANGELOG for what's live-verified vs. still not implemented; this is
+  not a 1.0 release.
 
 ### Fixed
 

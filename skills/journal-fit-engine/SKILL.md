@@ -114,6 +114,22 @@ fake international co-authors, data manipulation, duplicate/simultaneous
 submission where prohibited, or salami slicing. See
 [references/adaptation-policy.md](references/adaptation-policy.md).
 
+## Reference implementation
+
+`jfe/` is a real, tested, live-verified Python implementation of the
+mechanical parts of this workflow -- live journal evidence lookup
+(OpenAlex Sources, Crossref Journals), APC/OA classification, hard
+filters, and a categorical topic-overlap fit dimension. It supplements
+this SKILL.md's reasoning workflow; it does not replace the LLM's own
+judgment on soft fit beyond topic overlap, candidate generation,
+integrity screening, indexing/quartile verification, or submission
+strategy, none of which are implemented in code yet (see CHANGELOG's
+"Still not implemented"). Where `jfe/` cannot verify something (e.g.
+accepted article types, language policy), it returns `CANNOT_VERIFY`
+honestly rather than guessing -- the LLM's own reasoning is still
+required to fill those gaps from other evidence. See
+`references/evidence-policy.md` for how CANNOT_VERIFY should be handled.
+
 ## Reference index
 
 - [references/manuscript-profile.md](references/manuscript-profile.md) — manuscript profile schema, contribution/genre classification
