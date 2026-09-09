@@ -1,9 +1,9 @@
 {
   "suite": "scholarly-agent-suite",
-  "suite_version": "1.0.0",
+  "suite_version": "1.0.2",
   "components": {
     "scholarly-agent": {
-      "version": "1.0.0",
+      "version": "1.0.2",
       "role": "orchestration",
       "source_repository": "in-tree (scholarly-agent-suite)",
       "source_commit": "n/a"

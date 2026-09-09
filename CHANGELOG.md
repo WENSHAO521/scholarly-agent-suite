@@ -5,6 +5,30 @@ Suite versioning follows `README.md#component-versioning` /
 `shared/protocol-versioning.md`; component versions are tracked separately in
 `COMPONENTS.json`.
 
+## v1.0.2 -- 2026-09-09
+
+v1.0.2 PUBLISHED
+
+### Fixed
+
+- The published `v1.0.1` release itself shipped with `COMPONENTS.json`'s
+  `suite_version` still reading `"1.0.0"` -- `VERSION` was bumped to
+  `1.0.1` in that same commit, but `scripts/sync_components.py` was not
+  re-run afterward to regenerate `COMPONENTS.json`, and
+  `validate_suite.py` only checked that `suite_version` was *present*,
+  never that its *value* matched `VERSION`. Discovered by comparing a
+  fresh local rebuild's SHA-256 against the CI-published artifact (the
+  same reproducibility check that had just caught the v1.0.0 packaging
+  bug) and finding they still differed. Fixed by: (1) regenerating
+  `COMPONENTS.json` correctly before this release, in the right order
+  (bump `VERSION` first, then run `sync_components.py`, then commit
+  both together); (2) adding the missing value check to
+  `validate_suite.py` (`COMPONENTS.json suite_version matches VERSION
+  file`); (3) a regression test in `tests/test_components.py`. `v1.0.1`
+  stays published as-is per the never-overwrite rule -- its component
+  pins and packaged content were otherwise correct, only its own
+  `suite_version` field was one release behind.
+
 ## v1.0.1 -- 2026-09-09
 
 v1.0.1 PUBLISHED

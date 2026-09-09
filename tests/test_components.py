@@ -65,6 +65,20 @@ def test_components_json_has_all_five_with_required_fields():
         assert entry.get("source_commit")
 
 
+def test_components_json_suite_version_matches_version_file():
+    """Regression guard for a real bug (found 2026-09-09, shipped in the
+    published v1.0.1 GitHub Release): VERSION was bumped to 1.0.1 without
+    re-running sync_components.py, so the committed COMPONENTS.json still
+    said suite_version=1.0.0 -- an internal inconsistency validate_suite.py
+    didn't catch because it only checked the key existed, never its value
+    against VERSION. Run `python scripts/sync_components.py` after bumping
+    VERSION, before tagging, to keep this from recurring."""
+    suite_version = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
+    data = json.loads((ROOT / "COMPONENTS.json").read_text(encoding="utf-8"))
+    assert data["suite_version"] == suite_version
+    assert data["components"]["scholarly-agent"]["version"] == suite_version
+
+
 def test_component_versions_are_not_forced_to_match_suite_version():
     """Spec rule 7: a valid release need not have all skills == suite version."""
     data = json.loads((ROOT / "COMPONENTS.json").read_text(encoding="utf-8"))

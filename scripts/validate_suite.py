@@ -172,6 +172,22 @@ def validate_components_json(report: Report) -> None:
     data = json.loads(components_path.read_text(encoding="utf-8"))
     report.check("COMPONENTS.json has 'suite'", data.get("suite") == "scholarly-agent-suite")
     report.check("COMPONENTS.json has 'suite_version'", "suite_version" in data)
+    version_file = ROOT / "VERSION"
+    if version_file.exists():
+        suite_version = version_file.read_text(encoding="utf-8").strip()
+        report.check(
+            "COMPONENTS.json suite_version matches VERSION file",
+            data.get("suite_version") == suite_version,
+            f"COMPONENTS.json={data.get('suite_version')!r} VERSION={suite_version!r} "
+            "-- run `python scripts/sync_components.py` to regenerate COMPONENTS.json after bumping VERSION",
+        )
+        scholarly_agent_entry = data.get("components", {}).get("scholarly-agent", {})
+        report.check(
+            "COMPONENTS.json scholarly-agent version matches VERSION file",
+            scholarly_agent_entry.get("version") == suite_version,
+            f"COMPONENTS.json scholarly-agent.version={scholarly_agent_entry.get('version')!r} "
+            f"VERSION={suite_version!r}",
+        )
     components = data.get("components", {})
     for name in SKILL_NAMES:
         entry = components.get(name)
