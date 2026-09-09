@@ -1,21 +1,32 @@
 #!/usr/bin/env python3
 """Reproducible component sync for scholarly-agent-suite.
 
-Reads scripts/component-sources.json (pinned repo path/URL + commit + runtime
-allowlist per component), exports each component's tree at its pinned commit
-via `git archive`, copies only the allowlisted runtime paths into
-skills/<name>/, and rewrites COMPONENTS.json with the exact synced version,
-source repository, and source commit.
+Reads scripts/component-sources.json (public, portable: repo_url + a pinned
+commit sha + optional tag + runtime allowlist per component) and an optional,
+gitignored scripts/component-sources.local.json override (a "repo_path" per
+component pointing at a contributor's own local working copy, to skip the
+network clone during iterative local development). For each component:
+verify the pinned commit is reachable -- from the local override repo if one
+is configured, otherwise from a maintained local bare clone of repo_url under
+.cache/components/ -- export exactly that commit via `git archive`, copy only
+the allowlisted runtime paths into skills/<name>/, validate the resulting
+SKILL.md, and rewrite COMPONENTS.json with the exact synced version, source
+repository, and source commit.
 
-This script never reads from a component's working tree or a floating branch
--- it always exports the exact pinned commit, so an official release cannot
-accidentally pick up uncommitted or since-changed content.
+This script never reads a component's working-tree HEAD or a floating
+branch -- it always exports the exact pinned commit, so an official release
+cannot accidentally pick up uncommitted or since-changed content. A local
+override is only an alternate source of those same bytes: it must still
+contain the pinned commit, not a different revision.
 
 Usage:
-    python scripts/sync_components.py [--check]
+    python scripts/sync_components.py [--check] [--offline]
 
 --check performs the export/validation but does not write skills/ or
 COMPONENTS.json; it exits non-zero if any component would fail to sync.
+--offline skips `git clone`/`git fetch` against repo_url and requires the
+pinned commit to already be present in the local cache or override repo
+(useful for CI or a fully reproducible build without network access).
 """
 from __future__ import annotations
 
@@ -30,8 +41,10 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 SOURCES_FILE = ROOT / "scripts" / "component-sources.json"
+LOCAL_OVERRIDE_FILE = ROOT / "scripts" / "component-sources.local.json"
 SKILLS_DIR = ROOT / "skills"
 COMPONENTS_FILE = ROOT / "COMPONENTS.json"
+CACHE_DIR = ROOT / ".cache" / "components"
 
 REQUIRED_RUNTIME_FILE = "SKILL.md"
 
@@ -40,33 +53,50 @@ class SyncError(RuntimeError):
     pass
 
 
+def run(args: list[str]) -> subprocess.CompletedProcess:
+    return subprocess.run(args, capture_output=True, check=False)
+
+
+def verify_commit_reachable(repo_path: str, ref: str) -> None:
+    proc = run(["git", "-C", repo_path, "cat-file", "-e", ref])
+    if proc.returncode != 0:
+        raise SyncError(f"commit {ref} not found in {repo_path}")
+
+
+def ensure_local_cache(name: str, repo_url: str, ref: str, offline: bool) -> str:
+    """Return a local repo path containing `ref`, cloning/fetching as needed."""
+    cache_repo = CACHE_DIR / name
+    exists = (cache_repo / "HEAD").is_file()
+    if not exists:
+        if offline:
+            raise SyncError(f"{name}: no local cache at {cache_repo} and --offline was given")
+        cache_repo.parent.mkdir(parents=True, exist_ok=True)
+        proc = run(["git", "clone", "--quiet", "--bare", repo_url, str(cache_repo)])
+        if proc.returncode != 0:
+            raise SyncError(f"{name}: clone failed: {proc.stderr.decode(errors='replace')}")
+    elif run(["git", "-C", str(cache_repo), "cat-file", "-e", ref]).returncode != 0:
+        if offline:
+            raise SyncError(f"{name}: commit {ref} not in local cache and --offline was given")
+        proc = run(["git", "-C", str(cache_repo), "fetch", "--quiet", "origin"])
+        if proc.returncode != 0:
+            raise SyncError(f"{name}: fetch failed: {proc.stderr.decode(errors='replace')}")
+    verify_commit_reachable(str(cache_repo), ref)
+    return str(cache_repo)
+
+
 def git_archive_to(repo_path: str, ref: str, dest: Path) -> None:
     """Export `ref` from the repo at repo_path into dest (a clean directory)."""
     if dest.exists():
         shutil.rmtree(dest)
     dest.mkdir(parents=True)
-    proc = subprocess.run(
-        ["git", "-C", repo_path, "archive", ref],
-        capture_output=True,
-        check=False,
-    )
+    proc = run(["git", "-C", repo_path, "archive", ref])
     if proc.returncode != 0:
         raise SyncError(
             f"git archive failed for {repo_path}@{ref}: "
             f"{proc.stderr.decode(errors='replace')}"
         )
     with tarfile.open(fileobj=io.BytesIO(proc.stdout)) as tf:
-        tf.extractall(dest)  # noqa: S202 -- trusted local dev repos only
-
-
-def verify_commit_reachable(repo_path: str, ref: str) -> None:
-    proc = subprocess.run(
-        ["git", "-C", repo_path, "cat-file", "-e", ref],
-        capture_output=True,
-        check=False,
-    )
-    if proc.returncode != 0:
-        raise SyncError(f"commit {ref} not found in {repo_path}")
+        tf.extractall(dest)  # noqa: S202 -- exact pinned commit of a known component repo
 
 
 def copy_allowlisted(export_dir: Path, include: list[str], target_dir: Path) -> None:
@@ -109,12 +139,28 @@ def validate_skill_md(target_dir: Path, expected_name: str) -> str:
     return actual_name
 
 
+def load_local_overrides() -> dict[str, str]:
+    """Map component name -> local repo_path, from the gitignored override file."""
+    if not LOCAL_OVERRIDE_FILE.exists():
+        return {}
+    data = json.loads(LOCAL_OVERRIDE_FILE.read_text(encoding="utf-8"))
+    overrides = {}
+    for entry in data.get("components", []):
+        if entry.get("name") and entry.get("repo_path"):
+            overrides[entry["name"]] = entry["repo_path"]
+    return overrides
+
+
 def main() -> int:
-    parser = argparse.ArgumentParser(description=__doc__)
+    parser = argparse.ArgumentParser(
+        description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--check", action="store_true", help="dry run, no writes")
+    parser.add_argument("--offline", action="store_true",
+                         help="do not clone/fetch from repo_url; require the pinned commit locally")
     args = parser.parse_args()
 
     manifest = json.loads(SOURCES_FILE.read_text(encoding="utf-8"))
+    overrides = load_local_overrides()
     components_out: dict[str, dict] = {}
     work_root = ROOT / ".sync_work"
     if work_root.exists():
@@ -125,9 +171,15 @@ def main() -> int:
     for entry in manifest["components"]:
         name = entry["name"]
         try:
-            verify_commit_reachable(entry["repo_path"], entry["ref"])
+            local_path = overrides.get(name)
+            if local_path:
+                verify_commit_reachable(local_path, entry["ref"])
+                repo_path, source_note = local_path, f"local override ({local_path})"
+            else:
+                repo_path = ensure_local_cache(name, entry["repo_url"], entry["ref"], args.offline)
+                source_note = f"cached clone of {entry['repo_url']}"
             export_dir = work_root / f"{name}-export"
-            git_archive_to(entry["repo_path"], entry["ref"], export_dir)
+            git_archive_to(repo_path, entry["ref"], export_dir)
             target_dir = SKILLS_DIR / name
             if not args.check:
                 copy_allowlisted(export_dir, entry["include"], target_dir)
@@ -142,7 +194,7 @@ def main() -> int:
                 "source_repository": entry["repo_url"],
                 "source_commit": entry["ref"],
             }
-            print(f"OK  {name} @ {entry['ref'][:12]} (v{entry['version']})")
+            print(f"OK  {name} @ {entry['ref'][:12]} (v{entry['version']}) via {source_note}")
         except SyncError as exc:
             errors.append(str(exc))
             print(f"FAIL {name}: {exc}", file=sys.stderr)

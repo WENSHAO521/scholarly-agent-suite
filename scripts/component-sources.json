@@ -1,10 +1,9 @@
 {
-  "_comment": "Pinned sync sources for scholarly-agent-suite v1.0.0. Each entry names a local development repository, the exact commit being packaged, and the allowlist of paths copied into skills/<name>/. Do not point 'ref' at a branch name for an official release -- pin a commit sha (see protocols/../shared/protocol-versioning.md and README 'Component synchronization model').",
+  "_comment": "Pinned sync sources for scholarly-agent-suite. Each entry names the public component repository URL, the exact commit being packaged, and the allowlist of paths copied into skills/<name>/. 'ref' must be a full 40-char commit sha reachable from repo_url, never a branch name (see README 'Component synchronization model'). 'tag' is optional and only present when that exact commit has a real published tag/release -- never invented. A contributor's local working-copy paths belong in the gitignored scripts/component-sources.local.json override, never here.",
   "components": [
     {
       "name": "adaptive-model-router",
       "role": "execution",
-      "repo_path": "C:/Users/wensh/OneDrive/ssci一區/output/adaptive-model-router",
       "repo_url": "https://github.com/WENSHAO521/adaptive-model-router.git",
       "ref": "3c441a708faf92c2f5687878d826ecf7ee29a0ec",
       "version": "0.2.0",
@@ -13,16 +12,15 @@
     {
       "name": "scholarly-corpus-builder",
       "role": "research-intelligence",
-      "repo_path": "C:/Users/wensh/Desktop/새 폴더/scholarly-corpus-builder",
       "repo_url": "https://github.com/WENSHAO521/scholarly-corpus-builder.git",
       "ref": "e1043b3f1c25fcd3aaf213551f2bf2104ee83483",
+      "tag": "v0.9.0",
       "version": "0.9.0",
       "include": ["SKILL.md", "agents", "references", "scb", "LICENSE"]
     },
     {
       "name": "scholarly-voice-engine",
       "role": "writing-intelligence",
-      "repo_path": "C:/Users/wensh/Desktop/새 폴더/scholarly-voice-engine",
       "repo_url": "https://github.com/WENSHAO521/scholarly-voice-engine.git",
       "ref": "0a020b91462698b725d1b42646e9548de67e188d",
       "version": "1.0.0",
@@ -31,7 +29,6 @@
     {
       "name": "journal-fit-engine",
       "role": "publication-intelligence",
-      "repo_path": "C:/Users/wensh/Desktop/새 폴더/journal-fit-engine",
       "repo_url": "https://github.com/WENSHAO521/journal-fit-engine.git",
       "ref": "f0729e00f73e4db9593d94d77521966b8b50d632",
       "version": "0.1.0",

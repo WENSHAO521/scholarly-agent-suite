@@ -3,3 +3,5 @@ __pycache__/
 .pytest_cache/
 .sync_work/
 dist/
+.cache/
+scripts/component-sources.local.json

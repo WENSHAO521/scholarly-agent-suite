@@ -42,6 +42,20 @@ Initial integration/distribution release.
 - CI (`.github/workflows/validate.yml`) running the validator, tests, and a
   packaging dry run on every push/PR.
 
+### Fixed
+
+- Removed machine-specific absolute local paths (`repo_path`) from the
+  committed `scripts/component-sources.json`; it now records only public
+  `repo_url` + pinned commit sha (+ an optional real tag), and syncs
+  correctly on a clean machine with only network access.
+- Rewrote `scripts/sync_components.py` to clone/fetch each component's
+  `repo_url` into a local bare cache (`.cache/components/`, gitignored) and
+  export the pinned commit from there, with an `--offline` mode for
+  reproducible builds without network access. A gitignored
+  `scripts/component-sources.local.json` optionally overrides a component
+  with a contributor's local working-copy path for faster iteration; it must
+  still contain the pinned commit.
+
 ### Notes
 
 - No dependency resolver: `COMPONENTS.json` `compatibility` ranges are a

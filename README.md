@@ -137,7 +137,20 @@ Component repositories (`adaptive-model-router`, `scholarly-corpus-builder`,
 `scholarly-voice-engine`, `journal-fit-engine`) remain the canonical
 development sources and are never deleted or deprecated because this Suite
 exists. `scripts/component-sources.json` records exactly which commit of each
-was pinned for this release.
+was pinned for this release, using only public `repo_url` + pinned commit sha
+(and a `tag` when that commit has a real published tag) -- it contains no
+machine-specific paths and syncs correctly on a clean machine with only
+network access to each `repo_url`.
+
+`sync_components.py` clones/fetches each `repo_url` into a local bare cache
+under `.cache/components/` (gitignored) and exports the exact pinned commit
+from there; `--offline` skips the clone/fetch and requires the commit to
+already be cached, for reproducible builds without network access. A
+contributor iterating on a component locally can add a gitignored
+`scripts/component-sources.local.json` with a `repo_path` override per
+component to sync from a local working copy instead of the network -- the
+pinned `ref` must still be reachable from that local copy; it is a faster
+source of the same bytes, not a way to sync a different revision.
 
 ## Standalone compatibility
 
