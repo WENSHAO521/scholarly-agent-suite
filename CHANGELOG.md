@@ -5,6 +5,31 @@ Suite versioning follows `README.md#component-versioning` /
 `shared/protocol-versioning.md`; component versions are tracked separately in
 `COMPONENTS.json`.
 
+## v1.0.3 -- 2026-09-09
+
+v1.0.3 PUBLISHED
+
+### Fixed
+
+- Even after the v1.0.1 CRLF/`ZIP_STORED` fix, a fresh Windows-local
+  rebuild of the published `v1.0.2` content still did not match the
+  Linux-CI-published `v1.0.2` ZIP byte-for-byte. Root cause:
+  `zipfile.ZipInfo` defaults `create_system` to the platform running the
+  build script (`0`=Windows, `3`=Unix/Linux) unless explicitly pinned, so
+  identical file content still produced different ZIP container bytes
+  depending on which OS built it. Fixed by pinning `create_system = 3` on
+  every entry. **Verified directly, not just asserted**: a fresh local
+  Windows rebuild of this exact commit now produces
+  `4a27739d0a80cdf52c4db72c6930a86488d73b39cec7b0307da74311f85da65e` --
+  byte-identical to the already-published Linux-CI-built `v1.0.2` ZIP. A
+  new regression test pins this directly. `v1.0.1` and `v1.0.2` stay
+  published as-is per the never-overwrite rule.
+- This closes the "byte-identical across builds/machines" claim for
+  real, after two prior patches (v1.0.1, v1.0.2) each fixed one real bug
+  in it but left another undiscovered. Confirmed this time by actually
+  diffing CI-published bytes against a fresh local build rather than
+  only checking two same-machine builds agree with each other.
+
 ## v1.0.2 -- 2026-09-09
 
 v1.0.2 PUBLISHED

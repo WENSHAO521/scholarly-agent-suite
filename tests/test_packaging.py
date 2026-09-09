@@ -56,6 +56,26 @@ def test_package_is_byte_deterministic_across_two_builds(tmp_path, monkeypatch):
     assert hash1 == hash2
 
 
+def test_zip_entries_pin_create_system_to_unix(tmp_path, monkeypatch):
+    """Regression guard for a real bug (found 2026-09-09, after the CRLF
+    and ZIP_STORED fixes still didn't make a Windows-local rebuild match
+    the CI-published v1.0.2 artifact): zipfile.ZipInfo defaults
+    create_system to the platform running the script (0=Windows,
+    3=Unix/Linux) unless pinned, so the exact same content still produced
+    different ZIP bytes depending on which OS built it. Pinning
+    create_system=3 was the fix that finally made a fresh Windows local
+    rebuild byte-identical (verified directly, SHA-256
+    4a27739d0a80cdf52c4db72c6930a86488d73b39cec7b0307da74311f85da65e) to
+    the Linux-CI-published v1.0.2 ZIP."""
+    monkeypatch.setattr(package_suite, "DIST_DIR", tmp_path)
+    version = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
+    files = package_suite.iter_runtime_files()
+    zip_path = package_suite.build_zip(files, version)
+    with zipfile.ZipFile(zip_path) as zf:
+        for info in zf.infolist():
+            assert info.create_system == 3, info.filename
+
+
 def test_zip_entries_never_contain_carriage_returns(tmp_path, monkeypatch):
     """Regression guard for a real bug (found 2026-09-09): package_suite.py
     used to write file_path.read_bytes() directly, so a component file

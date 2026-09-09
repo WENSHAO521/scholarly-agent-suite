@@ -95,6 +95,10 @@ def build_zip(files: list[Path], version: str) -> Path:
         for file_path in files:
             arcname = root_prefix + file_path.relative_to(ROOT).as_posix()
             info = zipfile.ZipInfo(arcname, date_time=FIXED_ZIP_TIMESTAMP)
+            # ZipInfo defaults create_system to the platform running this
+            # script (0=Windows, 3=Unix) unless pinned -- fix it so the
+            # same commit produces the same bytes on Windows and Linux CI.
+            info.create_system = 3
             info.compress_type = zipfile.ZIP_STORED
             info.external_attr = 0o644 << 16
             zf.writestr(info, normalized_bytes(file_path))
