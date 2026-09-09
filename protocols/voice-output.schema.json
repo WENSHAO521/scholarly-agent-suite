@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://scholarly-agent-suite/protocols/voice-output.schema.json",
+  "title": "VOICE_OUTPUT_V1",
+  "description": "Returned by scholarly-voice-engine to scholarly-agent (or the user). Carries the produced/revised text plus its own integrity self-report so the orchestrator never has to re-derive it.",
+  "type": "object",
+  "required": ["protocol", "output_text", "validation_state"],
+  "properties": {
+    "protocol": { "const": "VOICE_OUTPUT_V1" },
+    "output_text": { "type": "string" },
+    "manuscript_profile": { "$ref": "manuscript-profile.schema.json#" },
+    "validation_state": {
+      "type": "string",
+      "enum": ["PASS", "PASS_WITH_LIMITATIONS", "REPAIR_REQUIRED", "BLOCKED_BY_MISSING_EVIDENCE"]
+    },
+    "unverified_citations": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Citations that could not be verified and must remain marked unverified downstream (shared/integrity-policy.md)."
+    },
+    "limitations": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "additionalProperties": false
+}

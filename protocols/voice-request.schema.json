@@ -1,0 +1,29 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://scholarly-agent-suite/protocols/voice-request.schema.json",
+  "title": "VOICE_REQUEST_V1",
+  "description": "Sent to scholarly-voice-engine (by scholarly-agent or directly by a user turn) describing what writing/revision output is wanted, before any voice-engine-internal context is attached.",
+  "type": "object",
+  "required": ["protocol", "task", "genre"],
+  "properties": {
+    "protocol": { "const": "VOICE_REQUEST_V1" },
+    "task": {
+      "type": "string",
+      "enum": ["draft", "revise", "audit", "adapt-to-journal", "calibrate-author-voice", "continue-chapter"]
+    },
+    "genre": {
+      "type": "string",
+      "enum": ["research-article", "review", "commentary", "book-chapter", "monograph", "other"]
+    },
+    "discipline": { "type": "string" },
+    "input_text": { "type": "string", "description": "Existing manuscript/paragraph text, when task is revise/audit/adapt-to-journal." },
+    "research_idea": { "type": "string", "description": "Freeform idea text, when task is draft and no manuscript exists yet." },
+    "target_journal_style_context": { "$ref": "journal-style-context.schema.json#" },
+    "author_voice_profile_ref": { "type": "string", "description": "Logical id of a SCHOLARLY_PROFILE_V1 (profile_type=author-voice), if calibration is requested." },
+    "constraints": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

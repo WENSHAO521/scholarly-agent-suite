@@ -1,0 +1,29 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://scholarly-agent-suite/protocols/continuity-state.schema.json",
+  "title": "CONTINUITY_STATE_V1",
+  "description": "Maintained by scholarly-voice-engine for book/monograph projects and passed between chapter-drafting sessions. Suite-level assets must never contain private book content -- only the ledger structure and logical references (rule 35).",
+  "type": "object",
+  "required": ["protocol", "voice_contract"],
+  "properties": {
+    "protocol": { "const": "CONTINUITY_STATE_V1" },
+    "voice_contract": {
+      "type": "object",
+      "description": "The stable voice/style decisions made for this book, to be held constant across chapters.",
+      "additionalProperties": true
+    },
+    "concept_ledger": { "type": "array", "items": { "type": "object" } },
+    "claim_ledger": { "type": "array", "items": { "type": "object" } },
+    "evidence_ledger": { "type": "array", "items": { "type": "object" } },
+    "chapter_ledger": { "type": "array", "items": { "type": "object" } },
+    "terminology": {
+      "type": "object",
+      "additionalProperties": { "type": "string" }
+    },
+    "open_questions": {
+      "type": "array",
+      "items": { "type": "string" }
+    }
+  },
+  "additionalProperties": false
+}

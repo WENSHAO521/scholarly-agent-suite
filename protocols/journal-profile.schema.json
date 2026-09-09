@@ -1,0 +1,32 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://scholarly-agent-suite/protocols/journal-profile.schema.json",
+  "title": "TARGET_JOURNAL_PROFILE_V1",
+  "description": "Produced by journal-fit-engine (optionally using SCHOLARLY_PROFILE_V1 journal evidence from scholarly-corpus-builder). Describes one candidate/target journal for fit evaluation or adaptation. Never carries a fabricated acceptance probability (shared/integrity-policy.md).",
+  "type": "object",
+  "required": ["protocol", "name", "freshness", "provenance"],
+  "properties": {
+    "protocol": { "const": "TARGET_JOURNAL_PROFILE_V1" },
+    "name": { "type": "string" },
+    "issn": { "type": "string" },
+    "scope_summary": { "type": "string" },
+    "indexing": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "e.g. SSCI, Scopus, DOAJ -- as verified, not assumed."
+    },
+    "apc_status": {
+      "type": "string",
+      "enum": ["no-apc", "apc-required", "waiver-available", "unknown"]
+    },
+    "oa_status": { "type": "string", "enum": ["fully-oa", "hybrid", "subscription", "unknown"] },
+    "fit_assessment": {
+      "type": "string",
+      "enum": ["STRONG_FIT", "MODERATE_FIT", "WEAK_FIT", "NOT_ASSESSED"],
+      "description": "Qualitative fit only. Never converted to a numeric acceptance probability downstream."
+    },
+    "freshness": { "type": "string", "enum": ["current", "aging", "stale"] },
+    "provenance": { "$ref": "provenance.schema.json#" }
+  },
+  "additionalProperties": false
+}

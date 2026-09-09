@@ -1,0 +1,61 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install test dependencies
+        run: python -m pip install --quiet pytest
+
+      - name: Verify tag matches VERSION
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          version="$(cat VERSION | tr -d '[:space:]')"
+          if [ "$tag" != "$version" ]; then
+            echo "Tag v$tag does not match VERSION ($version)" >&2
+            exit 1
+          fi
+
+      - name: Suite acceptance-criteria validation
+        run: python scripts/validate_suite.py
+
+      - name: Unit + integration tests
+        run: python -m pytest tests/ -v
+
+      - name: Build runtime package
+        run: python scripts/package_suite.py
+
+      - name: Refuse to overwrite an existing release
+        run: |
+          if gh release view "${GITHUB_REF_NAME}" >/dev/null 2>&1; then
+            echo "Release ${GITHUB_REF_NAME} already exists -- refusing to overwrite." >&2
+            exit 1
+          fi
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" \
+            dist/scholarly-agent-suite-v*.zip \
+            dist/release-manifest.json \
+            --title "${GITHUB_REF_NAME}" \
+            --notes "See CHANGELOG.md for release notes. See release-manifest.json for exact packaged component versions, source commits, and the ZIP's SHA-256 checksum."

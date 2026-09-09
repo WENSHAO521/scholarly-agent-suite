@@ -1,0 +1,6 @@
+interface:
+  display_name: "Adaptive Model Router"
+  short_description: "Cost-aware routing, validation, and controlled escalation"
+  default_prompt: "Use $adaptive-model-router for context-aware routing, bounded delegation, validation, and controlled escalation."
+policy:
+  allow_implicit_invocation: true

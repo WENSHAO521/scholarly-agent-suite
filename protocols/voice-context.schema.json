@@ -1,0 +1,39 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://scholarly-agent-suite/protocols/voice-context.schema.json",
+  "title": "VOICE_CONTEXT_V1",
+  "description": "Compiled context handed to scholarly-voice-engine so it does not have to re-derive discipline/genre/journal policy itself. Populated from a SCHOLARLY_PROFILE_V1 and/or a JOURNAL_STYLE_CONTEXT_V1 when those are available; scholarly-voice-engine must fall back to its own built-in discipline/genre policy when this context (or any of its fields) is absent (see shared/capability-boundaries.md, rule 43).",
+  "type": "object",
+  "required": ["protocol", "discipline", "genre"],
+  "properties": {
+    "protocol": { "const": "VOICE_CONTEXT_V1" },
+    "discipline": { "type": "string" },
+    "genre": { "type": "string" },
+    "research_design": { "type": "string" },
+    "author_voice": {
+      "type": "object",
+      "description": "Composite/abstracted traits only -- never a direct-imitation instruction for a third-party living author (shared/integrity-policy.md).",
+      "additionalProperties": true
+    },
+    "discipline_profile_ref": { "type": "string", "description": "Logical scholarly_profile_id, profile_type=discipline." },
+    "journal_style_context_ref": { "type": "string", "description": "Logical id of a JOURNAL_STYLE_CONTEXT_V1." },
+    "voice_constraints": {
+      "type": "object",
+      "properties": {
+        "claim_calibration": { "type": "string", "enum": ["conservative", "standard", "assertive"] },
+        "citation_integrity_mode": { "type": "string", "enum": ["strict", "standard"] }
+      },
+      "additionalProperties": true
+    },
+    "section_policies": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "limitations": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "e.g. 'discipline_profile unavailable, using built-in policy', 'journal context stale'."
+    }
+  },
+  "additionalProperties": false
+}

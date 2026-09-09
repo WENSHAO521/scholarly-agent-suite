@@ -1,0 +1,43 @@
+# Optional cross-runtime descriptor for this Skill, for hosts that discover
+# agents/skills via an OpenAI-style manifest rather than SKILL.md frontmatter.
+# Not required by Claude Code; kept for portability to other agent runtimes.
+name: scholarly-voice-engine
+description: >
+  Discipline-aware, genre-aware scholarly writing assistant. Produces or rewrites
+  academic prose (articles, reviews, commentaries, book chapters, monographs)
+  so it reads like a serious human scholar in the target field, calibrating
+  claim strength, evidence handling, argument architecture, and voice rather
+  than only vocabulary.
+instructions_file: ../SKILL.md
+interface:
+  display_name: "Scholarly Voice Engine"
+  short_description: "Cross-disciplinary scholarly writing and voice synthesis"
+  default_prompt: >
+    Use $scholarly-voice-engine to apply discipline-aware argument
+    architecture, author voice calibration, evidence discipline, and
+    scholarly prose.
+policy:
+  allow_implicit_invocation: true
+capabilities:
+  - draft_academic_article
+  - rewrite_academic_prose
+  - write_review_article
+  - write_commentary
+  - draft_book_chapter
+  - maintain_monograph_continuity
+  - calibrate_author_voice
+  - integrate_corpus_profile
+  - adapt_to_journal_style
+  - multilingual_scholarly_writing
+  - cross_disciplinary_synthesis
+constraints:
+  - never_fabricate_citations_or_quotations
+  - never_inflate_claim_strength_or_novelty
+  - never_directly_imitate_living_authors
+  - never_alter_underlying_data_or_claims_during_stylistic_rewrite
+  - never_perform_model_routing_corpus_retrieval_or_venue_recommendation
+routing_note: >
+  This descriptor governs scholarly genre, argument architecture, and prose
+  voice only. If the host has its own model-routing, corpus-building, or
+  journal-fit layer, this Skill defers to them per references/integration.md
+  and retains control only over how the writing is argued and voiced.

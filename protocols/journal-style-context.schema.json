@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://scholarly-agent-suite/protocols/journal-style-context.schema.json",
+  "title": "JOURNAL_STYLE_CONTEXT_V1",
+  "description": "Style adaptation context for one journal, consumed by scholarly-voice-engine. Deliberately keeps official requirements and observed corpus patterns in separate fields -- this distinction is mandatory (see rule 34 / shared/terminology.md) because the two carry different evidentiary weight.",
+  "type": "object",
+  "required": ["protocol", "journal_name", "official_requirements", "observed_patterns"],
+  "properties": {
+    "protocol": { "const": "JOURNAL_STYLE_CONTEXT_V1" },
+    "journal_name": { "type": "string" },
+    "official_requirements": {
+      "type": "object",
+      "description": "Stated in the journal's author guidelines: word limits, citation style, structure mandates, blinding rules.",
+      "additionalProperties": true
+    },
+    "observed_patterns": {
+      "type": "object",
+      "description": "Style regularities observed by scholarly-corpus-builder across a sampled corpus of published articles. Descriptive, not mandatory.",
+      "additionalProperties": true
+    },
+    "freshness": { "type": "string", "enum": ["current", "aging", "stale"] }
+  },
+  "additionalProperties": false
+}

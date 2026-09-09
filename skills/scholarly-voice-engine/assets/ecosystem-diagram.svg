@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 320" role="img" aria-label="Diagram of four skills: the Adaptive Model Router advises execution strategy to the Voice Engine, the Scholarly Corpus Builder sends it a profile, the Journal Fit Engine sends it an adaptation target and receives the finished manuscript back.">
+  <title>Scholarly Voice Engine — ecosystem position</title>
+  <defs>
+    <marker id="ecoArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#241f18"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="900" height="320" fill="#f6f3ec"/>
+
+  <polyline points="102,140 102,68 556,68 556,115" fill="none" stroke="#241f18" stroke-opacity="0.5" stroke-dasharray="5 4" marker-end="url(#ecoArrow)"/>
+  <text x="329" y="58" text-anchor="middle" font-family="SFMono-Regular,Consolas,'Liberation Mono',Menlo,monospace" font-size="10.5" fill="#241f18" fill-opacity="0.6">execution strategy — advisory only</text>
+
+  <rect x="20" y="140" width="163" height="110" rx="9" fill="none" stroke="#241f18" stroke-opacity="0.45"/>
+  <text x="101" y="172" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="12.5" font-weight="600" fill="#241f18">ADAPTIVE MODEL</text>
+  <text x="101" y="188" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="12.5" font-weight="600" fill="#241f18">ROUTER</text>
+  <text x="101" y="212" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#241f18" fill-opacity="0.65">how the task is</text>
+  <text x="101" y="226" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#241f18" fill-opacity="0.65">executed</text>
+
+  <rect x="233" y="140" width="163" height="110" rx="9" fill="none" stroke="#241f18" stroke-opacity="0.45"/>
+  <text x="314" y="172" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="12.5" font-weight="600" fill="#241f18">SCHOLARLY CORPUS</text>
+  <text x="314" y="188" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="12.5" font-weight="600" fill="#241f18">BUILDER</text>
+  <text x="314" y="212" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#241f18" fill-opacity="0.65">what evidence &amp; profiles</text>
+  <text x="314" y="226" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#241f18" fill-opacity="0.65">exist</text>
+
+  <rect x="446" y="115" width="220" height="150" rx="9" fill="none" stroke="#3f7a9e" stroke-width="2"/>
+  <text x="556" y="152" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="14" font-weight="600" fill="#3f7a9e">SCHOLARLY VOICE</text>
+  <text x="556" y="170" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="14" font-weight="600" fill="#3f7a9e">ENGINE</text>
+  <text x="556" y="188" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="10.5" font-style="italic" fill="#241f18" fill-opacity="0.6">— this skill —</text>
+  <text x="556" y="214" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#241f18" fill-opacity="0.7">how the argument &amp;</text>
+  <text x="556" y="228" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#241f18" fill-opacity="0.7">prose are built</text>
+  <text x="556" y="250" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#241f18" fill-opacity="0.7">never voice, never venue</text>
+
+  <rect x="716" y="140" width="163" height="110" rx="9" fill="none" stroke="#241f18" stroke-opacity="0.45"/>
+  <text x="797" y="172" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="12.5" font-weight="600" fill="#241f18">JOURNAL FIT</text>
+  <text x="797" y="188" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="12.5" font-weight="600" fill="#241f18">ENGINE</text>
+  <text x="797" y="212" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#241f18" fill-opacity="0.65">where the manuscript</text>
+  <text x="797" y="226" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" fill="#241f18" fill-opacity="0.65">belongs</text>
+
+  <line x1="396" y1="195" x2="446" y2="190" stroke="#241f18" stroke-opacity="0.6" marker-end="url(#ecoArrow)"/>
+  <text x="421" y="181" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="10" fill="#241f18" fill-opacity="0.65">profile</text>
+
+  <line x1="716" y1="175" x2="666" y2="175" stroke="#241f18" stroke-opacity="0.6" marker-end="url(#ecoArrow)"/>
+  <text x="691" y="166" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="10" fill="#241f18" fill-opacity="0.65">target</text>
+
+  <line x1="666" y1="222" x2="716" y2="222" stroke="#241f18" stroke-opacity="0.6" marker-end="url(#ecoArrow)"/>
+  <text x="691" y="238" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="10" fill="#241f18" fill-opacity="0.65">manuscript</text>
+</svg>

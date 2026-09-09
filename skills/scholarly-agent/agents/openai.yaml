@@ -1,0 +1,52 @@
+# Optional cross-runtime descriptor for this Skill, for hosts that discover
+# agents/skills via an OpenAI-style manifest rather than SKILL.md frontmatter.
+name: scholarly-agent
+description: >
+  Lightweight orchestrator for the Scholarly Agent Suite. Detects genuinely
+  multi-stage academic workflows, selects the smallest sufficient set of
+  specialist Skills (adaptive-model-router, scholarly-corpus-builder,
+  scholarly-voice-engine, journal-fit-engine), coordinates their handoffs via
+  shared protocols, and assembles one final scholarly deliverable.
+instructions_file: ../SKILL.md
+interface:
+  display_name: "Scholarly Agent"
+  short_description: "Coordinate multi-stage scholarly research and publication workflows"
+  default_prompt: >
+    Use $scholarly-agent to coordinate the smallest necessary set of
+    scholarly specialist skills toward one scholarly deliverable.
+policy:
+  allow_implicit_invocation: true
+capabilities:
+  - decompose_scholarly_task
+  - select_workflow_recipe
+  - coordinate_specialist_skills
+  - propagate_shared_state_and_constraints
+  - assemble_final_deliverable
+  - apply_final_quality_gate
+constraints:
+  - never_perform_model_routing_directly
+  - never_perform_corpus_acquisition_directly
+  - never_prescribe_academic_prose_rules_directly
+  - never_perform_journal_ranking_directly
+  - never_run_a_fixed_all_skill_pipeline_by_default
+  - never_report_complete_when_a_required_specialist_failed_or_was_partial
+routing_note: >
+  This descriptor governs orchestration only: task decomposition, workflow
+  selection, component coordination, and result assembly. Every domain
+  decision (routing, evidence, prose, venue fit) is delegated to the owning
+  specialist Skill; see shared/capability-boundaries.md and
+  references/routing-matrix.md.
+integration:
+  peers:
+    - adaptive-model-router
+    - scholarly-corpus-builder
+    - scholarly-voice-engine
+    - journal-fit-engine
+  standalone_capable: false
+  standalone_note: >
+    Unlike the four specialists, this Skill's entire value is coordinating
+    them -- it is not designed to be useful installed alone. It has no
+    hard runtime dependency on Suite-only files, but a host without the
+    other four Skills available has nothing for it to orchestrate.
+license: ../../../LICENSE
+maintained_by: scholarly-agent-suite contributors

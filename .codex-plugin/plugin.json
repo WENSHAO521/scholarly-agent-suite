@@ -1,0 +1,40 @@
+{
+  "name": "scholarly-agent-suite",
+  "version": "1.0.0",
+  "description": "Modular cross-disciplinary scholarly research, writing, corpus, routing, and publication intelligence suite.",
+  "author": {
+    "name": "WENSHAO521",
+    "email": "wainixueer3334@gmail.com",
+    "url": "https://github.com/WENSHAO521"
+  },
+  "homepage": "https://github.com/WENSHAO521/scholarly-agent-suite",
+  "repository": "https://github.com/WENSHAO521/scholarly-agent-suite",
+  "license": "MIT",
+  "keywords": [
+    "academic",
+    "scholarly-writing",
+    "research",
+    "corpus",
+    "publication-strategy",
+    "orchestration"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Scholarly Agent Suite",
+    "shortDescription": "Modular academic research, writing, corpus, routing, and publication intelligence suite",
+    "longDescription": "A modular cross-disciplinary academic AI agent suite for research execution, scholarly corpus construction, academic writing, author voice calibration, and evidence-backed publication strategy. Integrates five independent Skills -- scholarly-agent, adaptive-model-router, scholarly-corpus-builder, scholarly-voice-engine, and journal-fit-engine -- without collapsing them into one monolithic Skill.",
+    "category": "research",
+    "capabilities": [
+      "workflow_orchestration",
+      "execution_intelligence",
+      "research_intelligence",
+      "writing_intelligence",
+      "publication_intelligence"
+    ],
+    "defaultPrompt": [
+      "Use $scholarly-agent to coordinate the smallest necessary set of scholarly specialist skills.",
+      "Help me turn this research idea into a manuscript and find a journal.",
+      "Improve this manuscript and tell me where to submit it."
+    ]
+  }
+}

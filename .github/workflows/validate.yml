@@ -1,0 +1,63 @@
+name: Validate
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install test dependencies
+        run: python -m pip install --quiet pytest
+
+      - name: Suite acceptance-criteria validation
+        run: python scripts/validate_suite.py
+
+      - name: Unit + integration tests
+        run: python -m pytest tests/ -v
+
+      - name: Build runtime package
+        run: python scripts/package_suite.py
+
+      - name: Runtime package sanity check
+        run: |
+          python - <<'PY'
+          import glob
+          import zipfile
+
+          zip_path = glob.glob("dist/scholarly-agent-suite-v*.zip")[0]
+          with zipfile.ZipFile(zip_path) as zf:
+              assert zf.testzip() is None
+              names = zf.namelist()
+              assert all(n.startswith("scholarly-agent-suite/") for n in names)
+              assert "scholarly-agent-suite/.codex-plugin/plugin.json" in names
+              for skill in [
+                  "scholarly-agent", "adaptive-model-router",
+                  "scholarly-corpus-builder", "scholarly-voice-engine",
+                  "journal-fit-engine",
+              ]:
+                  assert f"scholarly-agent-suite/skills/{skill}/SKILL.md" in names
+              assert not any(n.split("/")[1] in ("tests", "evals", ".github", "scripts") for n in names if len(n.split("/")) > 1)
+          print("Runtime package sanity check passed.")
+          PY
+
+      - name: Upload runtime package (CI artifact only -- not a release)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-runtime-package
+          path: |
+            dist/*.zip
+            dist/release-manifest.json
+          retention-days: 7

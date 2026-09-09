@@ -1,0 +1,70 @@
+name: journal-fit-engine
+description: >-
+  Analyze manuscript-journal fit across academic disciplines using current
+  scope, article type, methodology, audience, contribution, and journal
+  evidence to produce evidence-backed venue shortlists and submission
+  strategies. Does not predict acceptance, rank by prestige alone, or
+  recommend based on keyword overlap.
+version: 0.1.0
+entrypoint: SKILL.md
+instructions_file: SKILL.md
+reference_files:
+  - references/manuscript-profile.md
+  - references/journal-profile.md
+  - references/fit-model.md
+  - references/candidate-generation.md
+  - references/evidence-policy.md
+  - references/journal-integrity.md
+  - references/submission-strategy.md
+  - references/indexing-metrics.md
+  - references/apc-open-access.md
+  - references/adaptation-policy.md
+  - references/integration.md
+discipline_files:
+  - disciplines/natural-sciences.md
+  - disciplines/mathematics.md
+  - disciplines/engineering-computing.md
+  - disciplines/medicine-health.md
+  - disciplines/social-sciences.md
+  - disciplines/management.md
+  - disciplines/law.md
+  - disciplines/humanities.md
+  - disciplines/education.md
+  - disciplines/interdisciplinary.md
+capabilities:
+  web_search: true
+  web_fetch: true
+  file_read: true
+tools_recommended:
+  - web_search
+  - web_fetch
+disclosure: progressive
+disclosure_notes: >-
+  Load SKILL.md first. Load a references/*.md file only when the workflow
+  step it covers is active. Load a disciplines/*.md file only when the
+  manuscript's field benefits from field-specific fit weighting.
+integration:
+  upstream:
+    - adaptive-model-router
+  peers:
+    - scholarly-corpus-builder
+    - scholarly-voice-engine
+  standalone_capable: true
+invocation_examples:
+  - "Where should I submit this paper?"
+  - "Which SSCI journals fit my manuscript?"
+  - "Compare Journal A and Journal B."
+  - "Is this paper suitable for [journal]?"
+  - "Find no-APC journals for this article."
+  - "Which Q1 journals are realistic?"
+  - "Check whether this journal accepts my article type."
+non_goals:
+  - journal-name generator
+  - impact-factor sorter
+  - prestige-ranking tool
+  - acceptance predictor
+  - pay-to-publish recommender
+  - generic "top 10 journals" list
+  - APC-driven recommendation engine
+license: LICENSE
+maintained_by: journal-fit-engine contributors

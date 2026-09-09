@@ -1,0 +1,55 @@
+{
+  "suite": "scholarly-agent-suite",
+  "suite_version": "1.0.0",
+  "components": {
+    "scholarly-agent": {
+      "version": "1.0.0",
+      "role": "orchestration",
+      "source_repository": "in-tree (scholarly-agent-suite)",
+      "source_commit": "n/a"
+    },
+    "adaptive-model-router": {
+      "version": "0.2.0",
+      "role": "execution",
+      "source_repository": "https://github.com/WENSHAO521/adaptive-model-router.git",
+      "source_commit": "3c441a708faf92c2f5687878d826ecf7ee29a0ec"
+    },
+    "scholarly-corpus-builder": {
+      "version": "0.9.0",
+      "role": "research-intelligence",
+      "source_repository": "https://github.com/WENSHAO521/scholarly-corpus-builder.git",
+      "source_commit": "e1043b3f1c25fcd3aaf213551f2bf2104ee83483"
+    },
+    "scholarly-voice-engine": {
+      "version": "1.0.0",
+      "role": "writing-intelligence",
+      "source_repository": "https://github.com/WENSHAO521/scholarly-voice-engine.git",
+      "source_commit": "0a020b91462698b725d1b42646e9548de67e188d"
+    },
+    "journal-fit-engine": {
+      "version": "0.1.0",
+      "role": "publication-intelligence",
+      "source_repository": "https://github.com/WENSHAO521/journal-fit-engine.git",
+      "source_commit": "f0729e00f73e4db9593d94d77521966b8b50d632"
+    }
+  },
+  "compatibility": {
+    "adaptive-model-router": ">=0.2,<1.0",
+    "scholarly-corpus-builder": ">=0.9,<2.0",
+    "scholarly-voice-engine": ">=1.0,<2.0",
+    "journal-fit-engine": ">=0.1,<1.0"
+  },
+  "compatibility_notes": "These ranges are a declaration of the versions this Suite release was built and integration-tested against. No dependency resolver is implemented; the Suite does not automatically install, downgrade, or upgrade component versions. Treat a version outside a declared range as untested, not as blocked.",
+  "protocol_versions": [
+    "EXECUTION_POLICY_V1",
+    "SCHOLARLY_PROFILE_V1",
+    "VOICE_REQUEST_V1",
+    "VOICE_CONTEXT_V1",
+    "VOICE_OUTPUT_V1",
+    "MANUSCRIPT_PROFILE_V1",
+    "TARGET_JOURNAL_PROFILE_V1",
+    "JOURNAL_STYLE_CONTEXT_V1",
+    "CONTINUITY_STATE_V1",
+    "PROVENANCE_RECORD_V1"
+  ]
+}

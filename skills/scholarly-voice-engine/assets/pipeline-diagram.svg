@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1440" role="img" aria-label="Flowchart of the Voice Engine's drafting pipeline, from resolving discipline and genre through voice calibration, journal adaptation, drafting, integrity guards, and a final quality-state branch into pass, repair, or blocked.">
+  <title>Scholarly Voice Engine — drafting pipeline</title>
+  <defs>
+    <marker id="pdArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#241f18"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="900" height="1440" fill="#f6f3ec"/>
+
+  <rect x="330" y="14" width="200" height="34" rx="17" fill="none" stroke="#241f18" stroke-opacity="0.45"/>
+  <text x="430" y="36" text-anchor="middle" font-family="SFMono-Regular,Consolas,'Liberation Mono',Menlo,monospace" font-size="11" letter-spacing="1" fill="#241f18" fill-opacity="0.75">MANUSCRIPT REQUEST</text>
+  <line x1="430" y1="48" x2="430" y2="74" stroke="#241f18" stroke-opacity="0.6" marker-end="url(#pdArrow)"/>
+
+  <rect x="230" y="76" width="400" height="248" rx="10" fill="none" stroke="#241f18" stroke-opacity="0.35"/>
+  <text x="250" y="104" font-family="SFMono-Regular,Consolas,'Liberation Mono',Menlo,monospace" font-size="12" font-weight="600" letter-spacing="1" fill="#241f18" fill-opacity="0.85">RESOLVE CONTEXT</text>
+  <line x1="250" y1="114" x2="610" y2="114" stroke="#241f18" stroke-opacity="0.2"/>
+  <g font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="14" fill="#241f18">
+    <text x="250" y="146"><tspan font-family="SFMono-Regular,Consolas,monospace" fill-opacity="0.55">01</tspan><tspan dx="10">Task &amp; editing mode</tspan></text>
+    <text x="250" y="180"><tspan font-family="SFMono-Regular,Consolas,monospace" fill-opacity="0.55">02</tspan><tspan dx="10">Discipline &amp; subfield</tspan></text>
+    <text x="250" y="214"><tspan font-family="SFMono-Regular,Consolas,monospace" fill-opacity="0.55">03</tspan><tspan dx="10">Genre</tspan></text>
+    <text x="250" y="248"><tspan font-family="SFMono-Regular,Consolas,monospace" fill-opacity="0.55">04</tspan><tspan dx="10">Research design</tspan></text>
+    <text x="250" y="282"><tspan font-family="SFMono-Regular,Consolas,monospace" fill-opacity="0.55">05</tspan><tspan dx="10">Argument architecture</tspan></text>
+    <text x="250" y="308"><tspan font-family="SFMono-Regular,Consolas,monospace" fill-opacity="0.55">06</tspan><tspan dx="10">Audience &amp; language</tspan></text>
+  </g>
+  <line x1="430" y1="324" x2="430" y2="350" stroke="#241f18" stroke-opacity="0.6" marker-end="url(#pdArrow)"/>
+
+  <rect x="230" y="352" width="400" height="86" rx="10" fill="none" stroke="#3f7a9e" stroke-width="1.5"/>
+  <text x="250" y="378" font-family="SFMono-Regular,Consolas,monospace" font-size="12" font-weight="600" letter-spacing="1" fill="#3f7a9e">VOICE PROFILE</text>
+  <g font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif" font-size="12">
+    <rect x="250" y="392" width="108" height="24" rx="12" fill="none" stroke="#6f9ab3"/>
+    <text x="304" y="408" text-anchor="middle" fill="#241f18" fill-opacity="0.85">primary</text>
+    <rect x="372" y="392" width="118" height="24" rx="12" fill="none" stroke="#6f9ab3"/>
+    <text x="431" y="408" text-anchor="middle" fill="#241f18" fill-opacity="0.85">secondary</text>
+    <rect x="504" y="392" width="98" height="24" rx="12" fill="none" stroke="#6f9ab3"/>
+    <text x="553" y="408" text-anchor="middle" fill="#241f18" fill-opacity="0.85">depth</text>
+  </g>
+  <line x1="430" y1="438" x2="430" y2="454" stroke="#241f18" stroke-opacity="0.6" marker-end="url(#pdArrow)"/>
+
+  <polygon points="430,455 560,510 430,565 300,510" fill="none" stroke="#241f18" stroke-opacity="0.55"/>
+  <text x="430" y="505" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12.5" fill="#241f18">Author sample or</text>
+  <text x="430" y="522" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12.5" fill="#241f18">corpus profile?</text>
+
+  <polyline points="300,510 180,510 180,598" fill="none" stroke="#241f18" stroke-opacity="0.6" marker-end="url(#pdArrow)"/>
+  <text x="234" y="500" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="11" fill="#3f8f47">yes</text>
+  <polyline points="560,510 680,510 680,598" fill="none" stroke="#241f18" stroke-opacity="0.6" marker-end="url(#pdArrow)"/>
+  <text x="626" y="500" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="11" fill="#241f18" fill-opacity="0.6">no</text>
+
+  <rect x="55" y="600" width="250" height="70" rx="8" fill="none" stroke="#241f18" stroke-opacity="0.45"/>
+  <text x="180" y="628" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="13" fill="#241f18">Calibrate to author /</text>
+  <text x="180" y="646" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="13" fill="#241f18">corpus voice</text>
+
+  <rect x="555" y="600" width="250" height="70" rx="8" fill="none" stroke="#241f18" stroke-opacity="0.45"/>
+  <text x="680" y="628" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="13" fill="#241f18">Apply discipline</text>
+  <text x="680" y="646" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="13" fill="#241f18">defaults</text>
+
+  <polyline points="180,670 180,700 430,700" fill="none" stroke="#241f18" stroke-opacity="0.55"/>
+  <polyline points="680,670 680,700 430,700" fill="none" stroke="#241f18" stroke-opacity="0.55"/>
+  <line x1="430" y1="700" x2="430" y2="716" stroke="#241f18" stroke-opacity="0.6" marker-end="url(#pdArrow)"/>
+
+  <polygon points="430,717 560,772 430,827 300,772" fill="none" stroke="#241f18" stroke-opacity="0.55"/>
+  <text x="430" y="767" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12.5" fill="#241f18">Journal target</text>
+  <text x="430" y="784" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12.5" fill="#241f18">available?</text>
+
+  <polyline points="300,772 180,772 180,860" fill="none" stroke="#241f18" stroke-opacity="0.6" marker-end="url(#pdArrow)"/>
+  <text x="234" y="762" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="11" fill="#3f8f47">yes</text>
+  <polyline points="560,772 680,772 680,860" fill="none" stroke="#241f18" stroke-opacity="0.6" marker-end="url(#pdArrow)"/>
+  <text x="626" y="762" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="11" fill="#241f18" fill-opacity="0.6">no</text>
+
+  <rect x="55" y="862" width="250" height="80" rx="8" fill="none" stroke="#241f18" stroke-opacity="0.45"/>
+  <text x="180" y="892" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="13" fill="#241f18">Adapt framing /</text>
+  <text x="180" y="910" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="13" fill="#241f18">structure only</text>
+  <text x="180" y="927" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="10.5" fill="#241f18" fill-opacity="0.55">never substance</text>
+
+  <rect x="555" y="862" width="250" height="80" rx="8" fill="none" stroke="#241f18" stroke-opacity="0.45"/>
+  <text x="680" y="892" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="13" fill="#241f18">No adaptation —</text>
+  <text x="680" y="910" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="13" fill="#241f18">draft as-is</text>
+
+  <polyline points="180,942 180,972 430,972" fill="none" stroke="#241f18" stroke-opacity="0.55"/>
+  <polyline points="680,942 680,972 430,972" fill="none" stroke="#241f18" stroke-opacity="0.55"/>
+  <line x1="430" y1="972" x2="430" y2="994" stroke="#241f18" stroke-opacity="0.6" marker-end="url(#pdArrow)"/>
+
+  <rect x="270" y="996" width="320" height="64" rx="8" fill="none" stroke="#241f18" stroke-width="1.2"/>
+  <text x="430" y="1022" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="13" font-weight="600" letter-spacing="0.5" fill="#241f18">DRAFT / REVISE</text>
+  <text x="430" y="1040" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="10" fill="#241f18" fill-opacity="0.55">surface · structural · argument-reconstruction</text>
+  <line x1="430" y1="1060" x2="430" y2="1086" stroke="#241f18" stroke-opacity="0.6" marker-end="url(#pdArrow)"/>
+
+  <rect x="230" y="1088" width="400" height="70" rx="8" fill="none" stroke="#3f7a9e" stroke-width="1.5"/>
+  <text x="430" y="1116" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="13" font-weight="600" letter-spacing="0.5" fill="#3f7a9e">CITATION INTEGRITY</text>
+  <text x="430" y="1136" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12" fill="#241f18" fill-opacity="0.75">+ claim-calibration guard</text>
+  <line x1="430" y1="1158" x2="430" y2="1184" stroke="#241f18" stroke-opacity="0.6" marker-end="url(#pdArrow)"/>
+
+  <rect x="230" y="1186" width="400" height="70" rx="8" fill="none" stroke="#3f7a9e" stroke-width="1.5"/>
+  <text x="430" y="1214" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="13" font-weight="600" letter-spacing="0.5" fill="#3f7a9e">QUALITY AUDIT</text>
+  <text x="430" y="1234" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="12" fill="#241f18" fill-opacity="0.75">integrity tests + AI-cadence audit</text>
+  <line x1="430" y1="1256" x2="430" y2="1280" stroke="#241f18" stroke-opacity="0.6"/>
+  <circle cx="430" cy="1284" r="5" fill="#241f18"/>
+  <text x="430" y="1273" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="9.5" letter-spacing="1" fill="#241f18" fill-opacity="0.6">QUALITY STATE</text>
+
+  <polyline points="430,1284 200,1284 200,1318" fill="none" stroke="#3f8f47" stroke-opacity="0.8" marker-end="url(#pdArrow)"/>
+  <text x="300" y="1274" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="10.5" fill="#3f8f47">PASS</text>
+  <line x1="430" y1="1284" x2="430" y2="1318" stroke="#b98a3d" stroke-opacity="0.8" marker-end="url(#pdArrow)"/>
+  <text x="452" y="1305" text-anchor="start" font-family="SFMono-Regular,Consolas,monospace" font-size="10.5" fill="#b98a3d">REPAIR</text>
+  <polyline points="430,1284 660,1284 660,1318" fill="none" stroke="#c1583f" stroke-opacity="0.8" marker-end="url(#pdArrow)"/>
+  <text x="560" y="1274" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="10.5" fill="#c1583f">BLOCKED</text>
+
+  <rect x="75" y="1320" width="250" height="90" rx="8" fill="none" stroke="#3f8f47"/>
+  <text x="200" y="1352" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="15" font-weight="600" fill="#3f8f47">PASS</text>
+  <text x="200" y="1374" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11.5" fill="#241f18" fill-opacity="0.75">publication-ready</text>
+  <text x="200" y="1390" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11.5" fill="#241f18" fill-opacity="0.75">prose returned</text>
+
+  <rect x="325" y="1320" width="210" height="90" rx="8" fill="none" stroke="#b98a3d"/>
+  <text x="430" y="1352" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="13" font-weight="600" fill="#b98a3d">REPAIR_REQUIRED</text>
+  <text x="430" y="1374" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11.5" fill="#241f18" fill-opacity="0.75">↺ back to</text>
+  <text x="430" y="1390" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11.5" fill="#241f18" fill-opacity="0.75">Draft / Revise</text>
+
+  <rect x="575" y="1320" width="250" height="90" rx="8" fill="none" stroke="#c1583f"/>
+  <text x="700" y="1352" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="14" font-weight="600" fill="#c1583f">BLOCKED_BY_*</text>
+  <text x="700" y="1374" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11.5" fill="#241f18" fill-opacity="0.75">blocker reported,</text>
+  <text x="700" y="1390" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11.5" fill="#241f18" fill-opacity="0.75">never hidden</text>
+</svg>

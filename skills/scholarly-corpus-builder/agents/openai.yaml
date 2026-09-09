@@ -1,0 +1,52 @@
+name: scholarly-corpus-builder
+description: >
+  Provenance-aware scholarly corpus and writing-profile builder. Acquires,
+  verifies, filters, normalizes, and analyzes lawful scholarly material to
+  produce discipline, journal, historical-scholar, and author-voice writing
+  profiles without retrieving unnecessary full text.
+instructions_file: ../SKILL.md
+model: gpt-5.1
+tools:
+  - type: web_search
+  - type: file_search
+  - type: code_interpreter
+tool_policy:
+  prefer_native_scholarly_apis: true
+  custom_scraping: disallowed
+  bypass_paywalls: disallowed
+  bypass_bot_protection: disallowed
+retrieval:
+  default_tier_order:
+    - user_provided_or_authorized
+    - open_metadata
+    - open_abstract
+    - open_full_text
+    - public_domain_historical
+  minimize_full_text: true
+  stop_rule: >
+    Stop retrieval once the requested profile is sufficiently supported,
+    additional sources show diminishing feature changes, and minimum
+    genre/source diversity is achieved.
+output_contract:
+  fields:
+    - corpus_type
+    - target
+    - purpose
+    - sample_window
+    - source_count
+    - source_types
+    - selection_method
+    - profile
+    - provenance_summary
+    - known_biases
+    - refresh_status
+    - limitations
+safeguards:
+  - no_paywall_bypass
+  - no_leaked_databases
+  - no_unnecessary_full_text_storage
+  - no_phrase_imitation_libraries
+  - no_living_author_imitation
+  - no_fabricated_source_counts_or_identifiers
+references_dir: ../references
+evals_dir: ../evals
