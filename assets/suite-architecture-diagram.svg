@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 560" role="img" aria-label="Diagram of the Scholarly Agent Suite architecture: the user talks to Scholarly Agent, which coordinates four specialists -- Adaptive Model Router, Scholarly Corpus Builder, Scholarly Voice Engine, and Journal Fit Engine -- all of which sit on a shared layer of protocols, integrity and provenance policy, and workflow recipes.">
+  <title>Scholarly Agent Suite -- architecture</title>
+  <defs>
+    <marker id="archArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#241f18"/>
+    </marker>
+  </defs>
+
+  <rect x="0" y="0" width="960" height="560" fill="#f6f3ec"/>
+
+  <!-- User -->
+  <rect x="410" y="16" width="140" height="44" rx="22" fill="none" stroke="#241f18" stroke-opacity="0.55"/>
+  <text x="480" y="43" text-anchor="middle" font-family="SFMono-Regular,Consolas,'Liberation Mono',Menlo,monospace" font-size="13" letter-spacing="1" fill="#241f18">USER</text>
+  <line x1="480" y1="60" x2="480" y2="96" stroke="#241f18" stroke-opacity="0.6" marker-end="url(#archArrow)"/>
+
+  <!-- Scholarly Agent (orchestrator) -->
+  <rect x="330" y="98" width="300" height="86" rx="10" fill="none" stroke="#3f7a9e" stroke-width="2"/>
+  <text x="480" y="130" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="15" font-weight="600" fill="#3f7a9e">SCHOLARLY AGENT</text>
+  <text x="480" y="150" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" font-style="italic" fill="#241f18" fill-opacity="0.6">workflow orchestration</text>
+  <text x="480" y="170" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="10.5" fill="#241f18" fill-opacity="0.65">smallest sufficient specialist set, never all four by default</text>
+
+  <!-- four connector lines down to specialists -->
+  <line x1="400" y1="184" x2="150" y2="240" stroke="#241f18" stroke-opacity="0.55" marker-end="url(#archArrow)"/>
+  <line x1="450" y1="184" x2="370" y2="240" stroke="#241f18" stroke-opacity="0.55" marker-end="url(#archArrow)"/>
+  <line x1="510" y1="184" x2="590" y2="240" stroke="#241f18" stroke-opacity="0.55" marker-end="url(#archArrow)"/>
+  <line x1="560" y1="184" x2="810" y2="240" stroke="#241f18" stroke-opacity="0.55" marker-end="url(#archArrow)"/>
+
+  <!-- specialist boxes -->
+  <g>
+    <rect x="30" y="242" width="220" height="120" rx="9" fill="none" stroke="#241f18" stroke-opacity="0.45"/>
+    <text x="140" y="272" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="12.5" font-weight="600" fill="#241f18">ADAPTIVE MODEL</text>
+    <text x="140" y="288" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="12.5" font-weight="600" fill="#241f18">ROUTER</text>
+    <text x="140" y="310" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="10.5" fill="#241f18" fill-opacity="0.65">execution intelligence</text>
+    <text x="140" y="326" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="10.5" fill="#241f18" fill-opacity="0.65">model, delegation,</text>
+    <text x="140" y="342" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="10.5" fill="#241f18" fill-opacity="0.65">validation</text>
+  </g>
+
+  <g>
+    <rect x="260" y="242" width="220" height="120" rx="9" fill="none" stroke="#241f18" stroke-opacity="0.45"/>
+    <text x="370" y="272" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="12.5" font-weight="600" fill="#241f18">SCHOLARLY CORPUS</text>
+    <text x="370" y="288" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="12.5" font-weight="600" fill="#241f18">BUILDER</text>
+    <text x="370" y="310" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="10.5" fill="#241f18" fill-opacity="0.65">research intelligence</text>
+    <text x="370" y="326" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="10.5" fill="#241f18" fill-opacity="0.65">evidence, profiles,</text>
+    <text x="370" y="342" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="10.5" fill="#241f18" fill-opacity="0.65">provenance</text>
+  </g>
+
+  <g>
+    <rect x="490" y="242" width="220" height="120" rx="9" fill="none" stroke="#241f18" stroke-opacity="0.45"/>
+    <text x="600" y="272" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="12.5" font-weight="600" fill="#241f18">SCHOLARLY VOICE</text>
+    <text x="600" y="288" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="12.5" font-weight="600" fill="#241f18">ENGINE</text>
+    <text x="600" y="310" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="10.5" fill="#241f18" fill-opacity="0.65">writing intelligence</text>
+    <text x="600" y="326" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="10.5" fill="#241f18" fill-opacity="0.65">argument, voice,</text>
+    <text x="600" y="342" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="10.5" fill="#241f18" fill-opacity="0.65">claim calibration</text>
+  </g>
+
+  <g>
+    <rect x="710" y="242" width="220" height="120" rx="9" fill="none" stroke="#241f18" stroke-opacity="0.45"/>
+    <text x="820" y="272" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="12.5" font-weight="600" fill="#241f18">JOURNAL FIT</text>
+    <text x="820" y="288" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="12.5" font-weight="600" fill="#241f18">ENGINE</text>
+    <text x="820" y="310" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="10.5" fill="#241f18" fill-opacity="0.65">publication intelligence</text>
+    <text x="820" y="326" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="10.5" fill="#241f18" fill-opacity="0.65">venue fit, submission</text>
+    <text x="820" y="342" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="10.5" fill="#241f18" fill-opacity="0.65">strategy</text>
+  </g>
+
+  <!-- connectors down into shared layer -->
+  <line x1="140" y1="362" x2="140" y2="404" stroke="#241f18" stroke-opacity="0.4" stroke-dasharray="4 4"/>
+  <line x1="370" y1="362" x2="370" y2="404" stroke="#241f18" stroke-opacity="0.4" stroke-dasharray="4 4"/>
+  <line x1="600" y1="362" x2="600" y2="404" stroke="#241f18" stroke-opacity="0.4" stroke-dasharray="4 4"/>
+  <line x1="820" y1="362" x2="820" y2="404" stroke="#241f18" stroke-opacity="0.4" stroke-dasharray="4 4"/>
+
+  <!-- shared layer -->
+  <rect x="30" y="406" width="900" height="120" rx="10" fill="none" stroke="#a65d3f" stroke-width="1.5"/>
+  <text x="50" y="432" font-family="SFMono-Regular,Consolas,monospace" font-size="12" font-weight="600" letter-spacing="1" fill="#a65d3f">SHARED LAYER -- SUPPLEMENTS, NEVER A HARD DEPENDENCY</text>
+  <line x1="50" y1="442" x2="910" y2="442" stroke="#a65d3f" stroke-opacity="0.25"/>
+
+  <rect x="50" y="456" width="270" height="52" rx="8" fill="none" stroke="#a65d3f" stroke-opacity="0.55"/>
+  <text x="185" y="478" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="11.5" font-weight="600" fill="#241f18">protocols/</text>
+  <text x="185" y="496" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="10" fill="#241f18" fill-opacity="0.65">10 shared data contracts (_V1)</text>
+
+  <rect x="345" y="456" width="270" height="52" rx="8" fill="none" stroke="#a65d3f" stroke-opacity="0.55"/>
+  <text x="480" y="478" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="11.5" font-weight="600" fill="#241f18">shared/</text>
+  <text x="480" y="496" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="10" fill="#241f18" fill-opacity="0.65">integrity, provenance, terminology, boundaries</text>
+
+  <rect x="640" y="456" width="270" height="52" rx="8" fill="none" stroke="#a65d3f" stroke-opacity="0.55"/>
+  <text x="775" y="478" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="11.5" font-weight="600" fill="#241f18">workflows/</text>
+  <text x="775" y="496" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="10" fill="#241f18" fill-opacity="0.65">14 stage-order recipes (not Skills)</text>
+
+  <text x="480" y="546" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" font-style="italic" fill="#241f18" fill-opacity="0.6">Integrate, do not collapse -- every specialist still installs and runs standalone.</text>
+</svg>

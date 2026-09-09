@@ -20,6 +20,8 @@ four separate Skills. The design principle is: **integrate, do not collapse.**
 
 ## Architecture
 
+![Scholarly Agent Suite architecture: the user talks to Scholarly Agent, which coordinates four specialists sitting on a shared layer of protocols, policy, and workflow recipes.](assets/suite-architecture-diagram.svg)
+
 ```
 User
  |
@@ -36,6 +38,15 @@ Shared:
  shared/      -- integrity, provenance, terminology, capability boundaries
  workflows/   -- stage-order recipes (not Skills)
 ```
+
+### Orchestration flowchart
+
+![Flowchart of Scholarly Agent's orchestration decision process: check whether two or more specialists are genuinely needed, select a workflow recipe, reuse fresh artifacts, propagate hard constraints, invoke the minimal specialist set, allow one bounded repair pass, then apply a final quality gate that branches into COMPLETE, COMPLETE_WITH_LIMITATIONS, or a BLOCKED state.](assets/orchestration-flowchart.svg)
+
+This is the concrete decision logic behind `skills/scholarly-agent/SKILL.md`'s
+"minimal orchestration rule" and `references/orchestration-state.md`'s final
+quality gate -- not a fixed Router → Corpus → Voice → Journal-Fit pipeline
+that runs for every request (rule 19).
 
 Each specialist Skill keeps its own trigger boundary, responsibility, tests,
 references, and version. See `shared/capability-boundaries.md` for exactly
