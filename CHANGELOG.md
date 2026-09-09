@@ -5,6 +5,108 @@ Suite versioning follows `README.md#component-versioning` /
 `shared/protocol-versioning.md`; component versions are tracked separately in
 `COMPONENTS.json`.
 
+## v1.2.0 -- 2026-09-09
+
+v1.2.0 PREPARED -- NOT PUBLISHED
+
+**Protocol Closure Phase**: `TARGET_JOURNAL_PROFILE_V1` moves from a
+schema-validated producer with no consumer (`PARTIAL`, as of v1.1.1) to a
+real producer -> consumer handoff. `journal-fit-engine`'s
+`jfe.target_journal_profile.build_target_journal_profile()` (unchanged --
+already shipped in v0.4.0/v1.1.1) is not touched by this release; the new
+work is entirely a downstream consumer inside this Suite, plus the tests
+that prove the handoff is real.
+
+### Added
+
+- `skills/scholarly-agent/scripts/target_journal_adapter.py` --
+  scholarly-agent's first real code (not just orchestration prose)
+  consuming a component protocol directly. Validates an incoming
+  `TARGET_JOURNAL_PROFILE_V1` envelope, applies a hard compatibility gate
+  against the manuscript's own stated hard constraints (`no_mandatory_apc`,
+  `requires_indexing`) and returns `SELECTED` / `REJECTED` /
+  `NEEDS_VERIFICATION` with reasons, limitations, and the profile's
+  `PROVENANCE_RECORD_V1` preserved unchanged. An unresolved fact (unknown
+  `apc_status`, an unconfirmed requested index) is always
+  `NEEDS_VERIFICATION`, never a guessed pass or fail; a confirmed mismatch
+  is `REJECTED` and a stale profile never softens an existing `REJECTED`
+  back to selectable. `journal_style_context_seed()` hands a `SELECTED`
+  profile's identity/freshness/provenance forward toward a
+  `JOURNAL_STYLE_CONTEXT_V1` build -- deliberately excluding
+  `fit_assessment`/`apc_status`/`oa_status`/`indexing`, which answer "is
+  this a plausible target?", not "how should this manuscript be written?" --
+  and refuses outright to seed one from a `REJECTED` selection.
+- `tests/test_target_journal_adapter.py` -- 19 unit tests covering protocol
+  validation and the full hard-gate truth table (APC mismatch, unknown APC,
+  unconfirmed indexing, stale-plus-checked-constraint, an unrequested
+  constraint never being invented, and the style-context seed's
+  contamination guard).
+- `tests/test_e2e_protocol_handoff.py`: `TestE2E07`-`TestE2E12` -- a second
+  real cross-Skill integration alongside the existing
+  `JOURNAL_STYLE_CONTEXT_V1` handoff (`TestE2E03`-`TestE2E06`). These drive
+  journal-fit-engine's actual `fit_model`/`apc_oa`/`indexing`/`integrity`
+  pipeline over real `JournalEvidence`/`ManuscriptProfile` objects into the
+  real producer, then into the new consumer, and (for a `SELECTED` result)
+  on into the existing `JOURNAL_STYLE_CONTEXT_V1` handoff -- nothing here
+  is mocked or hand-built at the protocol boundary. Cases covered: a
+  strong, APC-compatible, DOAJ-confirmed target (`SELECTED`, seeds a valid
+  style context); a real mandatory-APC mismatch (`REJECTED`, seed refused);
+  an unverifiable paid-index requirement (`NEEDS_VERIFICATION`, never a
+  fabricated pass); stale evidence with a checked hard constraint
+  (`NEEDS_VERIFICATION`); provenance surviving the full producer ->
+  consumer -> style-context round trip (source identity, retrieval date);
+  and a structural regression guard that fit/APC/OA/indexing vocabulary
+  never leaks into `official_requirements`/`observed_patterns`.
+- `workflows/target-journal-adaptation.md` -- documents the now-real Stage
+  1 (`journal-fit-engine: confirm/refresh target journal profile` ->
+  `scholarly-agent`'s hard compatibility gate) ahead of the existing
+  style-context/voice-adaptation stages.
+- `skills/scholarly-agent/references/orchestration-state.md` -- documents
+  the `SELECTED` / `REJECTED` / `NEEDS_VERIFICATION` target-journal
+  selection state tied to `artifacts.journal_profile_id`, and that only
+  `SELECTED` proceeds automatically to the style-context stage.
+- `tests/conftest.py`: `load_module_at()` -- loads a component script from
+  an arbitrary path under a unique module name, registered in
+  `sys.modules` before execution. Needed because
+  `skills/scholarly-agent/scripts/` and `skills/scholarly-voice-engine/scripts/`
+  are both directories literally named `scripts`; a plain
+  `sys.path.insert` + `import scripts...` collides the moment both
+  component directories are on `sys.path` in the same process (exactly
+  what `test_e2e_protocol_handoff.py` now does), since Python caches
+  `scripts` as one global module name regardless of which directory it
+  first resolved from.
+
+### Changed
+
+- `tests/test_protocols.py`'s existing producer-to-schema check for
+  `TARGET_JOURNAL_PROFILE_V1` no longer claims "no consumer exists yet" --
+  updated to point at the new E2E coverage above; the check itself is
+  unchanged and kept as a fast, independent defense-in-depth test.
+
+### Known limitations
+
+- The hard compatibility gate only checks the two hard-constraint keys
+  documented above (`no_mandatory_apc`, `requires_indexing`); it does not
+  widen itself to check a constraint the caller did not actually state, and
+  it does not re-derive fit, indexing, APC, or a quartile -- those remain
+  journal-fit-engine's job entirely.
+- `journal_style_context_seed()` supplies only identity, freshness, and
+  provenance; `official_requirements`/`observed_patterns` for the
+  eventual `JOURNAL_STYLE_CONTEXT_V1` still have to come from their own
+  real sources (a host LLM's guideline fetch, scholarly-corpus-builder) --
+  this consumer does not and must not invent either.
+- `PROVENANCE_RECORD_V1` itself stays `PARTIAL`, not `FULL`: this release
+  proves a real producer (journal-fit-engine) feeding a real consumer that
+  preserves it unchanged through two protocol handoffs, but there is still
+  no independent canonical provenance handoff test that exercises
+  `PROVENANCE_RECORD_V1` on its own terms, separately from riding inside
+  `TARGET_JOURNAL_PROFILE_V1`/`JOURNAL_STYLE_CONTEXT_V1`.
+- Unchanged from v1.1.1 below: `scholarly-corpus-builder` stays pinned at
+  `v0.9.1` (its `v0.9.2` release is packaging-only, byte-identical runtime
+  source); `adaptive-model-router` (`0.3.0`), `scholarly-voice-engine`
+  (`1.1.0`), `journal-fit-engine` (`0.4.0`, untouched by this release)
+  unchanged.
+
 ## v1.1.1 -- 2026-09-09
 
 v1.1.1 PUBLISHED

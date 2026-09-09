@@ -193,12 +193,20 @@ domain directly inside its own `SKILL.md`.
 - `tests/test_e2e_protocol_handoff.py` -- true cross-Skill integration tests
   that import each component's *actual code* from the synced `skills/` tree
   (not a mock, not a routing-only check) and exercise a real protocol
-  handoff end to end -- currently `journal-fit-engine`'s
+  handoff end to end. Two handoffs are covered: `journal-fit-engine`'s
   `JOURNAL_STYLE_CONTEXT_V1` producer feeding `scholarly-voice-engine`'s
-  consumer, asserting that official requirements, observed patterns,
-  freshness, and limitations all survive the full round trip, and that
-  corpus-derived evidence can never land in an official-requirement field
-  (or vice versa).
+  consumer (official requirements, observed patterns, freshness, and
+  limitations all survive the full round trip, and corpus-derived evidence
+  can never land in an official-requirement field or vice versa); and
+  `journal-fit-engine`'s `TARGET_JOURNAL_PROFILE_V1` producer feeding
+  `scholarly-agent`'s hard-compatibility-gate consumer
+  (`skills/scholarly-agent/scripts/target_journal_adapter.py`) -- a
+  confirmed APC mismatch is `REJECTED`, an unverifiable paid-index
+  requirement is `NEEDS_VERIFICATION` rather than a guessed pass/fail,
+  stale evidence with a checked hard constraint is `NEEDS_VERIFICATION`,
+  provenance survives the full handoff, and fit/APC/OA/indexing vocabulary
+  never leaks into the eventual `JOURNAL_STYLE_CONTEXT_V1`'s
+  `official_requirements`/`observed_patterns`.
 - `evals/` -- end-to-end orchestration fixtures (component selection,
   negative triggers, cross-disciplinary and multilingual scenarios).
 - Component-level correctness (adapters, analytics, validators) is owned by
@@ -238,11 +246,15 @@ protocol versions, file list, and a SHA-256 checksum.
 - Suite-level end-to-end evals (`evals/`) exercise orchestration/routing
   decisions, not the full correctness of each specialist's domain logic.
   `tests/test_e2e_protocol_handoff.py` goes one level deeper for the
-  `JOURNAL_STYLE_CONTEXT_V1` handoff specifically (real producer code into
-  real consumer code, not routing-only), but that coverage does not yet
-  extend to every protocol in `protocols/` -- see "Protocol compatibility"
-  in the release report for which handoffs currently have this level of
-  test versus schema-only round-trip coverage versus declared-only.
+  `JOURNAL_STYLE_CONTEXT_V1` and `TARGET_JOURNAL_PROFILE_V1` handoffs
+  specifically (real producer code into real consumer code, not
+  routing-only), but that coverage does not yet extend to every protocol in
+  `protocols/` -- `PROVENANCE_RECORD_V1` in particular stays `PARTIAL`
+  (preserved unchanged by both of the above, but with no independent
+  canonical provenance-handoff test of its own), and `SCHOLARLY_PROFILE_V1`
+  / `VOICE_CONTEXT_V1` / `MANUSCRIPT_PROFILE_V1` / `VOICE_REQUEST_V1` /
+  `VOICE_OUTPUT_V1` remain schema-only round-trip coverage rather than a
+  real cross-Skill handoff test.
 - `check_component_drift.py` requires each component's git history to be
   locally reachable (a local override or a `.cache/components/` clone); it
   is not itself a network service and does not run against GitHub's API.

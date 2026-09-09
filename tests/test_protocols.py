@@ -133,9 +133,12 @@ def test_journal_profile_fit_assessment_is_qualitative_enum_only():
 def test_journal_fit_engines_real_target_journal_profile_producer_validates():
     """journal-fit-engine's real jfe.target_journal_profile output (not a
     hand-built fixture) validates against the canonical schema -- a
-    producer-to-schema check for the protocol added in Suite v1.1.1. No
-    consumer exists yet (status stays PARTIAL, not FULL); this only proves
-    the producer side is schema-honest."""
+    producer-to-schema check for the protocol added in Suite v1.1.1, kept
+    here as a fast defense-in-depth check independent of the real
+    producer->consumer handoff. scholarly-agent's real consumer
+    (skills/scholarly-agent/scripts/target_journal_adapter.py, added in
+    Suite v1.2.0) is exercised end to end in
+    tests/test_e2e_protocol_handoff.py's TestE2E07-TestE2E12."""
     import sys
 
     jfe_skill_dir = str(ROOT / "skills" / "journal-fit-engine")

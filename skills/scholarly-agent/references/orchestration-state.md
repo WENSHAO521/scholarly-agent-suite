@@ -36,6 +36,28 @@ This is scratch state for the current task, not a persistent user memory
 system (rule 46, rule 130). Do not add task boards, dashboards, or
 scheduling beyond this shape (rule 130).
 
+## Target journal selection state
+
+When a `TARGET_JOURNAL_PROFILE_V1` envelope is in play (`artifacts.journal_profile_id`),
+run it through `skills/scholarly-agent/scripts/target_journal_adapter.py`'s
+hard compatibility gate before treating the journal as chosen. Use exactly
+these selection states -- do not invent synonyms, and do not conflate them
+with the workflow states above:
+
+`SELECTED`, `REJECTED`, `NEEDS_VERIFICATION`.
+
+- `REJECTED` (a confirmed hard mismatch, e.g. a mandatory-APC journal
+  against a stated `no_mandatory_apc` constraint) blocks
+  `target-journal-adaptation.md`'s later stages entirely -- do not build a
+  `JOURNAL_STYLE_CONTEXT_V1` or hand the manuscript to
+  `scholarly-voice-engine` for a rejected target unless the user explicitly
+  overrides the gate.
+- `NEEDS_VERIFICATION` (an unresolved fact -- unknown `apc_status`, a
+  requested index the profile could not confirm, or stale evidence a hard
+  constraint actually depends on) is not a failure and not a pass: surface
+  it to the user rather than silently proceeding or silently rejecting.
+- Only `SELECTED` proceeds automatically to the style-context stage.
+
 ## Freshness handling
 
 Respect a component's own `freshness` label (`current` / `aging` / `stale`)
