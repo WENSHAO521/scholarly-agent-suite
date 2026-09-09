@@ -1,9 +1,9 @@
 {
   "suite": "scholarly-agent-suite",
-  "suite_version": "1.1.0",
+  "suite_version": "1.1.1",
   "components": {
     "scholarly-agent": {
-      "version": "1.1.0",
+      "version": "1.1.1",
       "role": "orchestration",
       "source_repository": "in-tree (scholarly-agent-suite)",
       "source_commit": "n/a"
@@ -27,10 +27,10 @@
       "source_commit": "dab8a6743ca77fb28d94d308084efd963fd54e33"
     },
     "journal-fit-engine": {
-      "version": "0.3.0",
+      "version": "0.4.0",
       "role": "publication-intelligence",
       "source_repository": "https://github.com/WENSHAO521/journal-fit-engine.git",
-      "source_commit": "cbb77a80812ae37dc80a80e5f0db375dbc7739d5"
+      "source_commit": "4f5f7787a0f85f01c761ea601510f5d8d0aac777"
     }
   },
   "compatibility": {

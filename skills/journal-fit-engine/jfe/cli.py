@@ -3,8 +3,11 @@ invokes SKILL.md's instructions directly; this is for development, live
 verification, and debugging. JSON output throughout.
 
 Commands:
-    lookup-journal   --query "..." | --issn ISSN
-    evaluate-fit     --manuscript-json PATH (--query "..." | --issn ISSN)
+    lookup-journal        --query "..." | --issn ISSN
+    evaluate-fit           --manuscript-json PATH (--query "..." | --issn ISSN)
+    build-style-context     --query "..." | --issn ISSN [--official-requirements-json PATH]
+                            [--observed-patterns-json PATH] [--article-type TYPE]
+    build-journal-profile   --query "..." | --issn ISSN [--manuscript-json PATH]
 """
 from __future__ import annotations
 
@@ -24,6 +27,7 @@ from jfe.integrity import screen as integrity_screen
 from jfe.journal_evidence import EvidenceLookupError, lookup_by_issn, lookup_by_name
 from jfe.manuscript_profile import ManuscriptProfile, ProfileError
 from jfe.style_context import StyleContextError, from_journal_evidence
+from jfe.target_journal_profile import TargetJournalProfileError, build_target_journal_profile
 
 
 def _to_jsonable(obj):
@@ -125,6 +129,45 @@ def cmd_build_style_context(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_build_journal_profile(args: argparse.Namespace) -> int:
+    client = _client()
+    try:
+        evidence = _resolve_evidence(client, args)
+    except (EvidenceLookupError, HttpError) as exc:
+        print(json.dumps({"error": str(exc)}))
+        return 1
+
+    apc = classify_apc_oa(evidence)
+    indexing = assess_indexing(evidence)
+    integrity = integrity_screen(evidence)
+
+    fit = None
+    if args.manuscript_json:
+        manuscript_data = json.loads(Path(args.manuscript_json).read_text(encoding="utf-8"))
+        try:
+            manuscript = ManuscriptProfile.from_dict(manuscript_data)
+        except ProfileError as exc:
+            print(json.dumps({"error": f"invalid manuscript profile: {exc}"}))
+            return 1
+        filters = apply_hard_filters(manuscript, evidence, apc.state)
+        fit = compute_fit(manuscript, evidence, eliminated(filters))
+
+    try:
+        profile = build_target_journal_profile(
+            evidence,
+            fit_result=fit,
+            apc_classification=apc,
+            indexing_assessment=indexing,
+            integrity=integrity,
+        )
+    except TargetJournalProfileError as exc:
+        print(json.dumps({"error": str(exc)}))
+        return 1
+
+    _print_json(profile)
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
@@ -150,6 +193,15 @@ def build_parser() -> argparse.ArgumentParser:
                           help="Path to a JSON file of corpus-derived observed style patterns")
     style_p.add_argument("--article-type")
     style_p.set_defaults(func=cmd_build_style_context)
+
+    profile_p = sub.add_parser("build-journal-profile",
+                                help="Build a TARGET_JOURNAL_PROFILE_V1 envelope against live evidence")
+    profile_p.add_argument("--query")
+    profile_p.add_argument("--issn")
+    profile_p.add_argument("--manuscript-json",
+                            help="Optional: evaluate fit_assessment against this manuscript profile; "
+                                 "omitted, fit_assessment is NOT_ASSESSED")
+    profile_p.set_defaults(func=cmd_build_journal_profile)
 
     return parser
 

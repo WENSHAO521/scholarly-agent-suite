@@ -5,12 +5,42 @@ Suite versioning follows `README.md#component-versioning` /
 `shared/protocol-versioning.md`; component versions are tracked separately in
 `COMPONENTS.json`.
 
+## v1.1.1 -- 2026-09-09
+
+v1.1.1 PUBLISHED
+
+A component-pin refresh, not a Suite runtime/protocol/workflow change:
+`journal-fit-engine` bumped `0.3.0` -> `0.4.0` (adds a
+`TARGET_JOURNAL_PROFILE_V1` producer -- see that repository's own
+CHANGELOG), and this pin update is real new runtime capability actually
+landing in `skills/journal-fit-engine/jfe/`, unlike a standalone
+component's packaging-only patch (`scholarly-corpus-builder` v0.9.2,
+released the same day, stays pinned at `v0.9.1` here on purpose -- its
+runtime source content is byte-identical to `v0.9.1`, confirmed by diffing
+both tags' `scb/`/`SKILL.md`/`agents/`/`references/`/`LICENSE`; nothing a
+Suite re-pin would actually change).
+
+### Changed
+
+- `journal-fit-engine` pinned at `0.4.0` (`scripts/component-sources.json`,
+  `COMPONENTS.json`), re-synced from the published tag via
+  `scripts/sync_components.py` against the public `repo_url` (not a local
+  working copy).
+- `adaptive-model-router` (`0.3.0`), `scholarly-corpus-builder` (`0.9.1`),
+  `scholarly-voice-engine` (`1.1.0`) unchanged.
+
+### Known limitations
+
+Unchanged from v1.1.0 below.
+
 ## v1.1.0 -- 2026-09-09
 
-v1.1.0 PREPARED -- NOT PUBLISHED (committed and tagged locally in every
-repository below; not pushed to any remote, and no GitHub Release was
-created for any of them -- see the accompanying implementation report for
-what was and was not executed).
+v1.1.0 PUBLISHED
+
+Every component release below was pushed to its public remote, validated
+by real remote CI (including this Suite's Python 3.10-3.13 matrix), and
+published as a GitHub Release before this Suite tag was pushed -- see
+rule 152: local validation passing never by itself implies "PUBLISHED".
 
 The 1.1 line closes the `JOURNAL_STYLE_CONTEXT_V1` producer/consumer loop
 (the one cross-Skill protocol handoff that was still schema-only through
@@ -105,9 +135,13 @@ moves CI to a Python 3.10-3.13 compatibility matrix.
   (an override or a `.cache/components/` clone) -- it does not query
   GitHub's API directly, so a component with neither present locally
   reports `NO_LOCAL_SOURCE`, not a live check.
-- This release's git tags exist only in each repository's local clone;
-  see the implementation report's "Release readiness" section for exactly
-  what has and has not been pushed/published.
+- Only two of `protocols/`'s ten protocols were `FULL` at this release
+  (`JOURNAL_STYLE_CONTEXT_V1`: real cross-repository producer-into-
+  consumer E2E; `CONTINUITY_STATE_V1`: a self-contained serialization
+  round trip, not a cross-repo handoff -- the two are FULL by different
+  routes). `TARGET_JOURNAL_PROFILE_V1` and `PROVENANCE_RECORD_V1` were
+  `DECLARED_ONLY` (schema only, no producer or consumer code) as of this
+  tag; see v1.1.1 above for `TARGET_JOURNAL_PROFILE_V1`'s producer.
 
 ## v1.0.3 -- 2026-09-09
 

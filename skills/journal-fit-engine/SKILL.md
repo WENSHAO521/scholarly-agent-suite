@@ -127,8 +127,12 @@ VERIFIED/WARNING/CANNOT_VERIFY, never a predatory-probability score), an
 honest indexing/quartile assessor (`indexing.py`: only DOAJ is actually
 checkable from this Skill's free adapters; Scopus/Web of
 Science/SCIE/SSCI/AHCI/ESCI/JCR/CiteScore are always `cannot_verify`, never
-inferred), and a `JOURNAL_STYLE_CONTEXT_V1` protocol builder
-(`style_context.py`) for the Scholarly Voice Engine handoff (see
+inferred), a `JOURNAL_STYLE_CONTEXT_V1` protocol builder
+(`style_context.py`) for the Scholarly Voice Engine handoff, and a
+`TARGET_JOURNAL_PROFILE_V1` protocol builder (`target_journal_profile.py`)
+that composes evidence/APC-OA/fit/indexing results already computed by the
+modules above into one canonical resolved-candidate envelope for
+downstream orchestration (see
 [references/integration.md](references/integration.md)). It supplements
 this SKILL.md's reasoning workflow; it does not replace the LLM's own
 judgment on candidate generation or submission strategy, and it never

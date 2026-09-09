@@ -86,6 +86,44 @@ journal_target:
 Send only this compact target profile downstream — never the entire journal
 corpus or full manuscript rewrite instructions.
 
+## Downstream orchestration integration (TARGET_JOURNAL_PROFILE_V1)
+
+For a caller that needs one resolved candidate journal summarized as a
+single canonical envelope (e.g. `workflows/target-journal-adaptation.md`,
+or a shortlist/ranking layer comparing several candidates) rather than the
+per-module evidence above, `jfe/target_journal_profile.py`'s
+`build_target_journal_profile()` composes the already-computed
+evidence/APC-OA/fit/indexing/integrity results into a
+`TARGET_JOURNAL_PROFILE_V1` envelope (`scholarly-agent-suite/protocols/
+journal-profile.schema.json`):
+
+```yaml
+protocol: TARGET_JOURNAL_PROFILE_V1
+name: Journal of Example Studies
+issn: 1234-5678
+scope_summary: "Indexed subject areas (OpenAlex, not the journal's own scope statement): ..."
+indexing: [DOAJ]                    # only entries this Skill's adapters actually verified
+apc_status: apc-required | no-apc | waiver-available | unknown
+oa_status: fully-oa | hybrid | subscription | unknown
+fit_assessment: STRONG_FIT | MODERATE_FIT | WEAK_FIT | NOT_ASSESSED   # qualitative only, never a percentage
+freshness: current | aging | stale
+provenance: { protocol: PROVENANCE_RECORD_V1, sources: [...], retrieval_date: ..., verification_status: ... }
+```
+
+This is a pure adapter over this Skill's own evidence-backed modules, not a
+second fact-gathering layer: a field it cannot honestly support (no
+manuscript supplied, no topic data to assess fit against, no APC
+classification computed) is simply omitted from the envelope rather than
+guessed. `fit_assessment` deliberately distinguishes "could not be
+assessed" (`NOT_ASSESSED`, e.g. the index has no topic data) from "assessed
+as a poor fit" (`WEAK_FIT`) -- `fit_model.compute_fit()`'s own 6-label
+scale conflates the two, so this producer does not blindly forward its
+label. This is narrower than [journal-profile.md](journal-profile.md)'s
+full journal-profile concept (audience, word limits, submission rules,
+editorial process) by design — the schema has no field for those, and they
+stay LLM-reasoning tasks. Try it live: `python -m jfe.cli
+build-journal-profile --query "..." [--manuscript-json PATH]`.
+
 ## Adaptive Model Router integration
 
 If the Router is active, it owns execution-strategy decisions (which model,

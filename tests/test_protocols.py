@@ -130,6 +130,44 @@ def test_journal_profile_fit_assessment_is_qualitative_enum_only():
     assert "STRONG_FIT" in enum_values
 
 
+def test_journal_fit_engines_real_target_journal_profile_producer_validates():
+    """journal-fit-engine's real jfe.target_journal_profile output (not a
+    hand-built fixture) validates against the canonical schema -- a
+    producer-to-schema check for the protocol added in Suite v1.1.1. No
+    consumer exists yet (status stays PARTIAL, not FULL); this only proves
+    the producer side is schema-honest."""
+    import sys
+
+    jfe_skill_dir = str(ROOT / "skills" / "journal-fit-engine")
+    if jfe_skill_dir not in sys.path:
+        sys.path.insert(0, jfe_skill_dir)
+    from jfe.apc_oa import APCClassification, MANDATORY_APC
+    from jfe.fit_model import EXCELLENT_FIT, FitResult
+    from jfe.indexing import IndexingAssessment, IndexingEntry, OFFICIALLY_VERIFIED
+    from jfe.journal_evidence import JournalEvidence
+    from jfe.target_journal_profile import build_target_journal_profile
+
+    evidence = JournalEvidence(
+        display_name="Journal of Example Studies", issn_l="1234-5678", issn=["1234-5678"],
+        publisher="Example Press", is_oa=True, apc_usd=2000, is_in_doaj=True,
+        topics=["sociology"], source="openalex", checked_at="2026-09-09T00:00:00+00:00",
+    )
+    fit = FitResult(EXCELLENT_FIT, ["sociology"], "explanation", False)
+    apc = APCClassification(MANDATORY_APC, 2000, True, True, "note")
+    indexing = IndexingAssessment(entries=[
+        IndexingEntry("DOAJ", OFFICIALLY_VERIFIED, True, "openalex", "current", "note"),
+    ])
+
+    profile = build_target_journal_profile(
+        evidence, fit_result=fit, apc_classification=apc, indexing_assessment=indexing,
+    )
+    schema_lite.validate_file(profile, PROTOCOLS_DIR / "journal-profile.schema.json")
+    assert profile["fit_assessment"] == "STRONG_FIT"
+
+    provenance_schema = PROTOCOLS_DIR / "provenance.schema.json"
+    schema_lite.validate_file(profile["provenance"], provenance_schema)
+
+
 def test_execution_policy_never_requires_a_model_name_field():
     """Rule 30: don't hardwire model names into the shared protocol."""
     schema = json.loads((PROTOCOLS_DIR / "execution-policy.schema.json").read_text(encoding="utf-8"))
