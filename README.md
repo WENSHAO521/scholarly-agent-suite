@@ -36,7 +36,9 @@ Scholarly Agent (orchestration)
 Shared:
  protocols/   -- data contracts between Skills
  shared/      -- integrity, provenance, terminology, capability boundaries
- workflows/   -- stage-order recipes (not Skills)
+ workflows/   -- generated documentation mirror of scholarly-agent's own
+                 recipes (see "Workflow recipes" below) -- not a Skill,
+                 not a second canonical copy
 ```
 
 ### Orchestration flowchart
@@ -82,11 +84,19 @@ install, active component development, or if you only need one capability
 
 ## Typical workflows
 
-See `workflows/` for the full set of recipes (paper from an idea, revising an
-existing manuscript, journal selection, target-journal adaptation, literature
-review, systematic review, commentary writing, a full book project, a single
-monograph chapter, and author voice calibration). These are recipes the
-`scholarly-agent` Skill follows, not additional Skills.
+Workflow recipes (paper from an idea, revising an existing manuscript,
+journal selection, target-journal adaptation, literature review, systematic
+review, commentary writing, a full book project, a single monograph
+chapter, author voice calibration, and more) are orchestration resources
+**owned by `scholarly-agent`, not additional Skills** -- they ship inside
+`skills/scholarly-agent/references/workflows/`, its own Skill package, so
+scholarly-agent can resolve every recipe from inside its own runtime
+boundary no matter how it was installed (full Suite, standalone Skill,
+`.codex-plugin` load, release ZIP, or a host exposing only `skills/`).
+`workflows/` at the repository root mirrors the same fourteen files for
+anyone browsing the repo directly; it is generated from the canonical copy
+above (`scripts/sync_workflows.py`) and is never hand-edited -- there is
+exactly one manually-editable copy of each recipe.
 
 `scholarly-agent` does **not** run all four specialists for every request --
 see its `references/routing-matrix.md` for which intents need which
@@ -208,7 +218,23 @@ domain directly inside its own `SKILL.md`.
   never leaks into the eventual `JOURNAL_STYLE_CONTEXT_V1`'s
   `official_requirements`/`observed_patterns`.
 - `evals/` -- end-to-end orchestration fixtures (component selection,
-  negative triggers, cross-disciplinary and multilingual scenarios).
+  negative triggers, cross-disciplinary and multilingual scenarios),
+  including a combined `theory-paper` + `target-journal-adaptation` routing
+  fixture for "develop a theoretical paper for an already-selected target
+  journal."
+- `tests/test_workflow_packaging.py` -- proves every required workflow
+  recipe (`scripts/workflow_manifest.REQUIRED_WORKFLOWS`, the single source
+  of truth) is present in the source runtime boundary, in
+  `package_suite.iter_runtime_files()`, in the built release ZIP, in
+  `release-manifest.json`, and in a standalone-copied scholarly-agent
+  package -- plus a negative test proving a genuinely missing recipe is
+  actually caught.
+- `tests/test_workflow_install_smoke.py` -- builds the filesystem layout an
+  *installed* scholarly-agent Skill actually receives (not the repository
+  root) and resolves `SKILL.md`, the workflow index, and specific recipes
+  (`theory-paper.md`, `empirical-paper.md`,
+  `target-journal-adaptation.md`) from inside it; fails if a recipe is only
+  reachable via the repository root's `workflows/` mirror.
 - Component-level correctness (adapters, analytics, validators) is owned by
   each component's own repository and its own `tests/`/`evals/` -- this Suite
   does not duplicate them.
@@ -231,6 +257,15 @@ end-user install needs -- `.codex-plugin/`, `skills/`, `protocols/`,
 scripts, and any component `.git` metadata, and writes a
 `release-manifest.json` with the exact packaged versions, source commits,
 protocol versions, file list, and a SHA-256 checksum.
+
+Every workflow recipe scholarly-agent needs ships inside `skills/` (at
+`skills/scholarly-agent/references/workflows/`), so it is present in this
+ZIP under every consumption pattern -- the whole ZIP, `skills/` copied out
+on its own, or scholarly-agent extracted standalone. `tests/
+test_workflow_packaging.py` and `tests/test_workflow_install_smoke.py`
+assert this directly against the built ZIP, `release-manifest.json`, and a
+simulated installed-Skill-only filesystem layout, not just against the
+repository's source tree.
 
 ## Limitations
 

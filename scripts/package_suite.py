@@ -14,6 +14,16 @@ Packages exactly the runtime allowlist from the spec (rule 81):
       VERSION
       COMPONENTS.json
 
+`skills/` is what makes this deterministic regardless of installation mode:
+every workflow recipe scholarly-agent needs lives at
+`skills/scholarly-agent/references/workflows/` -- inside its own Skill
+package -- so it ships correctly whether this ZIP is used whole, a host
+extracts only `skills/`, or scholarly-agent is later re-packaged standalone.
+Top-level `workflows/` (also in this allowlist) is a generated
+*documentation* mirror of the same files, not a second runtime source --
+`scripts/sync_workflows.py --check` (wired into `validate_suite.py`) fails
+the build if it ever drifts from the canonical copy under `skills/`.
+
 Explicitly excludes tests/, evals/, .github/, scripts/, dist/, .git, and any
 __pycache__ (rule 83). The ZIP itself is built deterministically (sorted
 entries, fixed per-entry timestamp, UTF-8 text normalized to LF, stored

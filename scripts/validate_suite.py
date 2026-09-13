@@ -20,6 +20,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
 from schema_lite import validate as schema_validate  # noqa: E402
+from workflow_manifest import CANONICAL_WORKFLOWS_DIR, REQUIRED_WORKFLOWS  # noqa: E402
+import sync_workflows  # noqa: E402
 
 SKILL_NAMES = [
     "scholarly-agent",
@@ -42,20 +44,8 @@ PROTOCOL_FILES = {
     "provenance.schema.json": "PROVENANCE_RECORD_V1",
 }
 
-WORKFLOW_FILES = [
-    "paper-from-idea.md", "paper-from-notes.md", "revise-manuscript.md",
-    "journal-selection.md", "target-journal-adaptation.md",
-    "literature-review.md", "theory-paper.md", "empirical-paper.md",
-    "systematic-review.md", "nature-commentary.md", "book-project.md",
-    "monograph-chapter.md", "author-voice-calibration.md",
-    "corpus-profile-build.md",
-]
-
-MINIMUM_REQUIRED_WORKFLOWS = [
-    "paper-from-idea.md", "revise-manuscript.md", "journal-selection.md",
-    "target-journal-adaptation.md", "literature-review.md",
-    "nature-commentary.md", "book-project.md", "author-voice-calibration.md",
-]
+# The single source of truth for required workflow recipes lives in
+# scripts/workflow_manifest.py -- imported above, not redeclared here.
 
 
 class Report:
@@ -270,17 +260,21 @@ def validate_protocols(report: Report) -> None:
 
 
 def validate_workflows(report: Report, orchestrator_frontmatter_found: bool) -> None:
-    workflows_dir = ROOT / "workflows"
     skill_md_text = (ROOT / "skills" / "scholarly-agent" / "SKILL.md")
     skill_md_content = skill_md_text.read_text(encoding="utf-8") if skill_md_text.exists() else ""
-    for filename in WORKFLOW_FILES:
-        path = workflows_dir / filename
-        report.check(f"workflows/{filename} exists", path.exists())
-    for filename in MINIMUM_REQUIRED_WORKFLOWS:
+    for filename in REQUIRED_WORKFLOWS:
+        path = CANONICAL_WORKFLOWS_DIR / filename
+        report.check(f"skills/scholarly-agent/references/workflows/{filename} exists", path.exists())
         report.check(
-            f"scholarly-agent SKILL.md references workflows/{filename}",
-            filename in skill_md_content,
+            f"scholarly-agent SKILL.md references references/workflows/{filename}",
+            f"references/workflows/{filename}" in skill_md_content,
         )
+    drift = sync_workflows.check_drift()
+    report.check(
+        "workflows/ documentation mirror matches skills/scholarly-agent/references/workflows/ exactly",
+        not drift,
+        "; ".join(drift),
+    )
 
 
 def validate_shared_docs(report: Report) -> None:

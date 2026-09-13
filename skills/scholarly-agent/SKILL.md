@@ -71,21 +71,73 @@ Before invoking anything, answer:
 4. Which components can be skipped entirely?
 
 Then invoke only the required specialists, in the order the selected
-workflow recipe under `workflows/` specifies. Never run a fixed
+workflow recipe under `references/workflows/` specifies. Never run a fixed
 Router -> Corpus -> Voice -> Journal-Fit pipeline "because it's installed" --
 see rule 19 and `references/routing-matrix.md`.
 
 ## Workflow recipes
 
-Pick the closest matching recipe from `workflows/` (`paper-from-idea.md`,
-`paper-from-notes.md`, `revise-manuscript.md`, `journal-selection.md`,
-`target-journal-adaptation.md`, `literature-review.md`, `theory-paper.md`,
-`empirical-paper.md`, `systematic-review.md`, `nature-commentary.md`,
-`book-project.md`, `monograph-chapter.md`, `author-voice-calibration.md`,
-`corpus-profile-build.md`). These are recipes, not Skills -- they describe a
-stage order and default component set, not new logic. Adapt the recipe to
-what already exists (skip a stage whose artifact is already available and
-fresh) rather than following it mechanically.
+Workflow recipes are orchestration resources **owned by scholarly-agent**,
+not independent Skills of their own -- they ship inside this Skill's own
+package specifically so they resolve from inside its runtime boundary under
+every installation mode (full Suite, standalone scholarly-agent install,
+`.codex-plugin` load, release ZIP, or a host that only exposes the declared
+`skills/` tree). Never resolve them via a parent-directory path
+(`../../workflows/` or similar) -- that only happens to work when the whole
+repository root is visible next to `skills/`, which is not guaranteed and is
+exactly the class of bug that once made this orchestrator wrongly report a
+recipe as "missing" when it was only unreachable from where it was looking.
+
+Pick the closest matching recipe from `references/workflows/`:
+`references/workflows/paper-from-idea.md`,
+`references/workflows/paper-from-notes.md`,
+`references/workflows/revise-manuscript.md`,
+`references/workflows/journal-selection.md`,
+`references/workflows/target-journal-adaptation.md`,
+`references/workflows/literature-review.md`,
+`references/workflows/theory-paper.md`,
+`references/workflows/empirical-paper.md`,
+`references/workflows/systematic-review.md`,
+`references/workflows/nature-commentary.md`,
+`references/workflows/book-project.md`,
+`references/workflows/monograph-chapter.md`,
+`references/workflows/author-voice-calibration.md`,
+`references/workflows/corpus-profile-build.md`.
+These are recipes, not Skills -- they describe a stage order and default
+component set, not new logic. Adapt the recipe to what already exists (skip
+a stage whose artifact is already available and fresh) rather than
+following it mechanically.
+
+A theory paper whose target journal is already selected combines
+`references/workflows/theory-paper.md` with
+`references/workflows/target-journal-adaptation.md`: run the theory-paper
+stages (light-touch prior-theory evidence, then argument-architecture
+writing), then target-journal-adaptation's stages against the
+already-chosen journal -- journal-fit-engine performs adaptation only
+(confirm/refresh the profile, produce style context), never a fresh
+discovery/shortlist pass, since the venue is not in question.
+
+## Resolving a workflow recipe file
+
+Before ever reporting a workflow recipe as unavailable, actually inspect
+this Skill's own installed `references/workflows/` directory --
+`scripts/workflow_resolver.py`'s `resolve_workflow()` is the concrete
+procedure and returns exactly one of:
+
+- `RESOLVED` -- the file was found; proceed.
+- `WORKFLOW_SOURCE_MISSING` -- the requested name is not a workflow recipe
+  this orchestrator knows about at all. Safe to report immediately.
+- `WORKFLOW_RUNTIME_MISSING` -- the recipe is a real, known one, this
+  Skill's own `references/workflows/` directory was actually found and
+  read, and the specific file is confirmed absent from it. Only this case
+  may be reported as "the installed package is missing `<file>`" --
+  because only this case actually inspected the runtime and confirmed it.
+- `WORKFLOW_UNRESOLVABLE` -- `references/workflows/` itself could not be
+  located or read under the given install root. Report this as a
+  runtime-resolution / installation-visibility problem, never as the file
+  being missing -- repository/tag metadata saying the workflow exists is
+  not overridden by a lookup that never successfully inspected the
+  runtime.
 
 ## State, reuse, and freshness
 
@@ -133,6 +185,17 @@ those explicit calls.
 
 ## Reference index
 
-- `references/routing-matrix.md` -- which specialists a given intent needs.
+- `references/routing-matrix.md` -- which specialists a given intent needs,
+  and the shared error taxonomy (including the workflow-resolution codes).
 - `references/orchestration-state.md` -- state shape, freshness handling,
-  the final-quality gate, and the shared error taxonomy.
+  and the final-quality gate.
+- `references/workflows/` -- the fourteen workflow recipes themselves (see
+  "Workflow recipes" above); the runtime-canonical copy, resolvable from
+  inside this Skill's own package under every installation mode.
+- `scripts/workflow_resolver.py` -- resolves a workflow recipe from this
+  Skill's own installed runtime and classifies a failed lookup as
+  `WORKFLOW_SOURCE_MISSING` / `WORKFLOW_RUNTIME_MISSING` /
+  `WORKFLOW_UNRESOLVABLE` (see "Resolving a workflow recipe file" above).
+- `scripts/target_journal_adapter.py` -- the hard compatibility gate for
+  `TARGET_JOURNAL_PROFILE_V1` (see
+  `references/workflows/target-journal-adaptation.md`).

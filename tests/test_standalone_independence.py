@@ -48,3 +48,24 @@ def test_specialist_all_internal_references_resolve_within_own_directory(name):
     text = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
     for rel in re.findall(r"`((?:references|disciplines|assets)/[\w.\-/]+\.md)`", text):
         assert (skill_dir / rel).exists(), f"{name}: SKILL.md references missing file {rel}"
+
+
+def test_scholarly_agent_all_internal_references_resolve_within_own_directory():
+    """scholarly-agent is not in SPECIALISTS above because it is exempt from
+    SUITE_ONLY_PATH_RE (it legitimately coordinates shared/ and protocols/)
+    -- but its own workflow recipes are a different case: they are not
+    Suite-only shared resources, they are scholarly-agent's own bundled
+    content, so every references/workflows/*.md link in its SKILL.md must
+    resolve inside its own directory exactly like a specialist's
+    references/*.md links do. This is the regression guard for the
+    theory-paper.md packaging incident: it fails if SKILL.md ever points at
+    a workflow recipe that is not actually bundled inside
+    skills/scholarly-agent/ itself."""
+    skill_dir = ROOT / "skills" / "scholarly-agent"
+    text = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+    refs = re.findall(r"`((?:references|scripts)/[\w.\-/]+\.(?:md|py))`", text)
+    assert any(r.startswith("references/workflows/") for r in refs), (
+        "expected at least one references/workflows/*.md reference in scholarly-agent's SKILL.md"
+    )
+    for rel in refs:
+        assert (skill_dir / rel).exists(), f"scholarly-agent: SKILL.md references missing file {rel}"

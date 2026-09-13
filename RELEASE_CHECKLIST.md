@@ -19,6 +19,19 @@ This is the concrete procedure behind rule 97 / rule 145.
 - [ ] Each bundled component still installs and runs standalone (outside
       `skills/`, with no `../shared` or `../protocols` reference) --
       verified by `tests/test_standalone_independence.py`.
+- [ ] Every required workflow recipe (`scripts/workflow_manifest.
+      REQUIRED_WORKFLOWS`) exists at the runtime-canonical path
+      `skills/scholarly-agent/references/workflows/` -- never only at the
+      repository-root `workflows/` mirror. `python scripts/
+      sync_workflows.py --check` passes (also run as part of
+      `validate_suite.py`); if it reports drift, regenerate with
+      `python scripts/sync_workflows.py` and re-check, never hand-edit
+      `workflows/` directly.
+- [ ] `tests/test_workflow_packaging.py` and `tests/
+      test_workflow_install_smoke.py` pass -- these are the packaging
+      regression guard for the theory-paper.md runtime-visibility
+      incident (a recipe present in the repo/tag but unreachable from an
+      installed Skill's own runtime boundary).
 
 ## Package
 
@@ -28,6 +41,13 @@ This is the concrete procedure behind rule 97 / rule 145.
 - [ ] `release-manifest.json` inside the ZIP lists the exact suite version,
       component versions, source commits, protocol versions, file count, and
       a SHA-256 checksum, with no private machine paths.
+- [ ] Inspect the built ZIP directly (not just the source tree) and confirm
+      `skills/scholarly-agent/references/workflows/theory-paper.md` (and
+      every other required workflow recipe) is actually present inside it
+      -- e.g. `unzip -l dist/scholarly-agent-suite-v<VERSION>.zip | grep
+      references/workflows/`. Do not declare a release ready because the
+      repository contains the file; the acceptance condition is the built
+      artifact containing it.
 - [ ] Re-running packaging from a clean checkout of the same commit produces
       a ZIP with the same SHA-256 (deterministic ordering/timestamps).
 

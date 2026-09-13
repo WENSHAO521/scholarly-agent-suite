@@ -5,6 +5,128 @@ Suite versioning follows `README.md#component-versioning` /
 `shared/protocol-versioning.md`; component versions are tracked separately in
 `COMPONENTS.json`.
 
+## v1.2.1 -- 2026-09-13
+
+v1.2.1 PREPARED -- NOT PUBLISHED
+
+**Workflow packaging/runtime-visibility fix.** During an end-to-end
+theoretical-paper orchestration run, scholarly-agent reported that the
+installed package was missing `theory-paper.md`. That diagnosis was wrong
+in the specific way that matters: `workflows/theory-paper.md` existed on
+`master`, existed in tag `v1.2.0`, was already included by
+`package_suite.py`'s `RUNTIME_ALLOWLIST`, and was already documented in
+`skills/scholarly-agent/SKILL.md`. The real defect was architectural, not a
+missing file: `scholarly-agent`'s only path to any workflow recipe was
+`workflows/` *one level above its own Skill directory*
+(`skills/scholarly-agent/../../workflows/`), which only resolves when the
+whole repository root happens to be visible next to `skills/` -- not
+guaranteed for a standalone scholarly-agent install, a `.codex-plugin`
+load, a release ZIP extracted on its own, or a host that only exposes the
+declared `skills/` tree. The orchestrator also never actually inspected an
+installed runtime before reporting "missing," so a resolution failure and a
+genuine packaging gap were indistinguishable.
+
+### Added
+
+- **Runtime-canonical workflow location**:
+  `skills/scholarly-agent/references/workflows/` now holds all fourteen
+  workflow recipes as scholarly-agent's own bundled content -- it resolves
+  from inside this Skill's own runtime boundary under every installation
+  mode. `SKILL.md` now references every recipe by its in-package path
+  (`references/workflows/<name>.md`); no reference to a parent-directory
+  `workflows/` path remains.
+- `scripts/workflow_manifest.py` -- the single `REQUIRED_WORKFLOWS` source
+  of truth every test, `validate_suite.py`, and `sync_workflows.py` import,
+  replacing four independently-maintained copies of the same 14-item list.
+- `scripts/sync_workflows.py` -- regenerates (or `--check`s) the
+  repository-root `workflows/` directory as a generated documentation
+  mirror of the canonical copy above. `workflows/` is never hand-edited
+  again; there is exactly one manually-editable copy of each recipe.
+  `validate_suite.py` now fails if the mirror drifts from the canonical
+  source.
+- `skills/scholarly-agent/scripts/workflow_resolver.py` -- resolves a
+  workflow recipe from an installed scholarly-agent runtime and classifies
+  a failed lookup as one of `WORKFLOW_SOURCE_MISSING` (not a real recipe),
+  `WORKFLOW_RUNTIME_MISSING` (a real recipe, the runtime directory was
+  actually inspected, and the file is confirmed absent -- the only case
+  that may honestly be reported as "the installed package is missing
+  `<file>`"), or `WORKFLOW_UNRESOLVABLE` (the runtime directory itself
+  could not be located/read -- a resolution problem, never proof of
+  absence). Documented in `SKILL.md`'s new "Resolving a workflow recipe
+  file" section and `references/routing-matrix.md`'s new "Workflow-
+  resolution error taxonomy" section.
+- `references/workflows/theory-paper.md` gained a "Voice Engine emphasis"
+  section (construct definition, theoretical mechanism, proposition
+  architecture, causal/conceptual chain, boundary conditions, rival
+  explanations, theoretical contribution, falsifiability where applicable)
+  and a "Combining with target-journal-adaptation" section for the case
+  where a theory paper's target journal is already selected: corpus stays
+  a light-touch prior-theory sweep even with the adaptation stage added,
+  and journal-fit-engine performs adaptation only, never a fresh discovery
+  pass.
+- `evals/orchestration-cases.jsonl`: `theory-target-001` -- "Develop a
+  theoretical paper for an already-selected target journal," exercising
+  the combined `theory-paper` + `target-journal-adaptation` recipe with the
+  expected minimum specialist set (`scholarly-corpus-builder`,
+  `scholarly-voice-engine`, `journal-fit-engine`; the Adaptive Model Router
+  remains an optional execution layer). `tests/test_evals.py` asserts this
+  fixture's specialist set and combined-recipe framing directly.
+- Packaging regression tests (`tests/test_workflow_packaging.py`): every
+  required workflow recipe proven present in (1) the source runtime
+  boundary, (2) `package_suite.iter_runtime_files()`, (3) the built release
+  ZIP, (4) `release-manifest.json`, and (5) a standalone-copied
+  scholarly-agent package -- plus a negative test proving a genuinely
+  missing recipe is actually caught, and a drift guard between
+  `workflow_resolver.py`'s embedded recipe list and the shared manifest.
+- Install/runtime smoke test (`tests/test_workflow_install_smoke.py`):
+  builds the filesystem layout an installed scholarly-agent Skill actually
+  receives (no repository root, no top-level `workflows/`, no `shared/` or
+  `protocols/`) and resolves `SKILL.md`, the workflow index, and
+  `theory-paper.md` / `empirical-paper.md` / `target-journal-adaptation.md`
+  from inside it; includes a test that fails if a recipe is reachable only
+  via the repository-root mirror and not from the installed runtime, and a
+  test proving `WORKFLOW_UNRESOLVABLE` (not a false "missing") is reported
+  when the runtime directory itself is absent.
+- `tests/test_standalone_independence.py`: a new
+  `test_scholarly_agent_all_internal_references_resolve_within_own_directory`
+  check -- scholarly-agent's own `references/workflows/*.md` and
+  `scripts/*.py` links in `SKILL.md` must resolve inside its own directory,
+  the same completeness guarantee specialists already had.
+
+### Changed
+
+- `skills/scholarly-agent/SKILL.md`: "Workflow recipes" section rewritten
+  to state plainly that workflow recipes are orchestration resources owned
+  by scholarly-agent, not independent Skills, and to reference every recipe
+  by its in-package path.
+- `scripts/package_suite.py`, `scripts/validate_suite.py`,
+  `tests/test_workflows.py`: now import `REQUIRED_WORKFLOWS` from
+  `scripts/workflow_manifest.py` instead of maintaining separate copies of
+  the same list.
+- `README.md`, `RELEASE_CHECKLIST.md`: document the new canonical location,
+  the generated `workflows/` mirror and its drift check, and the new
+  regression/smoke tests. `RELEASE_CHECKLIST.md` adds an explicit "inspect
+  the built ZIP directly" step for `references/workflows/theory-paper.md`.
+
+### Known limitations
+
+- The repository-root `workflows/` mirror is retained for anyone browsing
+  the repo directly or following an existing link to it; it is generated
+  and drift-checked, never a second source of truth, but it does mean two
+  physical copies of each file still exist on disk (by design, not by
+  oversight -- see `scripts/sync_workflows.py`).
+- `skills/scholarly-agent/scripts/workflow_resolver.py` embeds its own
+  literal `KNOWN_WORKFLOWS` list rather than importing
+  `scripts/workflow_manifest.py`, because it must keep working when
+  scholarly-agent is installed completely standalone with no Suite
+  `scripts/` directory nearby. A dedicated test keeps the two lists in
+  sync; nothing prevents a future edit to one without the other except that
+  test.
+- This release does not change any component pin (`adaptive-model-router`
+  `0.3.0`, `scholarly-corpus-builder` `0.9.1`, `scholarly-voice-engine`
+  `1.1.0`, `journal-fit-engine` `0.4.0` all unchanged) -- it is a
+  Suite-internal packaging/documentation/orchestration fix only.
+
 ## v1.2.0 -- 2026-09-09
 
 v1.2.0 PUBLISHED

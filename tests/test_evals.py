@@ -93,3 +93,22 @@ def test_end_to_end_case_uses_all_four_components():
     endtoend = [row for row in all_fixtures() if row["category"] == "end_to_end"]
     assert endtoend, "no end_to_end fixture found"
     assert set(endtoend[0]["expected_components"]) == {"router", "corpus", "voice", "journal_fit"}
+
+
+def test_theory_paper_target_journal_fixture_has_expected_specialist_set():
+    """Theory-paper routing regression: 'develop a theoretical paper for an
+    already-selected target journal' must select scholarly-corpus-builder,
+    scholarly-voice-engine, and journal-fit-engine (adaptive-model-router
+    remains an optional execution layer, never a required fourth stage --
+    see references/routing-matrix.md's 'Why Router is always optional')."""
+    matches = [
+        row for row in load_jsonl(EVALS_DIR / "orchestration-cases.jsonl")
+        if row["category"] == "theory_paper_target_journal"
+    ]
+    assert matches, "no theory_paper_target_journal fixture found"
+    row = matches[0]
+    assert row["workflow_recipe"] == "theory-paper"
+    assert set(row["expected_components"]) == {"corpus", "voice", "journal_fit"}
+    assert "router" not in row["expected_components"]
+    assert row["expected_orchestrator_invoked"] is True
+    assert "target-journal-adaptation" in row["notes"]

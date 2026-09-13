@@ -8,17 +8,16 @@ from pathlib import Path
 
 import pytest
 
-ROOT = Path(__file__).resolve().parent.parent
-WORKFLOWS_DIR = ROOT / "workflows"
+from conftest import load_module
 
-REQUIRED_WORKFLOWS = [
-    "paper-from-idea.md", "paper-from-notes.md", "revise-manuscript.md",
-    "journal-selection.md", "target-journal-adaptation.md",
-    "literature-review.md", "theory-paper.md", "empirical-paper.md",
-    "systematic-review.md", "nature-commentary.md", "book-project.md",
-    "monograph-chapter.md", "author-voice-calibration.md",
-    "corpus-profile-build.md",
-]
+ROOT = Path(__file__).resolve().parent.parent
+workflow_manifest = load_module("workflow_manifest", "workflow_manifest.py")
+
+# Runtime-canonical location: inside scholarly-agent's own Skill package, so
+# it resolves from every installation mode (see workflow_manifest.py's
+# docstring for why this is not the repository-root workflows/ directory).
+WORKFLOWS_DIR = workflow_manifest.CANONICAL_WORKFLOWS_DIR
+REQUIRED_WORKFLOWS = workflow_manifest.REQUIRED_WORKFLOWS
 
 
 @pytest.mark.parametrize("filename", REQUIRED_WORKFLOWS)
@@ -56,3 +55,21 @@ def test_all_workflows_referenced_from_scholarly_agent_or_readme():
     for filename in REQUIRED_WORKFLOWS:
         stem = filename.replace(".md", "")
         assert stem in combined, f"no reference to workflow '{stem}' found in SKILL.md or README.md"
+
+
+def test_scholarly_agent_contains_all_required_workflows():
+    """Packaging regression guard (the theory-paper.md incident): every
+    required workflow recipe must be a real file inside scholarly-agent's
+    own Skill package, at the runtime-canonical path, and SKILL.md must
+    reference it by a path resolvable from inside that same package --
+    never by a parent-directory path that only works when the repository
+    root happens to be visible next to skills/."""
+    skill_md = (ROOT / "skills" / "scholarly-agent" / "SKILL.md").read_text(encoding="utf-8")
+    missing_source = workflow_manifest.missing_from(WORKFLOWS_DIR)
+    assert not missing_source, f"missing from source runtime boundary: {missing_source}"
+    for filename in REQUIRED_WORKFLOWS:
+        assert (WORKFLOWS_DIR / filename).is_file()
+        assert f"references/workflows/{filename}" in skill_md, (
+            f"SKILL.md does not reference references/workflows/{filename} "
+            "by its in-package path"
+        )
