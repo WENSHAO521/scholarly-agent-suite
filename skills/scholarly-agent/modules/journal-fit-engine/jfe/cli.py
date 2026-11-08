@@ -8,6 +8,8 @@ Commands:
     build-style-context     --query "..." | --issn ISSN [--official-requirements-json PATH]
                             [--observed-patterns-json PATH] [--article-type TYPE]
     build-journal-profile   --query "..." | --issn ISSN [--manuscript-json PATH]
+    posi-lookup             (--issn ISSN ... | --title "...") (--snapshot-dir DIR | --cache-dir DIR
+                            [--snapshot ID])
 """
 from __future__ import annotations
 
@@ -26,6 +28,7 @@ from jfe.indexing import assess_indexing
 from jfe.integrity import screen as integrity_screen
 from jfe.journal_evidence import EvidenceLookupError, lookup_by_issn, lookup_by_name
 from jfe.manuscript_profile import ManuscriptProfile, ProfileError
+from jfe.posi import PosiError, PosiSnapshot, fetch_snapshot
 from jfe.style_context import StyleContextError, from_journal_evidence
 from jfe.target_journal_profile import TargetJournalProfileError, build_target_journal_profile
 
@@ -168,6 +171,33 @@ def cmd_build_journal_profile(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_posi_lookup(args: argparse.Namespace) -> int:
+    """Look a journal up in one POSI snapshot: a local snapshot directory,
+    or a snapshot downloaded (and checksum-verified) into --cache-dir."""
+    if not args.issn and not args.title:
+        print(json.dumps({"error": "provide --issn or --title"}))
+        return 1
+    try:
+        if args.snapshot_dir:
+            snapshot = PosiSnapshot.from_directory(args.snapshot_dir)
+        elif args.cache_dir:
+            snapshot = fetch_snapshot(_client(), args.cache_dir, snapshot=args.snapshot)
+        else:
+            print(json.dumps({"error": "provide --snapshot-dir or --cache-dir"}))
+            return 1
+    except (PosiError, HttpError) as exc:
+        print(json.dumps({"error": f"POSI snapshot unavailable: {exc}"}))
+        return 1
+    record = snapshot.lookup(issns=args.issn or [], title=args.title)
+    if record is None:
+        _print_json({"found": False, "provenance": snapshot.provenance(),
+                     "note": "No exact ISSN or title match in this POSI snapshot. Absence from POSI "
+                             "is not evidence about the journal's quality or indexing elsewhere."})
+        return 0
+    _print_json({"found": True, "record": record.as_dict()})
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
@@ -202,6 +232,14 @@ def build_parser() -> argparse.ArgumentParser:
                             help="Optional: evaluate fit_assessment against this manuscript profile; "
                                  "omitted, fit_assessment is NOT_ASSESSED")
     profile_p.set_defaults(func=cmd_build_journal_profile)
+
+    posi_p = sub.add_parser("posi-lookup", help="Look a journal up in a POSI data snapshot")
+    posi_p.add_argument("--issn", action="append", help="May be given more than once")
+    posi_p.add_argument("--title", help="Exact title (normalized); no fuzzy matching")
+    posi_p.add_argument("--snapshot-dir", help="A local POSI snapshot directory")
+    posi_p.add_argument("--cache-dir", help="Download the snapshot here (verified against SHA256SUMS)")
+    posi_p.add_argument("--snapshot", help="Snapshot id; default is POSI's current snapshot")
+    posi_p.set_defaults(func=cmd_posi_lookup)
 
     return parser
 

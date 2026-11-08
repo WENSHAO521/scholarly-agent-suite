@@ -1,0 +1,18 @@
+{
+  "total": 1,
+  "results": [
+    {
+      "id": "doaj-journal-xyz",
+      "bibjson": {
+        "title": "Regional Economics Open Journal",
+        "publisher": {"name": "Open Regional Press"},
+        "identifier": [
+          {"type": "pissn", "id": "2222-3333"},
+          {"type": "eissn", "id": "2222-4444"}
+        ],
+        "license": [{"type": "CC BY", "url": "https://creativecommons.org/licenses/by/4.0/"}],
+        "oa_start": {"year": 2015}
+      }
+    }
+  ]
+}

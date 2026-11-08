@@ -17,6 +17,33 @@ journal's quartile can differ by category (a journal cross-listed in two JCR
 categories may be Q1 in one and Q3 in the other). Never state a bare "Q1"
 without naming the system and category.
 
+## POSI (Panorama Open Scholarly Index)
+
+POSI publishes open, versioned journal data (CC BY 4.0) that this module can
+read through `jfe/posi.py`: a Citation Ranking (PNCI, category rank,
+percentile, Citation Quartile, POSI Zone) for about 158,000 journals, and a
+small Core Collection with PQF grades, AJR Ratings, and APCs that cite their
+source page and check date. Rules for using it:
+
+- Report a POSI quartile as **POSI Citation Quartile C-Q*n* in <POSI
+  category> (metric year, methodology version)**. It is not a JCR, SJR, or
+  CiteScore quartile and never substitutes for one; those stay
+  `cannot_verify`.
+- Only `citation_ranking_status: official` is a POSI ranking result.
+  `provisional`, `observation`, and the not-ranked statuses are reported
+  as such.
+- Cite the snapshot id (and the release it follows) with every POSI claim.
+  Snapshots are immutable, so the claim stays checkable.
+- **Conflict of interest.** POSI is operated by Panorama Scholarly Group,
+  which also publishes journals in POSI's Core Collection. For those
+  journals, state this to the user, treat POSI's rating as the operator's
+  own assessment, and never let it be the sole basis for recommending the
+  journal.
+- Absence from POSI is not evidence about a journal's quality or its
+  indexing elsewhere.
+- Like any metric, POSI values are secondary strategy variables, never the
+  primary basis for a recommendation.
+
 ## Impact metrics
 
 Impact Factor, CiteScore, SJR, h-index, and similar metrics may be included

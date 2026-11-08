@@ -66,7 +66,7 @@ Example prompts:
 | [Model Router](skills/scholarly-agent/modules/adaptive-model-router/MODULE.md) | Execution planning | Decides how a large task is executed: model tier, reasoning effort, when to delegate to subagents, and when escalation is justified. Used only when the host can actually dispatch. |
 | [Corpus Builder](skills/scholarly-agent/modules/scholarly-corpus-builder/MODULE.md) | Research evidence | Retrieves open scholarly literature (OpenAlex, Crossref, PubMed/PMC, arXiv, DOAJ, your own files) with provenance, and builds discipline, journal, historical, and author-voice style profiles. |
 | [Voice Engine](skills/scholarly-agent/modules/scholarly-voice-engine/MODULE.md) | Writing and argument | Writes and edits discipline-aware, genre-aware academic prose, calibrates claims, checks citation integrity, and keeps long projects such as books consistent. |
-| [Journal Fit](skills/scholarly-agent/modules/journal-fit-engine/MODULE.md) | Publication strategy | Profiles the manuscript, generates candidate journals, applies hard filters (scope, APC, open access, indexing), assesses fit with evidence, and produces a submission strategy. |
+| [Journal Fit](skills/scholarly-agent/modules/journal-fit-engine/MODULE.md) | Publication strategy | Profiles the manuscript, generates candidate journals, applies hard filters (scope, APC, open access, indexing), assesses fit with evidence, and produces a submission strategy. Can read open [POSI](https://github.com/WENSHAO521/posi-data) journal data (citation ranking for about 158,000 journals) as an extra, clearly labelled evidence source. |
 
 The dispatcher itself lives in
 [`SKILL.md`](skills/scholarly-agent/SKILL.md). Modules keep separate

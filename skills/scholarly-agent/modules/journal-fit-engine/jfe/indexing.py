@@ -12,6 +12,13 @@ DOAJ inclusion is the one real, freely queryable indexing signal available
 (already fetched by jfe.journal_evidence as evidence.is_in_doaj) and is
 reported as `officially_verified` accordingly, with source and freshness
 attached.
+
+POSI (jfe.posi) is an optional second free signal: pass a PosiRecord as
+`posi=` and a "POSI" entry is added. It is `officially_verified` only when
+POSI's own citation ranking status is `official`; its quartile is always
+labelled as POSI's Citation Quartile with category and year, never as a
+JCR/SJR/CiteScore quartile, and POSI's conflict-of-interest disclosure for
+journals published by its operator is carried in the note.
 """
 from __future__ import annotations
 
@@ -52,7 +59,29 @@ class IndexingAssessment:
         }
 
 
-def assess_indexing(evidence: JournalEvidence, freshness: Optional[str] = None) -> IndexingAssessment:
+def _posi_entry(posi) -> IndexingEntry:
+    value = {
+        "posi_id": posi.posi_id,
+        "citation_ranking_status": posi.citation_ranking_status,
+        "citation_quartile": posi.quartile_label(),
+        "citation_percentile": posi.citation_percentile,
+        "posi_zone": posi.posi_zone if posi.zone_status == "official" else None,
+        "in_core_collection": posi.in_core_collection,
+        "ajr_rating": posi.ajr_rating if posi.ajr_rating_status == "official" else None,
+    }
+    note_parts = ["POSI's own open metrics, not JCR/SJR/CiteScore."]
+    note_parts.extend(posi.disclosures())
+    return IndexingEntry(
+        name="POSI",
+        state=OFFICIALLY_VERIFIED if (posi.ranking_is_official or posi.in_core_collection) else CANNOT_VERIFY,
+        value=value,
+        source=f"posi:{posi.provenance.get('snapshot')}",
+        freshness=posi.ranking_snapshot_date or posi.provenance.get("data_cutoff"),
+        note=" ".join(note_parts),
+    )
+
+
+def assess_indexing(evidence: JournalEvidence, freshness: Optional[str] = None, posi=None) -> IndexingAssessment:
     entries = [
         IndexingEntry(
             name="DOAJ",
@@ -78,4 +107,6 @@ def assess_indexing(evidence: JournalEvidence, freshness: Optional[str] = None) 
             "authoritative source and always name the year and category -- a bare quartile letter "
             "is meaningless (see references/indexing-metrics.md).",
         ))
+    if posi is not None:
+        entries.append(_posi_entry(posi))
     return IndexingAssessment(entries)

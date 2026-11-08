@@ -96,6 +96,14 @@ pytest tests/
   (envelope -> journal fit), both added in v2.0.0 after the merge exposed
   that neither producer/consumer pair actually conformed to the shared
   schema.
+- `tests/modules/scb/`, `tests/modules/jfe/`, `tests/modules/voice/` -- each
+  module's own unit tests, merged from its former repository in v2.0.0
+  (fixtures included). Tests of the former repositories' own packaging and
+  `validate_skill.py` scripts were not merged, since those scripts are not
+  part of this repository. `tests/modules/jfe/test_jfe_posi.py` covers the
+  POSI evidence source against a fixture cut from a real POSI snapshot.
+- `evals/modules/<module>/` -- each module's own eval cases, merged from its
+  former repository; `tests/test_evals.py` checks they parse.
 - `tests/test_workflow_packaging.py`, `test_workflow_install_smoke.py`,
   `test_packaging.py`, `test_diagrams.py` -- release ZIP contents,
   determinism, and installed-Skill layout.
@@ -130,9 +138,9 @@ pinned `create_system`.
 - Live evidence retrieval (current journal metrics, APC policy) depends on
   the host's network and tool access at runtime; the Skill adds no
   connectors.
-- Each module's own historical tests and evals stayed in its former
-  repository and were not merged; module correctness here is covered by the
-  suite tests above.
+- POSI lookups need a downloaded snapshot (`jfe.cli posi-lookup
+  --cache-dir`, about 13 MB) or network access; there is no live per-journal
+  POSI API.
 
 ## History: the v1 multi-Skill suite
 

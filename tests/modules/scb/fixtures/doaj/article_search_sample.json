@@ -1,0 +1,29 @@
+{
+  "total": 1,
+  "page": 1,
+  "pageSize": 10,
+  "results": [
+    {
+      "id": "doaj-article-abc123",
+      "bibjson": {
+        "title": "Open Access Patterns in Regional Economics",
+        "abstract": "We examine open-access publication trends in regional economics journals.",
+        "year": "2021",
+        "author": [{"name": "Maria Alvarez"}],
+        "identifier": [
+          {"type": "doi", "id": "10.7777/example.1111"},
+          {"type": "issn", "id": "2222-3333"}
+        ],
+        "journal": {
+          "title": "Regional Economics Open Journal",
+          "publisher": "Open Regional Press",
+          "volume": "8",
+          "number": "1",
+          "issns": ["2222-3333"],
+          "license": [{"type": "CC BY", "url": "https://creativecommons.org/licenses/by/4.0/"}]
+        },
+        "link": [{"type": "fulltext", "url": "https://reoj.example.org/articles/abc123"}]
+      }
+    }
+  ]
+}

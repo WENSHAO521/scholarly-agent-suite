@@ -1,0 +1,8 @@
+{
+  "status": "ok",
+  "response-date": "2026-09-08 22:16:02",
+  "request": {"format": "json", "ids": ["17375194"], "idtype": "pmid"},
+  "records": [
+    {"doi": "10.1371/journal.pone.0000308", "pmcid": "PMC1817752", "pmid": 17375194, "requested-id": "17375194"}
+  ]
+}

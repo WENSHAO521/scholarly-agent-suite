@@ -202,8 +202,8 @@ putting its module directory on `sys.path`:
   resolution, deduplication, style analytics, profile compilation
   (`import scb`).
 - `modules/journal-fit-engine/jfe/` -- manuscript profiling, hard filters,
-  fit model, `TARGET_JOURNAL_PROFILE_V1` and `JOURNAL_STYLE_CONTEXT_V1`
-  producers (`import jfe`).
+  fit model, POSI snapshot lookup (`jfe/posi.py`), `TARGET_JOURNAL_PROFILE_V1`
+  and `JOURNAL_STYLE_CONTEXT_V1` producers (`import jfe`).
 - `modules/scholarly-voice-engine/scripts/voice/` -- profile merge,
   continuity ledger, prose audit, journal-context consumer
   (`import scripts.voice`; load it separately from this Skill's own

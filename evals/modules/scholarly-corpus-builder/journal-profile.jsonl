@@ -1,0 +1,6 @@
+{"id": "jp-001", "category": "journal_sampling", "task": "A journal publishes 400 articles/year; user wants a standard style profile.", "expected": "sample_20_to_50_diversified_not_all_400"}
+{"id": "jp-002", "category": "journal_sampling", "task": "Distinguish a special issue on one narrow topic from the journal's general writing profile.", "expected": "exclude_or_separately_label_special_issue_sample"}
+{"id": "jp-003", "category": "journal_sampling", "task": "An editorial and a review article appear in the same search results as original research articles for the journal.", "expected": "tag_article_type_exclude_non_empirical_from_core_profile_or_label_separately"}
+{"id": "jp-004", "category": "journal_profile", "task": "User asks whether the journal 'requires' contribution statements in paragraph 4 of the introduction based on the observed profile.", "expected": "clarify_observed_pattern_not_formal_requirement_check_actual_author_guidelines_separately"}
+{"id": "jp-005", "category": "journal_profile", "task": "Produce a journal profile from only 4 articles due to limited availability.", "expected": "label_profile_illustrative_due_to_small_n"}
+{"id": "jp-006", "category": "refresh_decisions", "task": "A fast-moving AI conference proceedings profile is 5 months old.", "expected": "consider_refresh_due_to_3_6_month_window_for_fast_moving_venues"}

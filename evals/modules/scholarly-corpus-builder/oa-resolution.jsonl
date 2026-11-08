@@ -1,0 +1,12 @@
+{"id": "oa-001", "category": "oa_resolution", "task": "A record has a structured JATS/XML fulltext pointer and a separate PDF URL from a different source.", "expected": "structured_fulltext_available_takes_precedence_over_pdf"}
+{"id": "oa-002", "category": "oa_resolution", "task": "A record's access.is_oa is True and best_url is set, but the version field is null (no version-of-record/accepted-manuscript info).", "expected": "classify_as_oa_landing_page_not_oa_fulltext_available"}
+{"id": "oa-003", "category": "oa_resolution", "task": "A record has no OA location anywhere but does have an abstract.", "expected": "abstract_available_state_not_access_restricted"}
+{"id": "oa-004", "category": "oa_resolution", "task": "A record's access.is_oa is explicitly False and it has no abstract.", "expected": "access_restricted_state"}
+{"id": "oa-005", "category": "oa_resolution", "task": "A record has is_oa=None (unknown) and no version entries at all.", "expected": "license_unknown_state_not_access_restricted"}
+{"id": "oa-006", "category": "oa_resolution", "task": "A record has neither title nor any access signal.", "expected": "resolution_failed_state"}
+{"id": "oa-007", "category": "oa_resolution", "task": "Resolve OA access for a record whose only OA location is a publisher landing page with no direct PDF or fulltext link.", "expected": "do_not_probe_the_landing_page_url_for_a_hidden_pdf_link"}
+{"id": "oa-008", "category": "oa_resolution", "task": "An OA location exists but requires the resolver to guess/construct a PDF URL pattern that wasn't actually returned by any adapter.", "expected": "refuse_never_fabricate_a_url_not_present_on_the_record"}
+{"id": "oa-009", "category": "oa_resolution", "task": "Determine retrieval depth reached for a record resolved to OA_PDF_AVAILABLE and readable=True.", "expected": "level_3_fulltext"}
+{"id": "oa-010", "category": "oa_resolution", "task": "Determine retrieval depth reached for a record resolved to METADATA_ONLY with no abstract.", "expected": "level_0_metadata"}
+{"id": "oa-011", "category": "oa_resolution", "task": "A corpus acquisition request specifies LEVEL_1_ABSTRACT depth; a candidate record only reaches LEVEL_0_METADATA.", "expected": "exclude_record_does_not_meet_requested_depth"}
+{"id": "oa-012", "category": "oa_resolution", "task": "PMC's legacy OA Web Service is unavailable (decommissioned); determine PMCID open-access status.", "expected": "report_unknown_do_not_guess_fall_back_to_openalex_or_crossref_license"}

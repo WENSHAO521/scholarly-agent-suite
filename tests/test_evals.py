@@ -112,3 +112,30 @@ def test_theory_paper_target_journal_fixture_has_expected_specialist_set():
     assert "router" not in row["expected_components"]
     assert row["expected_orchestrator_invoked"] is True
     assert "target-journal-adaptation" in row["notes"]
+
+
+# --- Module evals merged from the former component repositories (v2.0.0) ---
+
+MODULE_EVALS_DIR = ROOT / "evals" / "modules"
+MODULE_NAMES = [
+    "adaptive-model-router", "scholarly-corpus-builder",
+    "scholarly-voice-engine", "journal-fit-engine",
+]
+
+
+def test_every_module_has_merged_evals():
+    for name in MODULE_NAMES:
+        files = sorted((MODULE_EVALS_DIR / name).glob("*.jsonl"))
+        assert files, f"evals/modules/{name}/ has no .jsonl eval files"
+
+
+def test_module_eval_files_are_valid_jsonl():
+    for path in sorted(MODULE_EVALS_DIR.rglob("*.jsonl")):
+        rows = [l for l in path.read_text(encoding="utf-8").splitlines() if l.strip()]
+        assert rows, f"{path.relative_to(ROOT)} is empty"
+        for i, line in enumerate(rows, 1):
+            try:
+                row = json.loads(line)
+            except json.JSONDecodeError as exc:
+                raise AssertionError(f"{path.relative_to(ROOT)} line {i}: {exc}") from exc
+            assert isinstance(row, dict), f"{path.relative_to(ROOT)} line {i} is not an object"

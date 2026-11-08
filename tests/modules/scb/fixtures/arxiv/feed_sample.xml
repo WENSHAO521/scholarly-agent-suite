@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom" xmlns:opensearch="http://a9.com/-/spec/opensearch/1.1/" xmlns:arxiv="http://arxiv.org/schemas/atom">
+  <opensearch:totalResults>1</opensearch:totalResults>
+  <entry>
+    <id>http://arxiv.org/abs/2301.12345v2</id>
+    <updated>2023-02-01T00:00:00Z</updated>
+    <published>2023-01-30T00:00:00Z</published>
+    <title>Scaling Laws for Example Neural Networks</title>
+    <summary>We study scaling behavior in example neural networks and find regular patterns.</summary>
+    <author><name>Ada Researcher</name></author>
+    <author><name>Bob Scientist</name></author>
+    <arxiv:doi>10.1234/arxiv.9999</arxiv:doi>
+    <arxiv:journal_ref>Proc. Example Conf. 2023</arxiv:journal_ref>
+    <category term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <arxiv:primary_category xmlns:arxiv="http://arxiv.org/schemas/atom" term="cs.LG" scheme="http://arxiv.org/schemas/atom"/>
+    <link href="http://arxiv.org/abs/2301.12345v2" rel="alternate" type="text/html"/>
+    <link title="pdf" href="http://arxiv.org/pdf/2301.12345v2" rel="related" type="application/pdf"/>
+  </entry>
+</feed>

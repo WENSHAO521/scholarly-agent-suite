@@ -137,7 +137,15 @@ inferred), a `JOURNAL_STYLE_CONTEXT_V1` protocol builder
 `TARGET_JOURNAL_PROFILE_V1` protocol builder (`target_journal_profile.py`)
 that composes evidence/APC-OA/fit/indexing results already computed by the
 modules above into one canonical resolved-candidate envelope for
-downstream orchestration. A `MANUSCRIPT_PROFILE_V1` envelope from the voice
+downstream orchestration. `posi.py` reads an immutable, checksum-verified
+POSI (Panorama Open Scholarly Index) snapshot as an optional second free
+evidence source: POSI's own Citation Quartile and Zone with category and
+year, Core Collection ratings, and sourced APCs, which
+`indexing.assess_indexing(..., posi=record)` adds as a "POSI" entry and
+`posi.apply_to_evidence()` uses only to fill gaps, never to overwrite. Its
+reporting rules, including the conflict-of-interest disclosure for journals
+POSI's operator publishes, are in
+[references/indexing-metrics.md](references/indexing-metrics.md). A `MANUSCRIPT_PROFILE_V1` envelope from the voice
 module or the user enters through
 `jfe.manuscript_profile.from_manuscript_profile_v1()`, which maps the
 envelope's field names and article types onto this module's own profile (see

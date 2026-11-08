@@ -72,6 +72,30 @@ etc.): those names no longer register as Skills.
 - New `tests/test_e2e_module_handoffs.py` drives both handoffs with real
   module code, including the real journal-fit model.
 
+### Added
+
+- **Module tests and evals merged in.** 469 unit tests from the former
+  component repositories now live in `tests/modules/{scb,jfe,voice}/` (file
+  names prefixed by module to avoid collisions; fixtures included), and 377
+  eval cases in `evals/modules/<module>/`. `tests/conftest.py` puts the
+  module engines on `sys.path`. Not merged: each former repository's tests
+  of its own `package_runtime.py` / `validate_skill.py`, which do not exist
+  here. The router module has evals only; it never had unit tests.
+- **POSI as a journal-fit evidence source** (`jfe/posi.py`). Reads an
+  immutable POSI snapshot (from a local directory, or downloaded from
+  data.posi.panorama-sg.com with GitHub release assets as fallback, verified
+  against the snapshot's SHA256SUMS and cached). Exact ISSN or title lookup
+  only; ambiguous titles return no match. Reports POSI's Citation Quartile
+  only with its POSI category, metric year, and methodology version, never
+  as a JCR/SJR/CiteScore quartile; treats only `official` ranking status as
+  verified; cites the snapshot with every result; adds a conflict-of-interest
+  disclosure for journals published by POSI's operator, Panorama Scholarly
+  Group. `indexing.assess_indexing(..., posi=)` adds a "POSI" entry,
+  `apply_to_evidence()` fills missing OA/DOAJ/APC fields without
+  overwriting, and `jfe.cli posi-lookup` exposes it. Rules documented in the
+  module's `references/indexing-metrics.md`. 32 tests against a fixture cut
+  from real snapshot 2026-11-08.
+
 ### Removed
 
 - `scripts/sync_components.py`, `scripts/component-sources.json`,
