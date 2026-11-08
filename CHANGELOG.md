@@ -96,6 +96,19 @@ etc.): those names no longer register as Skills.
   module's `references/indexing-metrics.md`. 32 tests against a fixture cut
   from real snapshot 2026-11-08.
 
+- **Automatic packaging and publishing.** `.github/workflows/release.yml`
+  now runs on every push to `master` (and on `v*` tags and manual dispatch):
+  if release `v<VERSION>` does not exist, it validates, tests, builds the
+  runtime ZIP twice and requires identical SHA-256, and publishes the release
+  with the ZIP, `release-manifest.json`, `SHA256SUMS`, and the CHANGELOG
+  section as notes (new `scripts/release_notes.py`). It never overwrites an
+  existing release and rejects a tag that does not match `VERSION`. Tested in
+  `tests/test_release_automation.py`.
+- **New "how it works" flowchart** (`assets/orchestration-flowchart.svg`),
+  redrawn for the single-Skill dispatcher: three dispatch paths, the
+  multi-module workflow stages, the six-check quality gate with one repair
+  pass, and the three outcomes.
+
 ### Removed
 
 - `scripts/sync_components.py`, `scripts/component-sources.json`,

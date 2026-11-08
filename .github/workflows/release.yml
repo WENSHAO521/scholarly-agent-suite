@@ -1,12 +1,32 @@
 name: Release
 
+# Automatic packaging and publishing.
+#
+# Every push to master checks whether the version in VERSION already has a
+# GitHub release. If it does, nothing happens. If it does not, the workflow
+# validates, tests, builds the runtime ZIP twice to prove it is
+# byte-deterministic, and publishes release v<VERSION> (creating the tag on
+# the pushed commit) with the CHANGELOG section as release notes.
+#
+# So releasing is: bump VERSION (+ .codex-plugin/plugin.json and
+# COMPONENTS.json, which validate_suite.py checks), add a `## v<VERSION>`
+# CHANGELOG section, and merge to master. Pushing a `v*` tag by hand still
+# works and publishes that tag. An existing release is never overwritten.
+
 on:
   push:
+    branches:
+      - master
     tags:
       - "v*"
+  workflow_dispatch:
 
 permissions:
   contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
 
 jobs:
   release:
@@ -20,42 +40,75 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install test dependencies
-        run: python -m pip install --quiet pytest
-
-      - name: Verify tag matches VERSION
+      - name: Decide whether to release
+        id: decide
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          tag="${GITHUB_REF_NAME#v}"
-          version="$(cat VERSION | tr -d '[:space:]')"
-          if [ "$tag" != "$version" ]; then
-            echo "Tag v$tag does not match VERSION ($version)" >&2
+          version="$(tr -d '[:space:]' < VERSION)"
+          tag="v${version}"
+          if [ "${GITHUB_REF_TYPE}" = "tag" ] && [ "${GITHUB_REF_NAME}" != "${tag}" ]; then
+            echo "Tag ${GITHUB_REF_NAME} does not match VERSION (${version})" >&2
             exit 1
           fi
+          if gh release view "${tag}" >/dev/null 2>&1; then
+            echo "Release ${tag} already exists -- nothing to publish."
+            echo "publish=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "Release ${tag} does not exist yet -- publishing."
+            echo "publish=true" >> "$GITHUB_OUTPUT"
+          fi
+          echo "tag=${tag}" >> "$GITHUB_OUTPUT"
+          echo "version=${version}" >> "$GITHUB_OUTPUT"
+
+      - name: Install test dependencies
+        if: steps.decide.outputs.publish == 'true'
+        run: python -m pip install --quiet pytest
 
       - name: Suite acceptance-criteria validation
+        if: steps.decide.outputs.publish == 'true'
         run: python scripts/validate_suite.py
 
       - name: Unit + integration tests
-        run: python -m pytest tests/ -v
+        if: steps.decide.outputs.publish == 'true'
+        run: python -m pytest tests/ -q
 
-      - name: Build runtime package
-        run: python scripts/package_suite.py
+      - name: Release notes from CHANGELOG
+        if: steps.decide.outputs.publish == 'true'
+        run: python scripts/release_notes.py "${{ steps.decide.outputs.version }}" > release-notes.md
 
-      - name: Refuse to overwrite an existing release
+      - name: Build runtime package (twice, must be byte-identical)
+        if: steps.decide.outputs.publish == 'true'
         run: |
-          if gh release view "${GITHUB_REF_NAME}" >/dev/null 2>&1; then
-            echo "Release ${GITHUB_REF_NAME} already exists -- refusing to overwrite." >&2
+          python scripts/package_suite.py
+          first="$(sha256sum dist/scholarly-agent-suite-v*.zip | cut -d' ' -f1)"
+          mv dist/release-manifest.json release-manifest.first.json
+          rm dist/scholarly-agent-suite-v*.zip
+          python scripts/package_suite.py
+          second="$(sha256sum dist/scholarly-agent-suite-v*.zip | cut -d' ' -f1)"
+          rm release-manifest.first.json
+          if [ "${first}" != "${second}" ]; then
+            echo "Packaging is not deterministic: ${first} != ${second}" >&2
             exit 1
           fi
-        env:
-          GH_TOKEN: ${{ github.token }}
+          (cd dist && sha256sum scholarly-agent-suite-v*.zip release-manifest.json > SHA256SUMS)
+          cat dist/SHA256SUMS
 
       - name: Publish GitHub release
+        if: steps.decide.outputs.publish == 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "${GITHUB_REF_NAME}" \
+          tag="${{ steps.decide.outputs.tag }}"
+          # Re-check right before publishing: never overwrite a release.
+          if gh release view "${tag}" >/dev/null 2>&1; then
+            echo "Release ${tag} appeared while this run was building -- refusing to overwrite." >&2
+            exit 1
+          fi
+          gh release create "${tag}" \
             dist/scholarly-agent-suite-v*.zip \
             dist/release-manifest.json \
-            --title "${GITHUB_REF_NAME}" \
-            --notes "See CHANGELOG.md for release notes. See release-manifest.json for exact packaged component versions, source commits, and the ZIP's SHA-256 checksum."
+            dist/SHA256SUMS \
+            --target "${GITHUB_SHA}" \
+            --title "Scholarly Agent ${tag}" \
+            --notes-file release-notes.md

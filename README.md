@@ -85,7 +85,7 @@ carries hard constraints (APC limits, word counts, open-access
 requirements) forward, allows one bounded repair pass, and ends in one of
 three honest states: `COMPLETE`, `COMPLETE_WITH_LIMITATIONS`, or `BLOCKED`.
 
-![Flowchart of the dispatcher's decision process: check whether two or more modules are genuinely needed, select a workflow recipe, reuse fresh artifacts, propagate hard constraints, load the minimal module set, allow one bounded repair pass, then apply a final quality gate that branches into COMPLETE, COMPLETE_WITH_LIMITATIONS, or a BLOCKED state.](assets/orchestration-flowchart.svg)
+![How a request is handled: the dispatcher asks what the deliverable is and which modules it needs, then answers directly, loads one module, or runs a multi-module workflow that selects a recipe, reuses fresh artifacts, carries hard constraints, runs the stages through versioned protocols, and ends at a six-check quality gate with at most one repair pass and an outcome of COMPLETE, COMPLETE_WITH_LIMITATIONS, or BLOCKED.](assets/orchestration-flowchart.svg)
 
 Modules hand work to each other through ten versioned JSON Schemas in
 [`protocols/`](skills/scholarly-agent/protocols/): `EXECUTION_POLICY_V1`,
@@ -154,8 +154,10 @@ Everything, including all four modules, is developed in this repository.
 Until v1.2.1 the modules were separate Skills synced from their own
 repositories; v2.0.0 merged them (see [`CHANGELOG.md`](CHANGELOG.md)).
 Layout rules, versioning, testing, packaging, and known limitations are in
-[`docs/development.md`](docs/development.md), and the release procedure is
-in [`RELEASE_CHECKLIST.md`](RELEASE_CHECKLIST.md).
+[`docs/development.md`](docs/development.md). Releases are packaged and
+published automatically: merging a new `VERSION` to `master` builds the
+runtime ZIP and publishes it as a GitHub release (see
+[`RELEASE_CHECKLIST.md`](RELEASE_CHECKLIST.md)).
 
 ## Roadmap
 
