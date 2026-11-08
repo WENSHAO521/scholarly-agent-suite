@@ -1,24 +1,76 @@
 # Scholarly Agent Suite
 
-A modular cross-disciplinary academic AI agent suite for research execution,
-scholarly corpus construction, academic writing, author voice calibration,
-and evidence-backed publication strategy.
+**English** · [繁體中文](README.zh-TW.md)
 
-This is **not** an AI paper generator, an automatic publication machine, or a
-journal-acceptance predictor. It is an integration, coordination, and
-distribution layer over four independently maintained specialist Skills, plus
-one small orchestrator.
+An evidence-first AI research assistant for academic work in any discipline.
+It helps you go from an idea, a pile of notes, or a draft manuscript to a
+well-argued paper and a defensible submission plan, while keeping every
+citation, metric, and claim traceable to a real source.
 
-## Why a Suite
+The Suite is one installable package made of five cooperating Agent Skills:
+a small orchestrator that plans the work, and four specialists that each own
+one part of the scholarly process.
 
-Each capability below already works as a standalone Skill. The Suite does not
-replace them or merge them into one giant Skill -- it packages them together,
-gives them a shared vocabulary and shared data contracts, and adds a thin
-orchestrator so a genuinely multi-stage scholarly task (e.g. "turn this idea
-into a paper and find a journal") does not require the user to manually chain
-four separate Skills. The design principle is: **integrate, do not collapse.**
+> **What it is not.** It is not a one-click paper generator, it does not
+> predict acceptance, and it never invents citations, DOIs, quotations,
+> journal metrics, or corpus statistics. See [Integrity
+> guarantees](#integrity-guarantees).
 
-## Architecture
+## What you can ask it
+
+Ask in plain language. The orchestrator picks the matching workflow recipe
+and calls only the specialists that recipe actually needs.
+
+| You want to... | Workflow recipe | Specialists involved |
+|---|---|---|
+| Turn a research idea into a manuscript | [paper-from-idea](skills/scholarly-agent/references/workflows/paper-from-idea.md) | (Corpus), Voice, (Journal Fit) |
+| Turn notes or fragments into a paper | [paper-from-notes](skills/scholarly-agent/references/workflows/paper-from-notes.md) | (Corpus), Voice, (Journal Fit) |
+| Write an empirical paper (IMRaD and variants) | [empirical-paper](skills/scholarly-agent/references/workflows/empirical-paper.md) | Corpus, Voice |
+| Write a theoretical or conceptual paper | [theory-paper](skills/scholarly-agent/references/workflows/theory-paper.md) | Corpus, Voice |
+| Revise a manuscript, including reviewer responses | [revise-manuscript](skills/scholarly-agent/references/workflows/revise-manuscript.md) | Voice, (Corpus), (Journal Fit) |
+| Write a narrative literature review | [literature-review](skills/scholarly-agent/references/workflows/literature-review.md) | Corpus, Voice |
+| Run a systematic review (PRISMA-style) | [systematic-review](skills/scholarly-agent/references/workflows/systematic-review.md) | Corpus, Voice |
+| Write a short commentary or perspective piece | [nature-commentary](skills/scholarly-agent/references/workflows/nature-commentary.md) | Corpus, Voice |
+| Plan and draft a whole book | [book-project](skills/scholarly-agent/references/workflows/book-project.md) | Corpus, Voice |
+| Write one monograph chapter | [monograph-chapter](skills/scholarly-agent/references/workflows/monograph-chapter.md) | (Corpus), Voice |
+| Find suitable journals for a manuscript | [journal-selection](skills/scholarly-agent/references/workflows/journal-selection.md) | Journal Fit, Corpus |
+| Adapt a manuscript to a chosen journal | [target-journal-adaptation](skills/scholarly-agent/references/workflows/target-journal-adaptation.md) | Journal Fit, Voice, (Corpus) |
+| Learn your own writing voice from past papers | [author-voice-calibration](skills/scholarly-agent/references/workflows/author-voice-calibration.md) | Corpus, Voice |
+| Build a discipline, journal, or historical style profile | [corpus-profile-build](skills/scholarly-agent/references/workflows/corpus-profile-build.md) | Corpus |
+
+Specialists in parentheses join only when the request calls for them, and
+the Adaptive Model Router can sit under any recipe as an optional execution
+layer. The
+exact routing rules live in
+[`routing-matrix.md`](skills/scholarly-agent/references/routing-matrix.md).
+A small single-step task, such as polishing one paragraph, skips the
+orchestrator and goes straight to the one specialist that owns it.
+
+Example prompts:
+
+- "Help me turn this research idea into a manuscript and find a journal."
+- "Revise this draft for *Journal X* and draft a response to reviewers."
+- "Build a style profile from my last ten articles, then rewrite this
+  introduction in my own voice."
+- "Which open-access journals in education policy fit this paper, with no
+  APC above 2,000 USD?"
+
+## The five Skills
+
+| Skill | Owns | What it does |
+|---|---|---|
+| [scholarly-agent](skills/scholarly-agent/SKILL.md) | Orchestration | Breaks a multi-stage task into steps, picks a workflow recipe, hands data between specialists, and runs a final integrity and completeness check. |
+| [adaptive-model-router](skills/adaptive-model-router/SKILL.md) | Execution | Decides how a task is executed: model tier, when to delegate to subagents, and when escalation is justified. |
+| [scholarly-corpus-builder](skills/scholarly-corpus-builder/SKILL.md) | Research evidence | Retrieves open scholarly literature (OpenAlex, Crossref, PubMed/PMC, arXiv, DOAJ, your own files) with provenance, and builds discipline, journal, historical, and author-voice style profiles. |
+| [scholarly-voice-engine](skills/scholarly-voice-engine/SKILL.md) | Writing and argument | Writes and edits discipline-aware, genre-aware academic prose, calibrates claims, checks citation integrity, and keeps long projects consistent. |
+| [journal-fit-engine](skills/journal-fit-engine/SKILL.md) | Publication strategy | Profiles the manuscript, generates candidate journals, applies hard filters (scope, APC, open access, indexing), scores fit with evidence, and produces a submission strategy. |
+
+Each Skill keeps its own trigger boundary, references, tests, and version,
+and still works on its own if installed separately. Exact bundled versions
+and source commits are recorded in [`COMPONENTS.json`](COMPONENTS.json),
+which is the single source of truth.
+
+## How it works
 
 ![Scholarly Agent Suite architecture: the user talks to Scholarly Agent, which coordinates four specialists sitting on a shared layer of protocols, policy, and workflow recipes.](assets/suite-architecture-diagram.svg)
 
@@ -28,275 +80,103 @@ User
  v
 Scholarly Agent (orchestration)
  |
- +-- Adaptive Model Router      (execution intelligence)
- +-- Scholarly Corpus Builder   (research intelligence)
- +-- Scholarly Voice Engine     (writing intelligence)
- +-- Journal Fit Engine         (publication intelligence)
+ +-- Adaptive Model Router      (execution)
+ +-- Scholarly Corpus Builder   (research evidence)
+ +-- Scholarly Voice Engine     (writing and argument)
+ +-- Journal Fit Engine         (publication strategy)
 
-Shared:
- protocols/   -- data contracts between Skills
- shared/      -- integrity, provenance, terminology, capability boundaries
- workflows/   -- generated documentation mirror of scholarly-agent's own
-                 recipes (see "Workflow recipes" below) -- not a Skill,
-                 not a second canonical copy
+Shared layer:
+ protocols/   versioned JSON data contracts between Skills
+ shared/      integrity, provenance, terminology, capability boundaries
 ```
 
-### Orchestration flowchart
+The orchestrator is not a fixed pipeline. For every request it checks
+whether two or more specialists are genuinely needed, reuses fresh results
+from earlier steps, carries hard constraints (APC limits, word counts,
+open-access requirements) forward, allows one bounded repair pass, and ends
+in one of three honest states: `COMPLETE`, `COMPLETE_WITH_LIMITATIONS`, or
+`BLOCKED`.
 
 ![Flowchart of Scholarly Agent's orchestration decision process: check whether two or more specialists are genuinely needed, select a workflow recipe, reuse fresh artifacts, propagate hard constraints, invoke the minimal specialist set, allow one bounded repair pass, then apply a final quality gate that branches into COMPLETE, COMPLETE_WITH_LIMITATIONS, or a BLOCKED state.](assets/orchestration-flowchart.svg)
 
-This is the concrete decision logic behind `skills/scholarly-agent/SKILL.md`'s
-"minimal orchestration rule" and `references/orchestration-state.md`'s final
-quality gate -- not a fixed Router → Corpus → Voice → Journal-Fit pipeline
-that runs for every request (rule 19).
-
-Each specialist Skill keeps its own trigger boundary, responsibility, tests,
-references, and version. See `shared/capability-boundaries.md` for exactly
-what each one is (and is not) responsible for.
-
-## Components
-
-| Skill | Role | Packaged version |
-|---|---|---|
-| [scholarly-agent](skills/scholarly-agent/SKILL.md) | Workflow orchestration | see `COMPONENTS.json` |
-| [adaptive-model-router](skills/adaptive-model-router/SKILL.md) | Execution intelligence | see `COMPONENTS.json` |
-| [scholarly-corpus-builder](skills/scholarly-corpus-builder/SKILL.md) | Research & evidence intelligence | see `COMPONENTS.json` |
-| [scholarly-voice-engine](skills/scholarly-voice-engine/SKILL.md) | Writing & argument intelligence | see `COMPONENTS.json` |
-| [journal-fit-engine](skills/journal-fit-engine/SKILL.md) | Publication intelligence | see `COMPONENTS.json` |
-
-`COMPONENTS.json` records the *exact* version and source commit of each
-bundled component for this Suite release -- it is the single source of truth,
-not this table (versions here would go stale; the JSON file will not).
-
-## Quick start
-
-### Option A -- Suite Plugin (recommended)
-
-Install the whole Suite once via `.codex-plugin/plugin.json`. All five Skills
-become available, plus shared workflow recipes and protocols.
-
-### Option B -- Individual Skill
-
-Every component Skill remains independently installable and fully functional
-on its own (see "Standalone compatibility" below). Use this for a minimal
-install, active component development, or if you only need one capability
-(e.g. only `scholarly-voice-engine`).
-
-## Typical workflows
-
-Workflow recipes (paper from an idea, revising an existing manuscript,
-journal selection, target-journal adaptation, literature review, systematic
-review, commentary writing, a full book project, a single monograph
-chapter, author voice calibration, and more) are orchestration resources
-**owned by `scholarly-agent`, not additional Skills** -- they ship inside
-`skills/scholarly-agent/references/workflows/`, its own Skill package, so
-scholarly-agent can resolve every recipe from inside its own runtime
-boundary no matter how it was installed (full Suite, standalone Skill,
-`.codex-plugin` load, release ZIP, or a host exposing only `skills/`).
-`workflows/` at the repository root mirrors the same fourteen files for
-anyone browsing the repo directly; it is generated from the canonical copy
-above (`scripts/sync_workflows.py`) and is never hand-edited -- there is
-exactly one manually-editable copy of each recipe.
-
-`scholarly-agent` does **not** run all four specialists for every request --
-see its `references/routing-matrix.md` for which intents need which
-specialists, and its SKILL.md for when it should not activate at all (e.g. a
-one-sentence paragraph polish stays with `scholarly-voice-engine` alone).
-
-## Shared protocols
-
-Ten JSON Schemas under `protocols/` define the data contracts specialists use
-to hand work to each other (`EXECUTION_POLICY_V1`, `SCHOLARLY_PROFILE_V1`,
+Specialists hand work to each other through ten versioned JSON Schemas in
+[`protocols/`](protocols/): `EXECUTION_POLICY_V1`, `SCHOLARLY_PROFILE_V1`,
 `VOICE_REQUEST_V1`, `VOICE_CONTEXT_V1`, `VOICE_OUTPUT_V1`,
 `MANUSCRIPT_PROFILE_V1`, `TARGET_JOURNAL_PROFILE_V1`,
-`JOURNAL_STYLE_CONTEXT_V1`, `CONTINUITY_STATE_V1`, `PROVENANCE_RECORD_V1`).
-See `shared/protocol-versioning.md` for how these evolve without breaking
-existing consumers.
+`JOURNAL_STYLE_CONTEXT_V1`, `CONTINUITY_STATE_V1`, and
+`PROVENANCE_RECORD_V1`. For example, Journal Fit Engine produces a
+`JOURNAL_STYLE_CONTEXT_V1` that Voice Engine consumes, so a journal's
+official requirements and its merely observed house style never get mixed
+up.
 
-## Integrity policy
+## Install
 
-`shared/integrity-policy.md` is non-negotiable across every bundled Skill: no
-fabricated citations, DOIs, quotations, journal metrics, corpus counts, or
-acceptance probabilities; no paywall bypass or shadow libraries; no direct
-living-author imitation; no AI-detector-evasion objective. The orchestrator's
-final quality gate (`skills/scholarly-agent/references/orchestration-state.md`)
-enforces that a specialist's unresolved integrity flag is never silently
-dropped on the way to a "complete" result.
+**Option A: the whole Suite (recommended).** Install the repository as a
+plugin through [`.codex-plugin/plugin.json`](.codex-plugin/plugin.json), or
+unzip a release package (`scholarly-agent-suite-v<version>.zip`). All five
+Skills, the workflow recipes, the protocols, and the shared policies become
+available together.
 
-## Component versioning
+**Option B: one Skill on its own.** Copy any folder under `skills/` into
+your host's skills directory, or install it from its own repository. Every
+Skill is self-contained: none of them needs `shared/` or `protocols/` next
+to it to run.
 
-Component Skills are **not** forced to share the Suite's version number. A
-valid release can (and does) bundle `scholarly-corpus-builder` at `0.9.1`
-alongside `scholarly-voice-engine` at `1.1.0` -- see `COMPONENTS.json` for the
-exact versions and `compatibility` for the declared-compatible ranges. This is
-a declaration, not a dependency resolver: the Suite does not automatically
-install or upgrade components.
+To check a local checkout:
 
-## Development model
-
-```
-component repository
-  -> component release/tag
-    -> scripts/sync_components.py (pinned commit, never a floating branch)
-      -> skills/<component>/
-        -> suite integration tests
-          -> suite release
+```bash
+pip install pytest jsonschema
+python scripts/validate_suite.py   # acceptance checks
+pytest tests/                      # suite tests
 ```
 
-Component repositories (`adaptive-model-router`, `scholarly-corpus-builder`,
-`scholarly-voice-engine`, `journal-fit-engine`) remain the canonical
-development sources and are never deleted or deprecated because this Suite
-exists. `scripts/component-sources.json` records exactly which commit of each
-was pinned for this release, using only public `repo_url` + pinned commit sha
-(and a `tag` when that commit has a real published tag) -- it contains no
-machine-specific paths and syncs correctly on a clean machine with only
-network access to each `repo_url`.
+## Integrity guarantees
 
-`sync_components.py` clones/fetches each `repo_url` into a local bare cache
-under `.cache/components/` (gitignored) and exports the exact pinned commit
-from there; `--offline` skips the clone/fetch and requires the commit to
-already be cached, for reproducible builds without network access. A
-contributor iterating on a component locally can add a gitignored
-`scripts/component-sources.local.json` with a `repo_path` override per
-component to sync from a local working copy instead of the network -- the
-pinned `ref` must still be reachable from that local copy; it is a faster
-source of the same bytes, not a way to sync a different revision.
+These rules apply to every bundled Skill and are enforced by the
+orchestrator's final quality gate
+([`shared/integrity-policy.md`](shared/integrity-policy.md)):
 
-## Component drift detection
+- No fabricated citations, DOIs, quotations, journal metrics, corpus
+  counts, or acceptance probabilities. Anything unverified is labelled as
+  such.
+- No paywall bypassing or shadow libraries; only open or user-supplied
+  sources.
+- No imitation of a living author's voice; author-voice calibration is for
+  your own writing.
+- No AI-detector evasion as a goal.
+- A specialist's unresolved integrity flag is never silently dropped on the
+  way to a "complete" result.
 
-`python scripts/check_component_drift.py` compares what's pinned in
-`scripts/component-sources.json` against each component repository's actual
-current state (its own tags, its own default-branch tip) and reports one of:
-`CURRENT`, `UNRELEASED_COMMITS_AHEAD`, `NEW_RELEASE_AVAILABLE`,
-`PIN_NOT_TAGGED`, `PIN_UNREACHABLE`, `VERSION_TAG_MISMATCH`,
-`SOURCE_VERSION_MISMATCH`, or `NO_LOCAL_SOURCE`. It only detects and
-reports -- it never edits `component-sources.json` or `COMPONENTS.json`,
-never re-pins, and never triggers a release; bumping a pin is always a
-deliberate maintainer action driven by `RELEASE_CHECKLIST.md`. A weekly
-`.github/workflows/component-drift.yml` run surfaces drift as an
-informational report; only a genuinely broken pin (`PIN_UNREACHABLE`,
-`VERSION_TAG_MISMATCH`, `SOURCE_VERSION_MISMATCH`) fails that workflow.
+## Repository layout
 
-**A newer component HEAD does not automatically mean the Suite is
-outdated.** The Suite pins published, integration-tested source states
-(see "Development model" above) -- `NEW_RELEASE_AVAILABLE` or
-`UNRELEASED_COMMITS_AHEAD` on a component is a prompt to evaluate whether
-picking that up is worth a new sync + integration test pass, not a
-standing failure.
+```
+skills/            the five Skills (four synced from their own repos, one in-tree)
+protocols/         JSON Schemas for the shared data contracts
+shared/            cross-Skill policies and terminology
+workflows/         generated read-only mirror of the orchestrator's recipes
+assets/            README diagrams (not shipped in the runtime package)
+scripts/           sync, drift check, validation, and packaging tools
+tests/, evals/     suite tests and orchestration fixtures
+docs/              maintainer documentation
+```
 
-## Standalone compatibility
+## Development and releases
 
-Every bundled Skill still works if installed by itself, outside this Suite --
-none of them has a hard runtime dependency on a `../shared/*` or
-`../protocols/*` file living next to it. Suite-level shared policy and
-protocols standardize and supplement the family; they never become an
-unavailable hard dependency for a standalone install (rule 42). Each
-specialist keeps a compact copy of the integrity rules relevant to its own
-domain directly inside its own `SKILL.md`.
-
-## Testing
-
-- `tests/` -- suite-level tests: plugin manifest, component presence/
-  frontmatter/uniqueness, protocol schema validity and cross-schema
-  compatibility, workflow references, orchestration trigger tests (positive
-  and negative), packaging tests, and component-drift-detector tests.
-- `tests/test_e2e_protocol_handoff.py` -- true cross-Skill integration tests
-  that import each component's *actual code* from the synced `skills/` tree
-  (not a mock, not a routing-only check) and exercise a real protocol
-  handoff end to end. Two handoffs are covered: `journal-fit-engine`'s
-  `JOURNAL_STYLE_CONTEXT_V1` producer feeding `scholarly-voice-engine`'s
-  consumer (official requirements, observed patterns, freshness, and
-  limitations all survive the full round trip, and corpus-derived evidence
-  can never land in an official-requirement field or vice versa); and
-  `journal-fit-engine`'s `TARGET_JOURNAL_PROFILE_V1` producer feeding
-  `scholarly-agent`'s hard-compatibility-gate consumer
-  (`skills/scholarly-agent/scripts/target_journal_adapter.py`) -- a
-  confirmed APC mismatch is `REJECTED`, an unverifiable paid-index
-  requirement is `NEEDS_VERIFICATION` rather than a guessed pass/fail,
-  stale evidence with a checked hard constraint is `NEEDS_VERIFICATION`,
-  provenance survives the full handoff, and fit/APC/OA/indexing vocabulary
-  never leaks into the eventual `JOURNAL_STYLE_CONTEXT_V1`'s
-  `official_requirements`/`observed_patterns`.
-- `evals/` -- end-to-end orchestration fixtures (component selection,
-  negative triggers, cross-disciplinary and multilingual scenarios),
-  including a combined `theory-paper` + `target-journal-adaptation` routing
-  fixture for "develop a theoretical paper for an already-selected target
-  journal."
-- `tests/test_workflow_packaging.py` -- proves every required workflow
-  recipe (`scripts/workflow_manifest.REQUIRED_WORKFLOWS`, the single source
-  of truth) is present in the source runtime boundary, in
-  `package_suite.iter_runtime_files()`, in the built release ZIP, in
-  `release-manifest.json`, and in a standalone-copied scholarly-agent
-  package -- plus a negative test proving a genuinely missing recipe is
-  actually caught.
-- `tests/test_workflow_install_smoke.py` -- builds the filesystem layout an
-  *installed* scholarly-agent Skill actually receives (not the repository
-  root) and resolves `SKILL.md`, the workflow index, and specific recipes
-  (`theory-paper.md`, `empirical-paper.md`,
-  `target-journal-adaptation.md`) from inside it; fails if a recipe is only
-  reachable via the repository root's `workflows/` mirror.
-- Component-level correctness (adapters, analytics, validators) is owned by
-  each component's own repository and its own `tests/`/`evals/` -- this Suite
-  does not duplicate them.
-
-Run `python scripts/validate_suite.py` for the acceptance-criteria checker,
-and `pytest tests/` for the full test suite. CI (`.github/workflows/
-validate.yml`) runs validation and tests across a Python 3.10-3.13
-compatibility matrix; the deterministic packaging build itself runs once,
-on the canonical Python 3.11 job, since packaging correctness doesn't vary
-by interpreter version and rebuilding it four times over would just be
-wasted CI time.
-
-## Runtime package
-
-`scripts/package_suite.py` builds a self-contained runtime ZIP
-(`dist/scholarly-agent-suite-v<version>.zip`) containing only what an
-end-user install needs -- `.codex-plugin/`, `skills/`, `protocols/`,
-`shared/`, `workflows/`, `README.md`, `LICENSE`, `VERSION`, and
-`COMPONENTS.json`. It excludes `tests/`, `evals/`, `.github/`, development
-scripts, and any component `.git` metadata, and writes a
-`release-manifest.json` with the exact packaged versions, source commits,
-protocol versions, file list, and a SHA-256 checksum.
-
-Every workflow recipe scholarly-agent needs ships inside `skills/` (at
-`skills/scholarly-agent/references/workflows/`), so it is present in this
-ZIP under every consumption pattern -- the whole ZIP, `skills/` copied out
-on its own, or scholarly-agent extracted standalone. `tests/
-test_workflow_packaging.py` and `tests/test_workflow_install_smoke.py`
-assert this directly against the built ZIP, `release-manifest.json`, and a
-simulated installed-Skill-only filesystem layout, not just against the
-repository's source tree.
-
-## Limitations
-
-- No dependency resolver: component version compatibility is a declared
-  range (`COMPONENTS.json`), not an enforced constraint.
-- No protocol version adapters yet (only `V1` of each protocol exists);
-  a future breaking change requires a new major protocol version and, likely,
-  a Suite major version.
-- Live/network-dependent evidence retrieval (current journal metrics, current
-  APC policy) depends entirely on each component's own tool access at
-  runtime; the Suite adds no additional connectors (see rule 60, "optional
-  future connectors").
-- Suite-level end-to-end evals (`evals/`) exercise orchestration/routing
-  decisions, not the full correctness of each specialist's domain logic.
-  `tests/test_e2e_protocol_handoff.py` goes one level deeper for the
-  `JOURNAL_STYLE_CONTEXT_V1` and `TARGET_JOURNAL_PROFILE_V1` handoffs
-  specifically (real producer code into real consumer code, not
-  routing-only), but that coverage does not yet extend to every protocol in
-  `protocols/` -- `PROVENANCE_RECORD_V1` in particular stays `PARTIAL`
-  (preserved unchanged by both of the above, but with no independent
-  canonical provenance-handoff test of its own), and `SCHOLARLY_PROFILE_V1`
-  / `VOICE_CONTEXT_V1` / `MANUSCRIPT_PROFILE_V1` / `VOICE_REQUEST_V1` /
-  `VOICE_OUTPUT_V1` remain schema-only round-trip coverage rather than a
-  real cross-Skill handoff test.
-- `check_component_drift.py` requires each component's git history to be
-  locally reachable (a local override or a `.cache/components/` clone); it
-  is not itself a network service and does not run against GitHub's API.
+The four specialist Skills are developed in their own repositories and
+pinned here by exact commit; the orchestrator lives in this repository.
+Syncing, component drift detection, packaging, test coverage, versioning
+rules, and known limitations are documented in
+[`docs/development.md`](docs/development.md). The release procedure is in
+[`RELEASE_CHECKLIST.md`](RELEASE_CHECKLIST.md) and the history in
+[`CHANGELOG.md`](CHANGELOG.md).
 
 ## Roadmap
 
-Future components (e.g. `peer-review-engine`, `systematic-review-engine`,
-`grant-writing-engine`) are only added once each has a distinct trigger
-boundary, substantial independent policy, and standalone usability (rule
-131-133) -- not merely because a feature could be split out.
+New specialists (for example a peer-review, systematic-review, or
+grant-writing engine) are added only when each has a distinct trigger
+boundary, substantial policy of its own, and standalone usefulness, not
+merely because a feature could be split out.
+
+## License
+
+[MIT](LICENSE)

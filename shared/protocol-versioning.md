@@ -15,7 +15,7 @@ between specialist Skills.
 
 Inter-Skill contracts are not casually broken. A component bump that would
 require a breaking protocol change is a Suite MAJOR event (see
-`README.md#suite-versioning`), not a patch.
+`docs/development.md#suite-versioning`), not a patch.
 
 ## Stability in practice
 

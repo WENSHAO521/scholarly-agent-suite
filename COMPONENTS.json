@@ -15,10 +15,10 @@
       "source_commit": "de79826a1d63dff4253a6f63f62a08de0096fda4"
     },
     "scholarly-corpus-builder": {
-      "version": "0.9.1",
+      "version": "0.9.2",
       "role": "research-intelligence",
       "source_repository": "https://github.com/WENSHAO521/scholarly-corpus-builder.git",
-      "source_commit": "ec802366624b5b5fc2179bea27784a05009a4eef"
+      "source_commit": "844735f13aa76dc1558a2a3837091da95b328636"
     },
     "scholarly-voice-engine": {
       "version": "1.1.0",

@@ -1,5 +1,5 @@
 {
-  "_comment": "Pinned sync sources for scholarly-agent-suite. Each entry names the public component repository URL, the exact commit being packaged, and the allowlist of paths copied into skills/<name>/. 'ref' must be a full 40-char commit sha reachable from repo_url, never a branch name (see README 'Component synchronization model'). 'tag' is optional and only present when that exact commit has a real published tag/release -- never invented. A contributor's local working-copy paths belong in the gitignored scripts/component-sources.local.json override, never here.",
+  "_comment": "Pinned sync sources for scholarly-agent-suite. Each entry names the public component repository URL, the exact commit being packaged, and the allowlist of paths copied into skills/<name>/. 'ref' must be a full 40-char commit sha reachable from repo_url, never a branch name (see docs/development.md 'Development model'). 'tag' is optional and only present when that exact commit has a real published tag/release -- never invented. A contributor's local working-copy paths belong in the gitignored scripts/component-sources.local.json override, never here.",
   "components": [
     {
       "name": "adaptive-model-router",
@@ -14,9 +14,9 @@
       "name": "scholarly-corpus-builder",
       "role": "research-intelligence",
       "repo_url": "https://github.com/WENSHAO521/scholarly-corpus-builder.git",
-      "ref": "ec802366624b5b5fc2179bea27784a05009a4eef",
-      "tag": "v0.9.1",
-      "version": "0.9.1",
+      "ref": "844735f13aa76dc1558a2a3837091da95b328636",
+      "tag": "v0.9.2",
+      "version": "0.9.2",
       "include": ["SKILL.md", "agents", "references", "scb", "LICENSE"]
     },
     {

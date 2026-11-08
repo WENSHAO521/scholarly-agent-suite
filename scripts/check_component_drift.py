@@ -26,8 +26,8 @@ Per-component status is one of:
   NEW_RELEASE_AVAILABLE      -- a newer version-tag exists than the one
                                  pinned (informational: a newer component
                                  HEAD does not by itself mean the Suite is
-                                 outdated -- see README's Component
-                                 synchronization section).
+                                 outdated -- see docs/development.md's
+                                 Component drift detection section).
   PIN_NOT_TAGGED              -- the pinned ref has no tag pointing at it at
                                  all (warning: pins should normally land on
                                  a real release tag).

@@ -1,7 +1,7 @@
 # Changelog
 
 All notable changes to the Scholarly Agent Suite are documented in this file.
-Suite versioning follows `README.md#component-versioning` /
+Suite versioning follows `docs/development.md#component-versioning` /
 `shared/protocol-versioning.md`; component versions are tracked separately in
 `COMPONENTS.json`.
 
@@ -94,6 +94,26 @@ genuine packaging gap were indistinguishable.
   the same completeness guarantee specialists already had.
 
 ### Changed
+
+- **scholarly-corpus-builder re-pinned to v0.9.2** (`844735f`, was v0.9.1
+  `ec80236`). v0.9.2 is a packaging-reproducibility patch in the component
+  repository only (CRLF/LF normalization and cross-platform ZIP metadata
+  in its own `package_runtime.py`); no `scb/` code, schema, API, or
+  `SKILL.md` changed, so the synced `skills/scholarly-corpus-builder/` tree
+  is byte-identical and only `scripts/component-sources.json` and
+  `COMPONENTS.json` move. `check_component_drift.py --fetch` now reports
+  all four components `CURRENT`.
+- **README rewritten as a user-facing introduction**: what the Suite does,
+  a "what you can ask it" table mapping each request to its workflow recipe
+  and the specialists that recipe actually uses, the five Skills, how
+  orchestration works, install, and integrity guarantees. Maintainer
+  material (versioning, development model, drift detection, standalone
+  compatibility, testing, runtime package, limitations) moved verbatim to
+  `docs/development.md`, plus a new "Suite versioning" section that
+  `shared/protocol-versioning.md` already linked to but which never
+  existed. Added a Traditional Chinese introduction, `README.zh-TW.md`.
+  `docs/` and `README.zh-TW.md` are repository documentation, not part of
+  the runtime package.
 
 - `skills/scholarly-agent/SKILL.md`: "Workflow recipes" section rewritten
   to state plainly that workflow recipes are orchestration resources owned
