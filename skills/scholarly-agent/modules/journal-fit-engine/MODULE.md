@@ -1,0 +1,178 @@
+<!-- Module of the scholarly-agent Skill (formerly the standalone `journal-fit-engine` Skill).
+     Loaded on demand by ../../SKILL.md; paths below are relative to this module's directory. -->
+
+> **Module `journal-fit-engine`** -- part of the single `scholarly-agent` Skill. Load this file only when the
+> dispatcher in `SKILL.md` selects this module. Wherever this file says "this Skill" or names
+> another former Skill (e.g. `scholarly-voice-engine`), read it as "this module" / the sibling
+> module at `modules/<name>/`. Paths such as `references/...` are relative to `modules/journal-fit-engine/`.
+>
+> Scope: Analyze manuscript–journal fit across disciplines using current scope, article type, methodology, audience, contribution, journal evidence, practical submission constraints, and publication-integrity checks to produce evidence-backed venue shortlists and submission strategies.
+
+# Journal Fit Engine
+
+Cross-disciplinary manuscript–venue matching. Answers "where does this manuscript
+intellectually belong?" before "which journal has the highest metric?"
+
+Not a journal-name generator, impact-factor sorter, prestige ranker, acceptance
+predictor, or pay-to-publish recommender. Recommend journals because the
+manuscript belongs in their scholarly conversation — not because a journal is
+prestigious, indexed, cheap, or topically adjacent.
+
+## Ecosystem position
+
+```
+Adaptive Model Router      → how to execute the task
+Scholarly Corpus Builder   → what scholarly evidence/journal profiles to acquire
+Scholarly Voice Engine     → how the manuscript should be argued and written
+Journal Fit Engine (this)  → which publication venues fit the manuscript
+```
+
+Stay in lane. This Skill does not write, rewrite, or argue the manuscript — it
+recommends venues and hands adaptation targets to Scholarly Voice Engine, and
+requests missing evidence from Scholarly Corpus Builder rather than duplicating
+retrieval. See [references/integration.md](references/integration.md).
+
+## When to activate
+
+Activate for: "Where should I submit this paper?", "Which SSCI journals fit my
+manuscript?", "Compare Journal A and Journal B", "Is this paper suitable for
+[journal]?", "Find no-APC journals for this article", "Which Q1 journals are
+realistic?", "Check whether this journal accepts my article type."
+
+Do not activate for unrelated general writing, editing, or citation-formatting
+requests that don't involve venue selection.
+
+## Core workflow (always in this order)
+
+1. **Build the Manuscript Profile first.** Never recommend a journal before you
+   understand the manuscript. See [references/manuscript-profile.md](references/manuscript-profile.md).
+   Leave unknown fields unknown — never invent manuscript attributes.
+2. **Classify contribution and genre.** Determine primary/secondary contribution
+   type and accepted-article-type genre without inflating novelty.
+3. **Generate a candidate pool** (typically 10–30 journals) from references,
+   neighbor literature, disciplinary indexes, and user-provided targets — never
+   from keyword search alone. See [references/candidate-generation.md](references/candidate-generation.md).
+4. **Apply hard filters**, then rank remaining candidates on soft-fit dimensions.
+   See [references/fit-model.md](references/fit-model.md).
+5. **Verify current journal evidence** (scope, article types, APC, indexing,
+   integrity) before recommending, and mark what could not be verified. See
+   [references/evidence-policy.md](references/evidence-policy.md) and
+   [references/journal-integrity.md](references/journal-integrity.md).
+6. **Produce an evidence-backed shortlist** with fit explanation, mismatches,
+   required adaptations, and a submission ladder. See
+   [references/submission-strategy.md](references/submission-strategy.md).
+
+Load a discipline file from [disciplines/](disciplines/) only when the
+manuscript's field benefits from field-specific fit logic (e.g. law, math,
+humanities, clinical medicine weight dimensions very differently).
+
+## Hard filters vs. soft fit (critical distinction)
+
+**Hard filters** eliminate a candidate: wrong article type not accepted, word
+limit fundamentally incompatible, journal inactive/discontinued, unsupported
+language, explicitly out-of-scope subject.
+
+**Soft fit** ranks but does not eliminate: topic alignment, method prevalence,
+theoretical orientation, audience, writing style, regional emphasis.
+
+Never let soft-fit weakness silently function as a hard filter, and never let a
+hard-filter failure be waved off as "just a concern."
+
+## Evidence discipline
+
+- Separate **OFFICIAL JOURNAL DATA** (aims/scope, article types, word limits,
+  APC, OA policy, submission rules) from **OBSERVED ARTICLE PROFILE** (dominant
+  methods, recurring topics, typical structure) — never present the latter as
+  the former.
+- Prefer the evidence hierarchy: official journal/publisher pages > trusted
+  indexes (Crossref, OpenAlex, DOAJ, PubMed, etc.) > recent published articles
+  > secondary journal listings.
+- When current data cannot be verified, output `CURRENT_STATUS_NOT_VERIFIED` —
+  never invent scope, APC, indexing, or acceptance-rate facts.
+- Tag every recommendation's evidence completeness as `HIGH_EVIDENCE`,
+  `MODERATE_EVIDENCE`, or `LIMITED_EVIDENCE`.
+
+## No fake precision
+
+Never output a numeric acceptance probability or a decimal fit score (e.g.
+"93.72% fit", "70% chance of acceptance"). Use categories: `EXCELLENT FIT`,
+`STRONG FIT`, `PLAUSIBLE FIT`, `STRETCH`, `WEAK FIT`, `NOT RECOMMENDED`.
+Internal numeric heuristics may exist for ranking but must never be presented
+to the user as probabilities.
+
+## Output contract
+
+A full recommendation uses only the relevant sections from: MANUSCRIPT PROFILE,
+TOP CANDIDATES (best intellectual fit / best balanced / stretch / conservative),
+FIT EXPLANATION, MAIN MISMATCHES, REQUIRED ADAPTATIONS, PRACTICAL CONSTRAINTS,
+EVIDENCE STATUS, SUBMISSION LADDER. Every recommended journal must answer "why
+this journal?" with concrete evidence (scope language, recent article pattern,
+method fit, audience, article type) — never "this journal publishes research in
+this area" alone. The engine must also be willing to say "do not submit here."
+
+## Ethical boundaries
+
+Never advise altering results, samples, statistics, theorems, historical
+evidence, or legal authorities to fit a journal — only framing and presentation
+adapt, never truth. Never advise citation padding, coercive citation compliance,
+fake international co-authors, data manipulation, duplicate/simultaneous
+submission where prohibited, or salami slicing. See
+[references/adaptation-policy.md](references/adaptation-policy.md).
+
+## Reference implementation
+
+`jfe/` is a real, tested, live-verified Python implementation of the
+mechanical parts of this workflow -- live journal evidence lookup
+(OpenAlex Sources, Crossref Journals), APC/OA classification, hard
+filters, an 11-dimension categorical fit assessment (`fit_dimensions.py`:
+scope, topic, article-type, method, audience, activity, APC constraint, OA
+model, journal integrity, indexing evidence, requirement compatibility),
+an evidence-based integrity screen (`integrity.py`:
+VERIFIED/WARNING/CANNOT_VERIFY, never a predatory-probability score), an
+honest indexing/quartile assessor (`indexing.py`: only DOAJ is actually
+checkable from this Skill's free adapters; Scopus/Web of
+Science/SCIE/SSCI/AHCI/ESCI/JCR/CiteScore are always `cannot_verify`, never
+inferred), a `JOURNAL_STYLE_CONTEXT_V1` protocol builder
+(`style_context.py`) for the Scholarly Voice Engine handoff, and a
+`TARGET_JOURNAL_PROFILE_V1` protocol builder (`target_journal_profile.py`)
+that composes evidence/APC-OA/fit/indexing results already computed by the
+modules above into one canonical resolved-candidate envelope for
+downstream orchestration. `posi.py` reads an immutable, checksum-verified
+POSI (Panorama Open Scholarly Index) snapshot as an optional second free
+evidence source: POSI's own Citation Quartile and Zone with category and
+year, Core Collection ratings, and sourced APCs, which
+`indexing.assess_indexing(..., posi=record)` adds as a "POSI" entry and
+`posi.apply_to_evidence()` uses only to fill gaps, never to overwrite. Its
+reporting rules, including the conflict-of-interest disclosure for journals
+POSI's operator publishes, are in
+[references/indexing-metrics.md](references/indexing-metrics.md). A `MANUSCRIPT_PROFILE_V1` envelope from the voice
+module or the user enters through
+`jfe.manuscript_profile.from_manuscript_profile_v1()`, which maps the
+envelope's field names and article types onto this module's own profile (see
+[references/integration.md](references/integration.md)). It supplements
+this SKILL.md's reasoning workflow; it does not replace the LLM's own
+judgment on candidate generation or submission strategy, and it never
+derives `official_requirements` (author guidelines) or `observed_patterns`
+(corpus-measured style) from its own index evidence -- those come from the
+LLM's own guideline retrieval and from scholarly-corpus-builder,
+respectively (see CHANGELOG's "Still not implemented"). Where `jfe/`
+cannot verify something (e.g. accepted article types, language policy,
+Scopus/WoS status), it returns `CANNOT_VERIFY` honestly rather than
+guessing -- the LLM's own reasoning is still required to fill those gaps
+from other evidence. See `references/evidence-policy.md` for how
+CANNOT_VERIFY should be handled.
+
+## Reference index
+
+- [references/manuscript-profile.md](references/manuscript-profile.md) — manuscript profile schema, contribution/genre classification
+- [references/journal-profile.md](references/journal-profile.md) — journal profile schema, identity resolution
+- [references/fit-model.md](references/fit-model.md) — fit dimensions, hard filters, weighting by manuscript type
+- [references/candidate-generation.md](references/candidate-generation.md) — candidate discovery and reference-neighborhood analysis
+- [references/evidence-policy.md](references/evidence-policy.md) — official vs. observed, evidence hierarchy, provenance, confidence states
+- [references/journal-integrity.md](references/journal-integrity.md) — predatory/integrity screening, discontinuation status
+- [references/submission-strategy.md](references/submission-strategy.md) — two-stage recommendation, ladders, strategy modes, constraint relaxation
+- [references/indexing-metrics.md](references/indexing-metrics.md) — SSCI/SCIE/Scopus/quartile verification, impact metrics
+- [references/apc-open-access.md](references/apc-open-access.md) — APC, OA models, no-APC mode
+- [references/adaptation-policy.md](references/adaptation-policy.md) — adaptation types, cost, submission readiness, ethics
+- [references/integration.md](references/integration.md) — Corpus Builder / Voice Engine / Router integration contracts
+- [disciplines/](disciplines/) — per-discipline-family fit emphasis (natural sciences, mathematics, engineering/computing, medicine/health, social sciences, management, law, humanities, education, interdisciplinary)

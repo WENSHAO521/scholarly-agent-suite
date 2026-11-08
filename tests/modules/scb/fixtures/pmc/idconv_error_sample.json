@@ -1,0 +1,8 @@
+{
+  "status": "ok",
+  "response-date": "2026-09-08 22:16:02",
+  "request": {"format": "json", "ids": ["PMC0000000"], "idtype": "pmcid"},
+  "records": [
+    {"pmcid": "PMC0000000", "status": "error", "errmsg": "invalid article id"}
+  ]
+}

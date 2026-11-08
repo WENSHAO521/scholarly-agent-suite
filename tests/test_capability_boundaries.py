@@ -1,43 +1,48 @@
-"""Acceptance criteria: Orchestrator must not duplicate specialist logic
-(spec section 136, rule 3, rule 156). Heuristic textual check: the
-orchestrator's own SKILL.md must not itself prescribe domain-specific rules
-that belong to a specialist (e.g. citation formatting, model names, journal
-ranking formulas) -- it should only ever *refer* to the specialist that owns
-that rule."""
+"""Acceptance criteria: the dispatcher must not duplicate module logic, and
+module boundaries stay explicit after the v2 single-Skill merge. Heuristic
+textual check: the top-level SKILL.md must not itself prescribe
+domain-specific rules that belong to a module (citation formatting, model
+names, journal ranking formulas, source-API details) -- those live in the
+owning modules/<name>/MODULE.md."""
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+SKILL_DIR = ROOT / "skills" / "scholarly-agent"
 
-# Phrases that would indicate the orchestrator is doing a specialist's job
-# itself, rather than delegating to it.
 SCOPE_CREEP_MARKERS = [
     "impact factor >",  # journal-fit-engine's ranking logic
     "gpt-5",  # a hardwired model name (adaptive-model-router's job)
     "gpt-4",
-    "apa 7th edition",  # citation formatting specifics (voice-engine's job)
-    "openalex api",  # corpus-builder's acquisition detail
+    "apa 7th edition",  # citation formatting specifics (voice module's job)
+    "openalex api",  # corpus module's acquisition detail
 ]
 
 
-def test_orchestrator_skill_md_has_no_scope_creep_markers():
-    text = (ROOT / "skills" / "scholarly-agent" / "SKILL.md").read_text(encoding="utf-8").lower()
+def test_dispatcher_skill_md_has_no_scope_creep_markers():
+    text = (SKILL_DIR / "SKILL.md").read_text(encoding="utf-8").lower()
     found = [m for m in SCOPE_CREEP_MARKERS if m in text]
-    assert not found, f"scholarly-agent SKILL.md appears to duplicate specialist logic: {found}"
+    assert not found, f"SKILL.md appears to duplicate module logic: {found}"
 
 
-def test_orchestrator_agents_yaml_declares_boundary_constraints():
-    text = (ROOT / "skills" / "scholarly-agent" / "agents" / "openai.yaml").read_text(encoding="utf-8")
+def test_agents_yaml_declares_boundary_constraints_and_modules():
+    text = (SKILL_DIR / "agents" / "openai.yaml").read_text(encoding="utf-8")
     for marker in [
-        "never_perform_model_routing_directly",
-        "never_perform_corpus_acquisition_directly",
-        "never_prescribe_academic_prose_rules_directly",
-        "never_perform_journal_ranking_directly",
+        "load_only_the_modules_a_request_needs",
+        "dispatcher_never_inlines_module_domain_rules",
+        "module_boundaries_follow_shared_capability_boundaries",
+        "never_fabricate_citations_metrics_or_acceptance_probabilities",
     ]:
         assert marker in text
+    for name in [
+        "adaptive-model-router", "scholarly-corpus-builder",
+        "scholarly-voice-engine", "journal-fit-engine",
+    ]:
+        assert f"modules/{name}/MODULE.md" in text
+        assert (SKILL_DIR / "modules" / name / "MODULE.md").is_file()
 
 
-def test_capability_boundaries_doc_names_all_five_skills():
-    text = (ROOT / "shared" / "capability-boundaries.md").read_text(encoding="utf-8")
+def test_capability_boundaries_doc_names_dispatcher_and_all_modules():
+    text = (SKILL_DIR / "shared" / "capability-boundaries.md").read_text(encoding="utf-8")
     for name in [
         "adaptive-model-router", "scholarly-corpus-builder",
         "scholarly-voice-engine", "journal-fit-engine", "scholarly-agent",

@@ -47,11 +47,7 @@ def test_manifest_version_matches_version_file():
     assert manifest["version"] == suite_version
 
 
-def test_all_five_skills_present():
-    for name in [
-        "scholarly-agent", "adaptive-model-router", "scholarly-corpus-builder",
-        "scholarly-voice-engine", "journal-fit-engine",
-    ]:
-        skill_dir = ROOT / "skills" / name
-        assert skill_dir.is_dir(), f"skills/{name}/ missing"
-        assert (skill_dir / "SKILL.md").exists(), f"skills/{name}/SKILL.md missing"
+def test_single_skill_present():
+    skills = sorted(p.name for p in (ROOT / "skills").iterdir() if p.is_dir())
+    assert skills == ["scholarly-agent"]
+    assert (ROOT / "skills" / "scholarly-agent" / "SKILL.md").exists()

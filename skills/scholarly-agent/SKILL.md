@@ -1,94 +1,76 @@
 ---
 name: scholarly-agent
-description: Coordinate multi-stage academic workflows across research evidence, scholarly writing, model routing, and publication strategy. Use for substantive end-to-end scholarly tasks that require two or more specialist academic Skills; do not invoke for a simple one-step academic edit that one specialist Skill can handle directly.
+description: Evidence-first academic research and writing agent for any discipline. Use for scholarly work such as drafting or revising research articles, reviews, commentaries, theses, book chapters and monographs; building literature corpora and discipline, journal, historical or author-voice style profiles; finding and adapting to target journals; and planning how a multi-stage research task should be executed. Loads only the internal module(s) a request needs. Do not invoke for casual, marketing or administrative writing, or for a one-line factual question that needs no scholarly workflow.
 ---
 
 # Scholarly Agent
 
-The orchestrator for the Scholarly Agent Suite. It does not do research,
-writing, routing, or journal-fit work itself -- it decides which of those are
-actually needed for a given request, invokes the smallest sufficient set,
-and assembles their outputs into one deliverable.
+One Skill for the whole scholarly workflow. It contains four internal
+modules -- execution planning, research evidence, scholarly writing, and
+publication strategy -- plus a dispatcher (this file) that decides which of
+them a request actually needs, loads only those, hands data between them
+through versioned protocols, and runs a final integrity gate.
 
-Not a project-management tool, a memory system, or a fifth way to do what the
-specialists already do. If a task needs only one specialist, that specialist
-should handle it directly -- this Skill exists for the tasks that genuinely
-span more than one.
+Until v2.0.0 the four modules were separate Skills (`adaptive-model-router`,
+`scholarly-corpus-builder`, `scholarly-voice-engine`, `journal-fit-engine`).
+They keep those names as module names, so existing workflow recipes,
+protocols, and evals still read correctly.
 
-## Ecosystem position
+## Module map
 
-```
-Scholarly Agent             -> workflow orchestration (this Skill)
-Adaptive Model Router       -> how to execute the task
-Scholarly Corpus Builder    -> what scholarly evidence/journal profiles to acquire
-Scholarly Voice Engine      -> how the manuscript is argued and written
-Journal Fit Engine          -> where the manuscript should be submitted
-```
+| Module | Owns | Load `MODULE.md` when the request needs... |
+|---|---|---|
+| `modules/scholarly-voice-engine/MODULE.md` | Writing and argument | drafting, revising, restructuring, claim calibration, citation-integrity checks, author-voice calibration, long-form continuity |
+| `modules/scholarly-corpus-builder/MODULE.md` | Research evidence | retrieving or verifying literature, building a corpus, or compiling a discipline / journal / historical / author-voice style profile |
+| `modules/journal-fit-engine/MODULE.md` | Publication strategy | a manuscript profile, journal candidates, hard filters (scope, APC, open access, indexing), fit scoring, submission strategy, or a target journal's style context |
+| `modules/adaptive-model-router/MODULE.md` | Execution planning | deciding model tier, reasoning effort, subagent delegation, validation depth, or escalation for a large or high-stakes task (only meaningful when the host can actually dispatch) |
 
-## Responsibility boundary (see shared/capability-boundaries.md)
+Load a `MODULE.md` only when it is selected; never load all four "just in
+case." Each module's `references/` files are loaded on demand from inside
+that module, exactly as its `MODULE.md` directs. Paths in a `MODULE.md` are
+relative to that module's own directory, and where a module's text says
+"this Skill" or names another former Skill, read it as "this module" or the
+sibling module of that name.
 
-Responsible for: task decomposition, workflow selection, component
-coordination, shared-state handoff, result assembly, and the final
-integrity/completeness gate before declaring a workflow done.
+## Dispatch
 
-Not responsible for: model routing, corpus acquisition logic, academic prose
-rules, or journal ranking logic -- those stay inside their owning specialist.
-Never duplicate a specialist's internal policy here; if a decision needs
-domain judgment (is this evidence sufficient? is this claim overstated?
-does this journal fit?), delegate it to the specialist that owns it.
-
-## When to activate
-
-Activate only for a genuinely multi-stage scholarly deliverable -- something
-that needs two or more of the four specialists working together toward one
-final output. See `references/routing-matrix.md` for the full decision table.
-
-**Do activate** for requests like:
-- "Help me turn this idea into a paper and find journals."
-- "Improve this manuscript and tell me where to submit it."
-- "Help me build and write a research monograph."
-
-**Do not activate** for a one-step task a single specialist already covers:
-- "Fix this sentence." / "Polish this paragraph." -> scholarly-voice-engine
-- "What does APC mean?" / "Format this DOI." -> answer directly, no Skill
-- "Find journals for this finished manuscript." (no further writing wanted)
-  -> journal-fit-engine (with scholarly-corpus-builder as its own dependency)
-- "Translate this title." -> answer directly
-
-When unsure, prefer the narrower specialist. Reserve activation for tasks
-where skipping coordination would force the user to manually chain Skills
-themselves (rule 54, rule 56).
-
-## Minimal orchestration rule
-
-Before invoking anything, answer:
+Before loading anything, answer:
 
 1. What is the requested final deliverable?
-2. Which specialist capabilities are actually required to produce it?
-3. Which relevant artifacts (corpus profile, manuscript profile, journal
-   profile, continuity state) already exist and are still fresh enough to
-   reuse (`references/orchestration-state.md`)?
-4. Which components can be skipped entirely?
+2. Which module capabilities are actually required to produce it?
+3. Which artifacts (corpus profile, manuscript profile, journal profile,
+   continuity state) already exist and are still fresh enough to reuse
+   (`references/orchestration-state.md`)?
+4. Which modules can be skipped entirely?
 
-Then invoke only the required specialists, in the order the selected
-workflow recipe under `references/workflows/` specifies. Never run a fixed
-Router -> Corpus -> Voice -> Journal-Fit pipeline "because it's installed" --
-see rule 19 and `references/routing-matrix.md`.
+Then follow one of three paths:
+
+- **No module.** A one-line factual or formatting question is answered
+  directly. **Do not activate** a workflow for, e.g., "Fix this sentence"
+  (a single obvious grammar fix), "What does APC mean?", "Format this DOI",
+  or "Translate this title".
+- **Single module.** The request sits inside one module's scope, e.g.
+  "polish this paragraph" (voice), "build a journal style profile"
+  (corpus), "find journals for this finished manuscript" (journal fit).
+  Load that one `MODULE.md` and follow it. No workflow recipe, no
+  orchestration state.
+- **Multi-module workflow.** The deliverable genuinely needs two or more
+  modules, e.g. "turn this idea into a paper and find journals." Pick a
+  workflow recipe (below), keep compact orchestration state, and load each
+  module only when its stage starts.
+
+When unsure between paths, prefer the narrower one. Never run a fixed
+Router -> Corpus -> Voice -> Journal-Fit pipeline for every request; see
+`references/routing-matrix.md` for which intents need which modules.
 
 ## Workflow recipes
 
-Workflow recipes are orchestration resources **owned by scholarly-agent**,
-not independent Skills of their own -- they ship inside this Skill's own
-package specifically so they resolve from inside its runtime boundary under
-every installation mode (full Suite, standalone scholarly-agent install,
-`.codex-plugin` load, release ZIP, or a host that only exposes the declared
-`skills/` tree). Never resolve them via a parent-directory path
-(`../../workflows/` or similar) -- that only happens to work when the whole
-repository root is visible next to `skills/`, which is not guaranteed and is
-exactly the class of bug that once made this orchestrator wrongly report a
-recipe as "missing" when it was only unreachable from where it was looking.
+Workflow recipes ship inside this Skill so they resolve from its own
+runtime boundary under every installation mode. Never resolve them via a
+path that climbs out of this Skill directory; the repository-root
+`workflows/` folder is only a generated documentation mirror.
 
-Pick the closest matching recipe from `references/workflows/`:
+Pick the closest matching recipe:
 `references/workflows/paper-from-idea.md`,
 `references/workflows/paper-from-notes.md`,
 `references/workflows/revise-manuscript.md`,
@@ -103,53 +85,81 @@ Pick the closest matching recipe from `references/workflows/`:
 `references/workflows/monograph-chapter.md`,
 `references/workflows/author-voice-calibration.md`,
 `references/workflows/corpus-profile-build.md`.
-These are recipes, not Skills -- they describe a stage order and default
-component set, not new logic. Adapt the recipe to what already exists (skip
-a stage whose artifact is already available and fresh) rather than
-following it mechanically.
+A recipe describes a stage order and default module set, not new logic.
+Adapt it to what already exists (skip a stage whose artifact is available
+and fresh) rather than following it mechanically.
 
 A theory paper whose target journal is already selected combines
 `references/workflows/theory-paper.md` with
 `references/workflows/target-journal-adaptation.md`: run the theory-paper
 stages (light-touch prior-theory evidence, then argument-architecture
 writing), then target-journal-adaptation's stages against the
-already-chosen journal -- journal-fit-engine performs adaptation only
+already-chosen journal. The journal-fit module performs adaptation only
 (confirm/refresh the profile, produce style context), never a fresh
 discovery/shortlist pass, since the venue is not in question.
 
 ## Resolving a workflow recipe file
 
 Before ever reporting a workflow recipe as unavailable, actually inspect
-this Skill's own installed `references/workflows/` directory --
+this Skill's own installed `references/workflows/` directory.
 `scripts/workflow_resolver.py`'s `resolve_workflow()` is the concrete
 procedure and returns exactly one of:
 
 - `RESOLVED` -- the file was found; proceed.
-- `WORKFLOW_SOURCE_MISSING` -- the requested name is not a workflow recipe
-  this orchestrator knows about at all. Safe to report immediately.
-- `WORKFLOW_RUNTIME_MISSING` -- the recipe is a real, known one, this
-  Skill's own `references/workflows/` directory was actually found and
-  read, and the specific file is confirmed absent from it. Only this case
-  may be reported as "the installed package is missing `<file>`" --
-  because only this case actually inspected the runtime and confirmed it.
+- `WORKFLOW_SOURCE_MISSING` -- the requested name is not a known workflow
+  recipe. Safe to report immediately.
+- `WORKFLOW_RUNTIME_MISSING` -- the recipe is real, `references/workflows/`
+  was found and read, and the file is confirmed absent. Only this case may
+  be reported as "the installed package is missing `<file>`."
 - `WORKFLOW_UNRESOLVABLE` -- `references/workflows/` itself could not be
-  located or read under the given install root. Report this as a
-  runtime-resolution / installation-visibility problem, never as the file
-  being missing -- repository/tag metadata saying the workflow exists is
-  not overridden by a lookup that never successfully inspected the
-  runtime.
+  located or read. Report a runtime-resolution problem, never a missing
+  file.
+
+## Handoffs between modules
+
+Modules exchange data only through the versioned JSON Schemas in
+`protocols/`, never through ad hoc prose summaries:
+
+| Protocol | Schema | Typical producer -> consumer |
+|---|---|---|
+| `EXECUTION_POLICY_V1` | `protocols/execution-policy.schema.json` | router -> dispatcher (bounds each stage) |
+| `SCHOLARLY_PROFILE_V1` | `protocols/scholarly-profile.schema.json` | corpus -> voice, journal fit |
+| `VOICE_REQUEST_V1` | `protocols/voice-request.schema.json` | dispatcher -> voice |
+| `VOICE_CONTEXT_V1` | `protocols/voice-context.schema.json` | dispatcher -> voice |
+| `VOICE_OUTPUT_V1` | `protocols/voice-output.schema.json` | voice -> dispatcher |
+| `MANUSCRIPT_PROFILE_V1` | `protocols/manuscript-profile.schema.json` | voice or user -> journal fit |
+| `TARGET_JOURNAL_PROFILE_V1` | `protocols/journal-profile.schema.json` | journal fit -> dispatcher gate |
+| `JOURNAL_STYLE_CONTEXT_V1` | `protocols/journal-style-context.schema.json` | journal fit (or corpus observed patterns) -> voice |
+| `CONTINUITY_STATE_V1` | `protocols/continuity-state.schema.json` | voice <-> voice (long-form) |
+| `PROVENANCE_RECORD_V1` | `protocols/provenance.schema.json` | embedded in profiles, journal contexts, continuity state |
+
+A producer emitting a protocol version the consumer does not recognize is a
+`PROTOCOL_MISMATCH`; report it, never guess around it
+(`shared/protocol-versioning.md`). `scripts/target_journal_adapter.py` is
+the hard compatibility gate for `TARGET_JOURNAL_PROFILE_V1` (see
+`references/workflows/target-journal-adaptation.md`).
+
+## Module boundaries
+
+The merge put the modules in one Skill; it did not merge their
+responsibilities. `shared/capability-boundaries.md` is the single source of
+truth for who may decide what. In short: the router never sets corpus
+policy, the corpus module never recommends journals, the voice module never
+routes models, the journal-fit module never fabricates current metrics, and
+this dispatcher never re-implements a module's domain rules -- it delegates
+the decision to the module that owns it.
 
 ## State, reuse, and freshness
 
-Keep only compact, task-local state (`references/orchestration-state.md`
-gives the exact shape) -- goal, completed stages, active stage, artifact
-references, open issues, limitations. This is not a long-term memory system
-(rule 46, rule 130).
+For multi-module workflows only, keep compact, task-local state
+(`references/orchestration-state.md` gives the exact shape): goal,
+completed stages, active stage, artifact references, open issues,
+limitations. This is not a long-term memory system.
 
 Reuse existing artifacts by logical id (`corpus_profile_id`,
 `manuscript_profile_id`, `journal_profile_id`, `continuity_state_id`) rather
-than rebuilding them, unless a component reports the artifact `stale` and the
-current request depends on the stale part (rule 47-49).
+than rebuilding them, unless a module reports the artifact `stale` and the
+current request depends on the stale part.
 
 ## Constraint propagation
 
@@ -158,44 +168,58 @@ a citation style, a deadline) through every stage without silently dropping
 them. Store them as `hard_constraints` vs. `soft_preferences`
 (`references/orchestration-state.md`). If hard constraints leave no viable
 outcome, report that plainly and suggest the smallest relaxation -- never
-silently violate one to produce an answer (rule 111-112).
+silently violate one to produce an answer.
 
 ## Failure propagation and the final quality gate
 
-A specialist's limitation, `PARTIAL` result, or unresolved integrity flag
-must survive into the assembled output -- never launder it into an
-unqualified "complete" (rule 73, rule 76). Before marking a workflow
-`COMPLETE`, check `references/orchestration-state.md`'s gate: deliverable
-exists, evidence verified or limitations declared, argument integrity
-passed, citations not fabricated, journal claims current where required,
-and component outputs used compatible protocol versions (rule 106). If any
-check fails, report `COMPLETE_WITH_LIMITATIONS` or a blocked state instead.
+A module's limitation, `PARTIAL` result, or unresolved integrity flag must
+survive into the assembled output -- never launder it into an unqualified
+"complete." Before marking a workflow `COMPLETE`, check
+`references/orchestration-state.md`'s gate: deliverable exists, evidence
+verified or limitations declared, argument integrity passed, citations not
+fabricated, journal claims current where required, and module outputs used
+compatible protocol versions. If any check fails, report
+`COMPLETE_WITH_LIMITATIONS` or a blocked state instead.
 
 Bound repair loops: one main adaptation cycle plus at most one targeted
-repair pass. Never cycle a manuscript between two specialists indefinitely
-(rule 107).
+repair pass. Never cycle a manuscript between two modules indefinitely.
 
-## Explicit invocation
+## Integrity
 
-Advanced users may still explicitly invoke a specialist directly
-(`$scholarly-corpus-builder`, `$scholarly-voice-engine`,
-`$journal-fit-engine`, `$adaptive-model-router`, `$scholarly-agent`) where the
-host supports it -- this Skill does not intercept or require passing through
-those explicit calls.
+`shared/integrity-policy.md` applies to every module and is
+non-negotiable: no fabricated citations, DOIs, quotations, journal metrics,
+corpus counts, or acceptance probabilities; no paywall bypass or shadow
+libraries; no imitation of a living author's voice; no AI-detector evasion
+as a goal. Provenance rules are in `shared/provenance-policy.md` and
+shared vocabulary in `shared/terminology.md`.
+
+## Runtime code
+
+Some modules ship optional, tested Python engines. Each is importable by
+putting its module directory on `sys.path`:
+
+- `modules/scholarly-corpus-builder/scb/` -- source adapters, OA
+  resolution, deduplication, style analytics, profile compilation
+  (`import scb`).
+- `modules/journal-fit-engine/jfe/` -- manuscript profiling, hard filters,
+  fit model, POSI snapshot lookup (`jfe/posi.py`), `TARGET_JOURNAL_PROFILE_V1`
+  and `JOURNAL_STYLE_CONTEXT_V1` producers (`import jfe`).
+- `modules/scholarly-voice-engine/scripts/voice/` -- profile merge,
+  continuity ledger, prose audit, journal-context consumer
+  (`import scripts.voice`; load it separately from this Skill's own
+  `scripts/` to avoid a package-name clash).
 
 ## Reference index
 
-- `references/routing-matrix.md` -- which specialists a given intent needs,
-  and the shared error taxonomy (including the workflow-resolution codes).
+- `references/routing-matrix.md` -- which modules a given intent needs, and
+  the shared error taxonomy (including the workflow-resolution codes).
 - `references/orchestration-state.md` -- state shape, freshness handling,
-  and the final-quality gate.
-- `references/workflows/` -- the fourteen workflow recipes themselves (see
-  "Workflow recipes" above); the runtime-canonical copy, resolvable from
-  inside this Skill's own package under every installation mode.
-- `scripts/workflow_resolver.py` -- resolves a workflow recipe from this
-  Skill's own installed runtime and classifies a failed lookup as
-  `WORKFLOW_SOURCE_MISSING` / `WORKFLOW_RUNTIME_MISSING` /
-  `WORKFLOW_UNRESOLVABLE` (see "Resolving a workflow recipe file" above).
-- `scripts/target_journal_adapter.py` -- the hard compatibility gate for
-  `TARGET_JOURNAL_PROFILE_V1` (see
-  `references/workflows/target-journal-adaptation.md`).
+  and the final quality gate.
+- `references/workflows/` -- the fourteen workflow recipes.
+- `scripts/workflow_resolver.py` -- resolves a workflow recipe and
+  classifies a failed lookup.
+- `scripts/target_journal_adapter.py` -- hard compatibility gate for
+  `TARGET_JOURNAL_PROFILE_V1`.
+- `shared/capability-boundaries.md`, `shared/integrity-policy.md`,
+  `shared/provenance-policy.md`, `shared/protocol-versioning.md`,
+  `shared/terminology.md` -- cross-module policy.

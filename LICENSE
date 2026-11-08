@@ -22,10 +22,10 @@ SOFTWARE.
 
 ---
 
-This repository bundles synchronized runtime copies of independently licensed
-component Skills (adaptive-model-router, scholarly-corpus-builder,
-scholarly-voice-engine, journal-fit-engine) under skills/<name>/. Each
-bundled component retains its own LICENSE file under its skill directory;
-this top-level license covers the Suite's own integration code (the
-scholarly-agent Skill, protocols/, shared/, workflows/, scripts/, tests/,
-evals/) and does not relicense the bundled components.
+Since v2.0.0 the formerly separate, independently licensed component Skills
+(adaptive-model-router, scholarly-corpus-builder, scholarly-voice-engine,
+journal-fit-engine) are merged into this repository as modules under
+skills/scholarly-agent/modules/<name>/. Each module retains its original
+LICENSE file in its module directory; this top-level license covers the
+Suite's own code (the scholarly-agent dispatcher, protocols/, shared/,
+workflows/, scripts/, tests/, evals/) and does not relicense those modules.

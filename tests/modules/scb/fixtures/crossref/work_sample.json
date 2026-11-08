@@ -1,0 +1,19 @@
+{
+  "DOI": "10.1234/example.5678",
+  "title": ["Institutional Mechanisms and Policy Diffusion"],
+  "author": [
+    {"given": "Jane", "family": "Doe", "ORCID": "https://orcid.org/0000-0001-2345-6789"},
+    {"given": "John", "family": "Smith"}
+  ],
+  "published": {"date-parts": [[2023, 4, 15]]},
+  "container-title": ["Journal of Example Studies"],
+  "publisher": "Example University Press",
+  "volume": "12",
+  "issue": "3",
+  "page": "200-225",
+  "type": "journal-article",
+  "ISSN": ["1234-5678"],
+  "abstract": "<jats:p>This paper examines institutional mechanisms.</jats:p>",
+  "license": [{"URL": "https://creativecommons.org/licenses/by/4.0/"}],
+  "URL": "https://doi.org/10.1234/example.5678"
+}

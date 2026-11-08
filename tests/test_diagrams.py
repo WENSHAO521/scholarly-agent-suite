@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parent.parent
 ASSETS_DIR = ROOT / "assets"
 package_suite = load_module("package_suite", "package_suite.py")
 
-DIAGRAMS = ["suite-architecture-diagram.svg", "orchestration-flowchart.svg"]
+DIAGRAMS = ["scholarly-agent-architecture.svg", "orchestration-flowchart.svg"]
 
 
 @pytest.mark.parametrize("filename", DIAGRAMS)

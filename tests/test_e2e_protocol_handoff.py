@@ -26,11 +26,11 @@ from conftest import load_module_at
 from schema_lite import validate_file
 
 ROOT = Path(__file__).resolve().parent.parent
-JFE_SKILL_DIR = ROOT / "skills" / "journal-fit-engine"
-VOICE_SKILL_DIR = ROOT / "skills" / "scholarly-voice-engine"
+JFE_SKILL_DIR = ROOT / "skills" / "scholarly-agent" / "modules" / "journal-fit-engine"
+VOICE_SKILL_DIR = ROOT / "skills" / "scholarly-agent" / "modules" / "scholarly-voice-engine"
 AGENT_SKILL_DIR = ROOT / "skills" / "scholarly-agent"
-STYLE_CONTEXT_SCHEMA = ROOT / "protocols" / "journal-style-context.schema.json"
-JOURNAL_PROFILE_SCHEMA = ROOT / "protocols" / "journal-profile.schema.json"
+STYLE_CONTEXT_SCHEMA = ROOT / "skills" / "scholarly-agent" / "protocols" / "journal-style-context.schema.json"
+JOURNAL_PROFILE_SCHEMA = ROOT / "skills" / "scholarly-agent" / "protocols" / "journal-profile.schema.json"
 
 for _p in (str(JFE_SKILL_DIR), str(VOICE_SKILL_DIR)):
     if _p not in sys.path:

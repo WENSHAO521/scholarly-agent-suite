@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1400" role="img" aria-label="Flowchart of how Scholarly Agent decides what to do: check whether two or more specialists are genuinely needed; if not, route directly to one specialist with no orchestration; if so, select a workflow recipe, reuse fresh existing artifacts instead of rebuilding them, propagate hard constraints, invoke only the minimal specialist set in recipe order, allow at most one bounded repair pass, then apply a final quality gate that branches into COMPLETE, COMPLETE_WITH_LIMITATIONS, or a BLOCKED state.">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1400" role="img" aria-label="Flowchart of how the Scholarly Agent dispatcher decides what to do: check whether two or more modules are genuinely needed; if not, load only the one module the request needs; if so, select a workflow recipe, reuse fresh existing artifacts instead of rebuilding them, propagate hard constraints, load only the minimal module set in recipe order, allow at most one bounded repair pass, then apply a final quality gate that branches into COMPLETE, COMPLETE_WITH_LIMITATIONS, or a BLOCKED state.">
   <title>Scholarly Agent -- orchestration decision flowchart</title>
   <defs>
     <marker id="ofArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
@@ -15,7 +15,7 @@
 
   <!-- decision 1 -->
   <polygon points="450,92 610,168 450,244 290,168" fill="none" stroke="#a65d3f" stroke-width="1.6"/>
-  <text x="450" y="160" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="11.5" font-weight="600" fill="#a65d3f">TWO OR MORE SPECIALISTS</text>
+  <text x="450" y="160" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="11.5" font-weight="600" fill="#a65d3f">TWO OR MORE MODULES</text>
   <text x="450" y="176" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="11.5" font-weight="600" fill="#a65d3f">GENUINELY NEEDED?</text>
 
   <!-- NO branch -->
@@ -23,8 +23,8 @@
   <text x="665" y="158" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="10.5" fill="#241f18" fill-opacity="0.7">no</text>
   <rect x="640" y="188" width="230" height="76" rx="9" fill="none" stroke="#241f18" stroke-opacity="0.45"/>
   <text x="755" y="212" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="11" font-weight="600" fill="#241f18">ROUTE DIRECTLY TO</text>
-  <text x="755" y="228" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="11" font-weight="600" fill="#241f18">ONE SPECIALIST</text>
-  <text x="755" y="248" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="10" fill="#241f18" fill-opacity="0.6">no orchestration overhead</text>
+  <text x="755" y="228" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="11" font-weight="600" fill="#241f18">ONE MODULE</text>
+  <text x="755" y="248" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="10" fill="#241f18" fill-opacity="0.6">load only its MODULE.md</text>
   <line x1="755" y1="264" x2="755" y2="300" stroke="#241f18" stroke-opacity="0.6" marker-end="url(#ofArrow)"/>
   <rect x="670" y="302" width="170" height="38" rx="19" fill="none" stroke="#241f18" stroke-opacity="0.55"/>
   <text x="755" y="326" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="11" letter-spacing="1" fill="#241f18">DONE</text>
@@ -65,7 +65,7 @@
 
   <!-- invoke minimal set -->
   <rect x="230" y="654" width="440" height="100" rx="10" fill="none" stroke="#3f7a9e" stroke-width="2"/>
-  <text x="450" y="682" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="13" font-weight="600" fill="#3f7a9e">INVOKE MINIMAL SPECIALIST SET</text>
+  <text x="450" y="682" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="13" font-weight="600" fill="#3f7a9e">LOAD MINIMAL MODULE SET</text>
   <text x="450" y="700" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="10.5" fill="#241f18" fill-opacity="0.7">in the recipe's stage order --</text>
   <text x="450" y="716" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="10.5" fill="#241f18" fill-opacity="0.7">Router / Corpus Builder / Voice Engine / Journal Fit</text>
   <text x="450" y="734" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="10" font-style="italic" fill="#241f18" fill-opacity="0.55">never a fixed all-four pipeline by default</text>
@@ -83,7 +83,7 @@
     <text x="460" y="872"><tspan font-family="SFMono-Regular,Consolas,monospace" fill-opacity="0.55">5</tspan><tspan dx="10">journal claims current where required</tspan></text>
     <text x="460" y="894"><tspan font-family="SFMono-Regular,Consolas,monospace" fill-opacity="0.55">6</tspan><tspan dx="10">compatible protocol versions used</tspan></text>
   </g>
-  <text x="450" y="924" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="10.5" font-style="italic" fill="#241f18" fill-opacity="0.6">a specialist's PARTIAL result or unresolved flag must survive here, never be laundered</text>
+  <text x="450" y="924" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="10.5" font-style="italic" fill="#241f18" fill-opacity="0.6">a module's PARTIAL result or unresolved flag must survive here, never be laundered</text>
   <line x1="450" y1="942" x2="450" y2="978" stroke="#241f18" stroke-opacity="0.6" marker-end="url(#ofArrow)"/>
 
   <polygon points="450,980 640,1058 450,1136 260,1058" fill="none" stroke="#a65d3f" stroke-width="1.6"/>

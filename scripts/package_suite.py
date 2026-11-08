@@ -5,9 +5,8 @@ Packages exactly the runtime allowlist from the spec (rule 81):
 
     scholarly-agent-suite/
       .codex-plugin/
-      skills/
-      protocols/
-      shared/
+      skills/            (the single scholarly-agent Skill, including its
+                          modules/, protocols/ and shared/)
       workflows/
       README.md
       LICENSE
@@ -54,8 +53,6 @@ DIST_DIR = ROOT / "dist"
 RUNTIME_ALLOWLIST = [
     ".codex-plugin",
     "skills",
-    "protocols",
-    "shared",
     "workflows",
     "README.md",
     "LICENSE",
@@ -137,7 +134,8 @@ def write_release_manifest(zip_path: Path, files: list[Path], version: str) -> P
     components = json.loads((ROOT / "COMPONENTS.json").read_text(encoding="utf-8"))
     manifest = {
         "suite_version": version,
-        "components": components["components"],
+        "skill": components["skill"],
+        "modules": components["modules"],
         "protocol_versions": components.get("protocol_versions", []),
         "file_count": len(files),
         "files": [f"scholarly-agent-suite/{p.relative_to(ROOT).as_posix()}" for p in files],

@@ -1,0 +1,68 @@
+{
+  "id": "https://openalex.org/W1234567890",
+  "doi": "https://doi.org/10.1234/example.5678",
+  "title": "Institutional Mechanisms and Policy Diffusion",
+  "display_name": "Institutional Mechanisms and Policy Diffusion",
+  "publication_year": 2023,
+  "publication_date": "2023-04-15",
+  "type": "article",
+  "primary_location": {
+    "source": {
+      "display_name": "Journal of Example Studies",
+      "publisher": "Example University Press",
+      "issn": ["1234-5678"],
+      "type": "journal"
+    }
+  },
+  "biblio": {
+    "volume": "12",
+    "issue": "3",
+    "first_page": "200",
+    "last_page": "225"
+  },
+  "open_access": {
+    "is_oa": true,
+    "oa_status": "green",
+    "oa_url": "https://repository.example.edu/1234"
+  },
+  "best_oa_location": {
+    "is_oa": true,
+    "url": "https://repository.example.edu/1234",
+    "pdf_url": "https://repository.example.edu/1234.pdf",
+    "license": "cc-by",
+    "version": "acceptedVersion"
+  },
+  "locations": [
+    {
+      "is_oa": false,
+      "landing_page_url": "https://publisher.example/10.1234/example.5678",
+      "pdf_url": null,
+      "version": "publishedVersion",
+      "license": null,
+      "source": {"type": "journal"}
+    },
+    {
+      "is_oa": true,
+      "landing_page_url": "https://repository.example.edu/1234",
+      "pdf_url": "https://repository.example.edu/1234.pdf",
+      "version": "acceptedVersion",
+      "license": "cc-by",
+      "source": {"type": "repository"}
+    }
+  ],
+  "authorships": [
+    {"author": {"id": "https://openalex.org/A0001", "display_name": "Jane Doe"}},
+    {"author": {"id": "https://openalex.org/A0002", "display_name": "John Smith"}}
+  ],
+  "concepts": [
+    {"display_name": "Public administration"},
+    {"display_name": "Policy diffusion"}
+  ],
+  "abstract_inverted_index": {
+    "This": [0],
+    "paper": [1],
+    "examines": [2],
+    "institutional": [3],
+    "mechanisms.": [4]
+  }
+}

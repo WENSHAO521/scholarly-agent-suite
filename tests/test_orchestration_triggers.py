@@ -1,13 +1,13 @@
-"""Acceptance criteria: negative orchestration triggers (spec sections 66,
-151) and narrow trigger boundary (spec section 16-17). These Skills are
-natural-language-triggered, not code-triggered, so what is actually
-verifiable offline is: (1) the frontmatter description states the narrow
-boundary explicitly, and (2) the documented negative examples are present so
-a host/eval harness has them to test against (see evals/ for the executable
-version of these same cases)."""
+"""Acceptance criteria: trigger boundary of the single scholarly-agent
+Skill and its dispatch paths. Skills are natural-language-triggered, so
+what is verifiable offline is that (1) the frontmatter description covers
+every module's domain and states the negative boundary, and (2) the
+documented negative examples and module-selection paths are present for a
+host/eval harness to test against (see evals/ for the executable cases)."""
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
+SKILL_DIR = ROOT / "skills" / "scholarly-agent"
 
 
 def _frontmatter_description(skill_md_text: str) -> str:
@@ -19,30 +19,46 @@ def _frontmatter_description(skill_md_text: str) -> str:
     raise AssertionError("no description: field found")
 
 
-def test_orchestrator_description_states_two_or_more_specialist_threshold():
-    text = (ROOT / "skills" / "scholarly-agent" / "SKILL.md").read_text(encoding="utf-8")
-    description = _frontmatter_description(text)
-    assert "two or more specialist" in description
-    assert "do not invoke" in description
+def test_description_covers_every_module_domain():
+    description = _frontmatter_description((SKILL_DIR / "SKILL.md").read_text(encoding="utf-8")).lower()
+    for term in [
+        "drafting", "revising",          # voice
+        "corpora", "style profiles",     # corpus
+        "journals",                      # journal fit
+        "executed",                      # router
+    ]:
+        assert term in description, f"description missing '{term}'"
 
 
-def test_orchestrator_documents_do_not_activate_examples():
-    text = (ROOT / "skills" / "scholarly-agent" / "SKILL.md").read_text(encoding="utf-8")
+def test_description_states_negative_boundary():
+    description = _frontmatter_description((SKILL_DIR / "SKILL.md").read_text(encoding="utf-8"))
+    assert "Do not invoke" in description
+    assert "only the internal module" in description
+
+
+def test_skill_md_documents_do_not_activate_examples():
+    text = (SKILL_DIR / "SKILL.md").read_text(encoding="utf-8")
     assert "Do not activate" in text
     for phrase in ["Fix this sentence", "What does APC mean", "Translate this title"]:
         assert phrase in text
 
 
+def test_skill_md_documents_three_dispatch_paths():
+    text = (SKILL_DIR / "SKILL.md").read_text(encoding="utf-8")
+    for path_name in ["**No module.**", "**Single module.**", "**Multi-module workflow.**"]:
+        assert path_name in text
+
+
 def test_routing_matrix_documents_negative_examples():
-    text = (ROOT / "skills" / "scholarly-agent" / "references" / "routing-matrix.md").read_text(encoding="utf-8")
+    text = (SKILL_DIR / "references" / "routing-matrix.md").read_text(encoding="utf-8")
     assert "Negative examples" in text
     for phrase in ["Fix this grammar", "What's a DOI", "Format this citation", "Translate this title"]:
         assert phrase in text
 
 
-def test_specialist_descriptions_carry_their_own_narrow_boundary():
-    """Each specialist's own description should distinguish itself from the
-    others (rule 56: avoid competing implicit triggers)."""
+def test_each_module_keeps_its_scope_line():
+    """Each module's MODULE.md carries its former Skill description as a
+    Scope line, so the dispatcher can tell modules apart."""
     boundary_terms = {
         "adaptive-model-router": ["routing", "delegation"],
         "scholarly-corpus-builder": ["corpora", "profiles"],
@@ -50,7 +66,7 @@ def test_specialist_descriptions_carry_their_own_narrow_boundary():
         "journal-fit-engine": ["journal", "fit"],
     }
     for name, terms in boundary_terms.items():
-        text = (ROOT / "skills" / name / "SKILL.md").read_text(encoding="utf-8")
-        description = _frontmatter_description(text).lower()
+        text = (SKILL_DIR / "modules" / name / "MODULE.md").read_text(encoding="utf-8")
+        scope = next(l for l in text.splitlines() if l.startswith("> Scope:")).lower()
         for term in terms:
-            assert term in description, f"{name} description missing expected boundary term '{term}'"
+            assert term in scope, f"{name} scope missing '{term}'"

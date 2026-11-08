@@ -1,0 +1,15 @@
+{"id": "rr-001", "category": "refresh_decisions", "task": "No cached manifest exists for a requested journal target.", "expected": "gate_state_new_target"}
+{"id": "rr-002", "category": "refresh_decisions", "task": "A cached journal manifest has build status PARTIAL regardless of its age.", "expected": "gate_state_incomplete_overrides_freshness_window"}
+{"id": "rr-003", "category": "refresh_decisions", "task": "User explicitly asks to refresh a profile that is otherwise CURRENT.", "expected": "gate_state_user_requested_refresh_takes_precedence_over_current"}
+{"id": "rr-004", "category": "profile_staleness", "task": "A fast-moving AI-conference journal profile is 100 days old.", "expected": "gate_state_aging_under_the_3_6_month_fast_moving_window"}
+{"id": "rr-005", "category": "profile_staleness", "task": "A historical-scholar profile is 10 years old with no new source material available.", "expected": "gate_state_current_no_periodic_refresh_applies"}
+{"id": "rr-006", "category": "refresh_decisions", "task": "A cached manifest's creation timestamp cannot be parsed.", "expected": "gate_state_new_target_do_not_assume_freshness_from_unparseable_data"}
+{"id": "rr-007", "category": "tool_failure", "task": "An adapter returns HTTP 404 for a specific identifier lookup.", "expected": "classify_not_found_return_none_do_not_raise_do_not_retry"}
+{"id": "rr-008", "category": "tool_failure", "task": "An adapter persistently returns HTTP 429 beyond the bounded retry budget.", "expected": "surface_the_failure_after_retries_exhausted_do_not_hang_or_fabricate_a_result"}
+{"id": "rr-009", "category": "tool_failure", "task": "One adapter in a multi-adapter acquisition run throws an unexpected exception.", "expected": "record_as_adapter_error_continue_with_remaining_adapters_do_not_abort_whole_acquisition"}
+{"id": "rr-010", "category": "tool_failure", "task": "An adapter returns a 200 response with malformed/unparseable JSON.", "expected": "raise_a_clear_error_do_not_silently_return_a_fabricated_or_partial_record"}
+{"id": "rr-011", "category": "multilingual_corpus", "task": "A discipline corpus includes both English-language and Chinese-language abstracts.", "expected": "keep_per_language_sentence_statistics_separate_do_not_merge_into_one_number"}
+{"id": "rr-012", "category": "multilingual_corpus", "task": "An author writes in both English and German; build a cross-language voice profile.", "expected": "maintain_language_specific_style_plus_language_independent_intellectual_patterns_separately"}
+{"id": "rr-013", "category": "book_corpus", "task": "Build a style profile for a five-chapter academic monograph.", "expected": "analyze_chapter_length_opening_style_and_progression_not_as_enlarged_journal_articles"}
+{"id": "rr-014", "category": "corpus_sufficiency", "task": "An acquisition run reaches exactly the requested target_records with full retrieval depth met for all of them.", "expected": "manifest_status_complete"}
+{"id": "rr-015", "category": "corpus_sufficiency", "task": "An acquisition run reaches 25% of target_records with only 2 usable works.", "expected": "manifest_status_insufficient_not_partial"}

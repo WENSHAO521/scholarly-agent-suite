@@ -1,13 +1,16 @@
-"""Acceptance criteria: Plugin/component presence, frontmatter, uniqueness,
-versions (spec sections 62, 123, 141)."""
+"""Acceptance criteria for the v2 single-Skill layout: exactly one Skill
+(`scholarly-agent`) ships under skills/, and the four former specialist
+Skills live inside it as on-demand modules under
+skills/scholarly-agent/modules/<name>/MODULE.md."""
 import json
 from pathlib import Path
 
 import pytest
 
 ROOT = Path(__file__).resolve().parent.parent
-SKILL_NAMES = [
-    "scholarly-agent", "adaptive-model-router", "scholarly-corpus-builder",
+SKILL_DIR = ROOT / "skills" / "scholarly-agent"
+MODULE_NAMES = [
+    "adaptive-model-router", "scholarly-corpus-builder",
     "scholarly-voice-engine", "journal-fit-engine",
 ]
 
@@ -30,76 +33,58 @@ def parse_frontmatter(text: str) -> dict:
     return result
 
 
-@pytest.mark.parametrize("name", SKILL_NAMES)
-def test_skill_frontmatter_name_matches_directory(name):
-    skill_md = ROOT / "skills" / name / "SKILL.md"
-    fm = parse_frontmatter(skill_md.read_text(encoding="utf-8"))
-    assert fm["name"] == name
-    assert fm["description"], "description must be non-empty"
+def test_exactly_one_skill_ships():
+    skill_dirs = sorted(p.name for p in (ROOT / "skills").iterdir() if p.is_dir())
+    assert skill_dirs == ["scholarly-agent"], skill_dirs
 
 
-@pytest.mark.parametrize("name", SKILL_NAMES)
-def test_no_double_nesting(name):
-    skill_dir = ROOT / "skills" / name
-    assert not (skill_dir / name).is_dir(), f"skills/{name}/{name}/ double-nesting detected"
+def test_no_skill_md_anywhere_else_under_skills():
+    """A stray SKILL.md inside a module would make a host register it as a
+    second, competing Skill -- the exact thing the merge removed."""
+    found = sorted(p.relative_to(ROOT).as_posix() for p in (ROOT / "skills").rglob("SKILL.md"))
+    assert found == ["skills/scholarly-agent/SKILL.md"], found
 
 
-def test_no_duplicate_skill_names():
-    names = []
-    for name in SKILL_NAMES:
-        skill_md = ROOT / "skills" / name / "SKILL.md"
-        fm = parse_frontmatter(skill_md.read_text(encoding="utf-8"))
-        names.append(fm["name"])
-    assert len(names) == len(set(names)), f"duplicate Skill names found: {names}"
+def test_skill_frontmatter_name_matches_directory():
+    fm = parse_frontmatter((SKILL_DIR / "SKILL.md").read_text(encoding="utf-8"))
+    assert fm["name"] == "scholarly-agent"
+    assert fm["description"]
 
 
-def test_components_json_has_all_five_with_required_fields():
+def test_no_double_nesting():
+    assert not (SKILL_DIR / "scholarly-agent").is_dir()
+
+
+@pytest.mark.parametrize("name", MODULE_NAMES)
+def test_module_present_without_frontmatter(name):
+    module_md = SKILL_DIR / "modules" / name / "MODULE.md"
+    assert module_md.is_file(), f"modules/{name}/MODULE.md missing"
+    assert not module_md.read_text(encoding="utf-8").startswith("---"), (
+        f"modules/{name}/MODULE.md must not carry Skill frontmatter"
+    )
+
+
+@pytest.mark.parametrize("name", MODULE_NAMES)
+def test_module_referenced_from_skill_md(name):
+    text = (SKILL_DIR / "SKILL.md").read_text(encoding="utf-8")
+    assert f"modules/{name}/MODULE.md" in text
+
+
+def test_components_json_lists_one_skill_and_four_modules():
     data = json.loads((ROOT / "COMPONENTS.json").read_text(encoding="utf-8"))
-    components = data["components"]
-    for name in SKILL_NAMES:
-        assert name in components, f"COMPONENTS.json missing entry for {name}"
-        entry = components[name]
-        assert entry.get("version")
+    assert data["skill"] == "scholarly-agent"
+    assert sorted(data["modules"]) == sorted(MODULE_NAMES)
+    for name, entry in data["modules"].items():
+        assert entry["path"] == f"skills/scholarly-agent/modules/{name}"
+        assert (ROOT / entry["path"]).is_dir()
         assert entry.get("role")
-        assert entry.get("source_repository")
-        assert entry.get("source_commit")
+        origin = entry["merged_from"]
+        assert origin["repository"].startswith("https://github.com/")
+        assert len(origin["commit"]) == 40
+        assert origin["version"]
 
 
 def test_components_json_suite_version_matches_version_file():
-    """Regression guard for a real bug (found 2026-09-09, shipped in the
-    published v1.0.1 GitHub Release): VERSION was bumped to 1.0.1 without
-    re-running sync_components.py, so the committed COMPONENTS.json still
-    said suite_version=1.0.0 -- an internal inconsistency validate_suite.py
-    didn't catch because it only checked the key existed, never its value
-    against VERSION. Run `python scripts/sync_components.py` after bumping
-    VERSION, before tagging, to keep this from recurring."""
     suite_version = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
     data = json.loads((ROOT / "COMPONENTS.json").read_text(encoding="utf-8"))
     assert data["suite_version"] == suite_version
-    assert data["components"]["scholarly-agent"]["version"] == suite_version
-
-
-def test_component_versions_are_not_forced_to_match_suite_version():
-    """Spec rule 7: a valid release need not have all skills == suite version."""
-    data = json.loads((ROOT / "COMPONENTS.json").read_text(encoding="utf-8"))
-    versions = {name: entry["version"] for name, entry in data["components"].items()}
-    # This suite's actual v1.0.0 release legitimately mixes versions
-    # (0.2.0 / 0.9.0 / 1.0.0 / 0.1.0 / 1.0.0) -- assert that heterogeneity,
-    # not homogeneity, is what COMPONENTS.json currently records.
-    assert len(set(versions.values())) > 1
-
-
-def test_compatibility_ranges_declared_for_all_specialists():
-    data = json.loads((ROOT / "COMPONENTS.json").read_text(encoding="utf-8"))
-    compatibility = data["compatibility"]
-    for name in ["adaptive-model-router", "scholarly-corpus-builder", "scholarly-voice-engine", "journal-fit-engine"]:
-        assert name in compatibility
-
-
-def test_source_commits_are_full_shas_not_branch_names():
-    data = json.loads((ROOT / "scripts" / "component-sources.json").read_text(encoding="utf-8"))
-    for entry in data["components"]:
-        ref = entry["ref"]
-        assert len(ref) == 40 and all(c in "0123456789abcdef" for c in ref), (
-            f"{entry['name']}: ref {ref!r} is not a pinned 40-char commit sha"
-        )

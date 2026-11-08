@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<PubmedArticleSet>
+  <PubmedArticle>
+    <MedlineCitation Status="MEDLINE" Owner="NLM">
+      <PMID Version="1">33333333</PMID>
+      <Article PubModel="Print">
+        <Journal>
+          <Title>Journal of Example Medicine</Title>
+          <JournalIssue>
+            <Volume>45</Volume>
+            <Issue>2</Issue>
+            <PubDate><Year>2022</Year></PubDate>
+          </JournalIssue>
+        </Journal>
+        <ArticleTitle>Mechanisms of Example Cellular Response</ArticleTitle>
+        <Abstract>
+          <AbstractText Label="BACKGROUND">Little is known about example cellular response.</AbstractText>
+          <AbstractText Label="METHODS">We conducted an in vitro study.</AbstractText>
+        </Abstract>
+        <AuthorList>
+          <Author><LastName>Lee</LastName><ForeName>Grace</ForeName></Author>
+          <Author><LastName>Park</LastName><ForeName>Min</ForeName></Author>
+        </AuthorList>
+        <ELocationID EIdType="doi">10.5555/example.4321</ELocationID>
+        <PublicationTypeList>
+          <PublicationType>Journal Article</PublicationType>
+        </PublicationTypeList>
+      </Article>
+    </MedlineCitation>
+    <PubmedData>
+      <ArticleIdList>
+        <ArticleId IdType="pubmed">33333333</ArticleId>
+        <ArticleId IdType="doi">10.5555/example.4321</ArticleId>
+        <ArticleId IdType="pmc">PMC9999999</ArticleId>
+      </ArticleIdList>
+    </PubmedData>
+  </PubmedArticle>
+</PubmedArticleSet>
