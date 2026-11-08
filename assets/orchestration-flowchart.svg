@@ -1,131 +1,140 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1400" role="img" aria-label="Flowchart of how the Scholarly Agent dispatcher decides what to do: check whether two or more modules are genuinely needed; if not, load only the one module the request needs; if so, select a workflow recipe, reuse fresh existing artifacts instead of rebuilding them, propagate hard constraints, load only the minimal module set in recipe order, allow at most one bounded repair pass, then apply a final quality gate that branches into COMPLETE, COMPLETE_WITH_LIMITATIONS, or a BLOCKED state.">
-  <title>Scholarly Agent -- orchestration decision flowchart</title>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 1000" role="img" aria-label="How the Scholarly Agent handles a request. The dispatcher first asks what the deliverable is and which modules it really needs, then takes one of three paths. No module: a trivial question is answered directly. One module: it loads that module's MODULE.md and returns the module's result with its own validation state. Two or more modules: it selects one of 14 workflow recipes, reuses fresh artifacts, carries hard constraints forward, runs the stages loading each module only when its stage starts and handing off through versioned protocols, then applies a final quality gate of six checks. If a check fails, one targeted repair pass is allowed before the gate is applied again. The workflow ends as COMPLETE, COMPLETE_WITH_LIMITATIONS, or BLOCKED.">
+  <title>Scholarly Agent -- how a request is handled</title>
   <defs>
-    <marker id="ofArrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-      <path d="M0,0 L10,5 L0,10 Z" fill="#241f18"/>
+    <marker id="fa" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#241f18" fill-opacity="0.7"/>
     </marker>
+    <style>
+      .mono { font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace; }
+      .sans { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; }
+      .ink { fill: #241f18; }
+      .muted { fill: #241f18; fill-opacity: 0.62; }
+      .line { stroke: #241f18; stroke-opacity: 0.55; fill: none; }
+      .box { fill: #fffdf8; stroke: #241f18; stroke-opacity: 0.3; }
+    </style>
   </defs>
 
-  <rect x="0" y="0" width="900" height="1400" fill="#f6f3ec"/>
+  <rect x="0" y="0" width="960" height="1000" fill="#f6f3ec"/>
 
-  <!-- start -->
-  <rect x="330" y="16" width="240" height="40" rx="20" fill="none" stroke="#241f18" stroke-opacity="0.55"/>
-  <text x="450" y="41" text-anchor="middle" font-family="SFMono-Regular,Consolas,'Liberation Mono',Menlo,monospace" font-size="12" letter-spacing="1" fill="#241f18">SCHOLARLY REQUEST</text>
-  <line x1="450" y1="56" x2="450" y2="90" stroke="#241f18" stroke-opacity="0.6" marker-end="url(#ofArrow)"/>
+  <!-- Request -->
+  <rect x="360" y="20" width="240" height="40" rx="20" fill="#fffdf8" stroke="#241f18" stroke-opacity="0.45"/>
+  <text x="480" y="45" text-anchor="middle" class="mono ink" font-size="13" font-weight="700" letter-spacing="1">SCHOLARLY REQUEST</text>
+  <line x1="480" y1="60" x2="480" y2="88" class="line" marker-end="url(#fa)"/>
 
-  <!-- decision 1 -->
-  <polygon points="450,92 610,168 450,244 290,168" fill="none" stroke="#a65d3f" stroke-width="1.6"/>
-  <text x="450" y="160" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="11.5" font-weight="600" fill="#a65d3f">TWO OR MORE MODULES</text>
-  <text x="450" y="176" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="11.5" font-weight="600" fill="#a65d3f">GENUINELY NEEDED?</text>
+  <!-- Dispatcher -->
+  <rect x="260" y="90" width="440" height="62" rx="10" fill="#eaf1f5" stroke="#3f7a9e" stroke-width="1.5"/>
+  <text x="480" y="114" text-anchor="middle" class="mono" font-size="13" font-weight="700" letter-spacing="1" fill="#3f7a9e">DISPATCHER · SKILL.md</text>
+  <text x="480" y="136" text-anchor="middle" class="sans ink" font-size="12">What is the deliverable? Which modules does it really need?</text>
 
-  <!-- NO branch -->
-  <line x1="610" y1="168" x2="720" y2="168" stroke="#241f18" stroke-opacity="0.6" marker-end="url(#ofArrow)"/>
-  <text x="665" y="158" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="10.5" fill="#241f18" fill-opacity="0.7">no</text>
-  <rect x="640" y="188" width="230" height="76" rx="9" fill="none" stroke="#241f18" stroke-opacity="0.45"/>
-  <text x="755" y="212" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="11" font-weight="600" fill="#241f18">ROUTE DIRECTLY TO</text>
-  <text x="755" y="228" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="11" font-weight="600" fill="#241f18">ONE MODULE</text>
-  <text x="755" y="248" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="10" fill="#241f18" fill-opacity="0.6">load only its MODULE.md</text>
-  <line x1="755" y1="264" x2="755" y2="300" stroke="#241f18" stroke-opacity="0.6" marker-end="url(#ofArrow)"/>
-  <rect x="670" y="302" width="170" height="38" rx="19" fill="none" stroke="#241f18" stroke-opacity="0.55"/>
-  <text x="755" y="326" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="11" letter-spacing="1" fill="#241f18">DONE</text>
+  <!-- Branches -->
+  <path d="M330 152 L165 188" class="line" marker-end="url(#fa)"/>
+  <path d="M480 152 L435 188" class="line" marker-end="url(#fa)"/>
+  <path d="M630 152 L750 188" class="line" marker-end="url(#fa)"/>
 
-  <!-- YES branch continues down -->
-  <line x1="450" y1="244" x2="450" y2="280" stroke="#241f18" stroke-opacity="0.6" marker-end="url(#ofArrow)"/>
-  <text x="466" y="266" font-family="SFMono-Regular,Consolas,monospace" font-size="10.5" fill="#241f18" fill-opacity="0.7">yes</text>
+  <!-- Lane 1: no module -->
+  <rect x="40" y="190" width="250" height="72" rx="10" class="box"/>
+  <text x="165" y="214" text-anchor="middle" class="mono ink" font-size="12.5" font-weight="700">NO MODULE</text>
+  <text x="165" y="234" text-anchor="middle" class="sans muted" font-size="11" font-style="italic">"What does APC mean?"</text>
+  <text x="165" y="250" text-anchor="middle" class="sans muted" font-size="11" font-style="italic">"Fix this sentence."</text>
+  <line x1="165" y1="262" x2="165" y2="298" class="line" marker-end="url(#fa)"/>
+  <rect x="65" y="300" width="200" height="36" rx="18" fill="#ffffff" stroke="#241f18" stroke-opacity="0.45"/>
+  <text x="165" y="323" text-anchor="middle" class="mono ink" font-size="11.5" font-weight="700">ANSWER DIRECTLY</text>
 
-  <!-- select recipe -->
-  <rect x="270" y="282" width="360" height="82" rx="9" fill="none" stroke="#241f18" stroke-opacity="0.45"/>
-  <text x="450" y="308" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="12" font-weight="600" fill="#241f18">SELECT WORKFLOW RECIPE</text>
-  <text x="450" y="328" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="10" fill="#241f18" fill-opacity="0.65">paper-from-idea, revise-manuscript,</text>
-  <text x="450" y="344" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="10" fill="#241f18" fill-opacity="0.65">journal-selection, book-project, ... (workflows/)</text>
-  <line x1="450" y1="364" x2="450" y2="398" stroke="#241f18" stroke-opacity="0.6" marker-end="url(#ofArrow)"/>
+  <!-- Lane 2: one module -->
+  <rect x="310" y="190" width="250" height="72" rx="10" class="box"/>
+  <text x="435" y="214" text-anchor="middle" class="mono ink" font-size="12.5" font-weight="700">ONE MODULE</text>
+  <text x="435" y="234" text-anchor="middle" class="sans muted" font-size="11" font-style="italic">"Polish this paragraph."</text>
+  <text x="435" y="250" text-anchor="middle" class="sans muted" font-size="11" font-style="italic">"Build a journal style profile."</text>
+  <line x1="435" y1="262" x2="435" y2="298" class="line" marker-end="url(#fa)"/>
+  <rect x="310" y="300" width="250" height="66" rx="10" class="box"/>
+  <text x="435" y="324" text-anchor="middle" class="mono ink" font-size="12" font-weight="700">LOAD ITS MODULE.md</text>
+  <text x="435" y="343" text-anchor="middle" class="sans ink" font-size="11">follow that module's own workflow</text>
+  <text x="435" y="358" text-anchor="middle" class="sans ink" font-size="11">and validation; no recipe, no state</text>
+  <line x1="435" y1="366" x2="435" y2="394" class="line" marker-end="url(#fa)"/>
+  <rect x="320" y="396" width="230" height="36" rx="18" fill="#ffffff" stroke="#241f18" stroke-opacity="0.45"/>
+  <text x="435" y="419" text-anchor="middle" class="mono ink" font-size="11" font-weight="700">RESULT + VALIDATION STATE</text>
 
-  <!-- reuse check decision -->
-  <polygon points="450,400 630,460 450,520 270,460" fill="none" stroke="#a65d3f" stroke-width="1.6"/>
-  <text x="450" y="452" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="11" font-weight="600" fill="#a65d3f">EXISTING ARTIFACT</text>
-  <text x="450" y="468" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="11" font-weight="600" fill="#a65d3f">FRESH &amp; REUSABLE?</text>
+  <!-- Lane 3: workflow -->
+  <rect x="580" y="190" width="340" height="72" rx="10" fill="#fffdf8" stroke="#3f7a9e" stroke-opacity="0.7"/>
+  <text x="750" y="214" text-anchor="middle" class="mono" font-size="12.5" font-weight="700" fill="#3f7a9e">TWO OR MORE MODULES</text>
+  <text x="750" y="234" text-anchor="middle" class="sans muted" font-size="11" font-style="italic">"Turn my idea into a paper</text>
+  <text x="750" y="250" text-anchor="middle" class="sans muted" font-size="11" font-style="italic">and find a journal."</text>
+  <line x1="750" y1="262" x2="750" y2="298" class="line" marker-end="url(#fa)"/>
 
-  <line x1="630" y1="460" x2="720" y2="460" stroke="#241f18" stroke-opacity="0.6" marker-end="url(#ofArrow)"/>
-  <text x="672" y="450" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="10.5" fill="#241f18" fill-opacity="0.7">yes</text>
-  <rect x="640" y="478" width="230" height="60" rx="9" fill="none" stroke="#241f18" stroke-opacity="0.45"/>
-  <text x="755" y="502" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="11" font-weight="600" fill="#241f18">REUSE ARTIFACT</text>
-  <text x="755" y="520" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="10" fill="#241f18" fill-opacity="0.6">skip rebuilding this stage</text>
+  <rect x="580" y="300" width="340" height="52" rx="10" class="box"/>
+  <text x="750" y="322" text-anchor="middle" class="mono ink" font-size="12" font-weight="700">SELECT WORKFLOW RECIPE</text>
+  <text x="750" y="340" text-anchor="middle" class="sans ink" font-size="11">1 of 14 · e.g. paper-from-idea, theory-paper</text>
+  <line x1="750" y1="352" x2="750" y2="374" class="line" marker-end="url(#fa)"/>
 
-  <line x1="450" y1="520" x2="450" y2="556" stroke="#241f18" stroke-opacity="0.6" marker-end="url(#ofArrow)"/>
-  <text x="422" y="542" font-family="SFMono-Regular,Consolas,monospace" font-size="10.5" fill="#241f18" fill-opacity="0.7">no / stale</text>
+  <rect x="580" y="376" width="340" height="52" rx="10" class="box"/>
+  <text x="750" y="398" text-anchor="middle" class="mono ink" font-size="12" font-weight="700">REUSE FRESH ARTIFACTS</text>
+  <text x="750" y="416" text-anchor="middle" class="sans ink" font-size="11">skip a stage whose profile or draft is still current</text>
+  <line x1="750" y1="428" x2="750" y2="450" class="line" marker-end="url(#fa)"/>
 
-  <line x1="755" y1="538" x2="755" y2="576" stroke="#241f18" stroke-opacity="0.45" stroke-dasharray="4 4"/>
-  <line x1="755" y1="576" x2="596" y2="576" stroke="#241f18" stroke-opacity="0.45" stroke-dasharray="4 4" marker-end="url(#ofArrow)"/>
+  <rect x="580" y="452" width="340" height="52" rx="10" class="box"/>
+  <text x="750" y="474" text-anchor="middle" class="mono ink" font-size="12" font-weight="700">CARRY HARD CONSTRAINTS</text>
+  <text x="750" y="492" text-anchor="middle" class="sans ink" font-size="11">SSCI only · no APC · word limit -- never dropped</text>
+  <line x1="750" y1="504" x2="750" y2="526" class="line" marker-end="url(#fa)"/>
 
-  <!-- propagate constraints -->
-  <rect x="270" y="558" width="360" height="60" rx="9" fill="none" stroke="#241f18" stroke-opacity="0.45"/>
-  <text x="450" y="582" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="12" font-weight="600" fill="#241f18">PROPAGATE HARD CONSTRAINTS</text>
-  <text x="450" y="600" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="10" fill="#241f18" fill-opacity="0.65">e.g. SSCI only, no APC, word limit -- never silently dropped</text>
-  <line x1="450" y1="618" x2="450" y2="652" stroke="#241f18" stroke-opacity="0.6" marker-end="url(#ofArrow)"/>
-
-  <!-- invoke minimal set -->
-  <rect x="230" y="654" width="440" height="100" rx="10" fill="none" stroke="#3f7a9e" stroke-width="2"/>
-  <text x="450" y="682" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="13" font-weight="600" fill="#3f7a9e">LOAD MINIMAL MODULE SET</text>
-  <text x="450" y="700" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="10.5" fill="#241f18" fill-opacity="0.7">in the recipe's stage order --</text>
-  <text x="450" y="716" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="10.5" fill="#241f18" fill-opacity="0.7">Router / Corpus Builder / Voice Engine / Journal Fit</text>
-  <text x="450" y="734" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="10" font-style="italic" fill="#241f18" fill-opacity="0.55">never a fixed all-four pipeline by default</text>
-  <line x1="450" y1="754" x2="450" y2="790" stroke="#241f18" stroke-opacity="0.6" marker-end="url(#ofArrow)"/>
-
-  <!-- quality gate decision -->
-  <rect x="200" y="792" width="500" height="150" rx="10" fill="none" stroke="#241f18" stroke-opacity="0.35"/>
-  <text x="220" y="816" font-family="SFMono-Regular,Consolas,monospace" font-size="11.5" font-weight="600" letter-spacing="1" fill="#241f18">FINAL QUALITY GATE</text>
-  <line x1="220" y1="826" x2="680" y2="826" stroke="#241f18" stroke-opacity="0.2"/>
-  <g font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11.5" fill="#241f18">
-    <text x="220" y="850"><tspan font-family="SFMono-Regular,Consolas,monospace" fill-opacity="0.55">1</tspan><tspan dx="10">deliverable exists</tspan></text>
-    <text x="220" y="872"><tspan font-family="SFMono-Regular,Consolas,monospace" fill-opacity="0.55">2</tspan><tspan dx="10">evidence verified or limitation declared</tspan></text>
-    <text x="220" y="894"><tspan font-family="SFMono-Regular,Consolas,monospace" fill-opacity="0.55">3</tspan><tspan dx="10">argument integrity passed</tspan></text>
-    <text x="460" y="850"><tspan font-family="SFMono-Regular,Consolas,monospace" fill-opacity="0.55">4</tspan><tspan dx="10">no fabricated/unlabeled citations</tspan></text>
-    <text x="460" y="872"><tspan font-family="SFMono-Regular,Consolas,monospace" fill-opacity="0.55">5</tspan><tspan dx="10">journal claims current where required</tspan></text>
-    <text x="460" y="894"><tspan font-family="SFMono-Regular,Consolas,monospace" fill-opacity="0.55">6</tspan><tspan dx="10">compatible protocol versions used</tspan></text>
+  <rect x="580" y="528" width="340" height="96" rx="10" fill="#fffdf8" stroke="#3f7a9e" stroke-opacity="0.7"/>
+  <text x="750" y="550" text-anchor="middle" class="mono" font-size="12" font-weight="700" fill="#3f7a9e">RUN THE STAGES</text>
+  <g class="mono" font-size="10.5" font-weight="700">
+    <rect x="600" y="562" width="88" height="24" rx="12" fill="#e6efe7" stroke="#4f7d5a"/>
+    <text x="644" y="578" text-anchor="middle" fill="#3d6647">CORPUS</text>
+    <rect x="706" y="562" width="88" height="24" rx="12" fill="#eaf1f5" stroke="#3f7a9e"/>
+    <text x="750" y="578" text-anchor="middle" fill="#3f7a9e">VOICE</text>
+    <rect x="812" y="562" width="88" height="24" rx="12" fill="#f6ecdb" stroke="#b07a2a"/>
+    <text x="856" y="578" text-anchor="middle" fill="#8a5e1f">JOURNAL FIT</text>
   </g>
-  <text x="450" y="924" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="10.5" font-style="italic" fill="#241f18" fill-opacity="0.6">a module's PARTIAL result or unresolved flag must survive here, never be laundered</text>
-  <line x1="450" y1="942" x2="450" y2="978" stroke="#241f18" stroke-opacity="0.6" marker-end="url(#ofArrow)"/>
+  <line x1="688" y1="574" x2="704" y2="574" class="line" marker-end="url(#fa)"/>
+  <line x1="794" y1="574" x2="810" y2="574" class="line" marker-end="url(#fa)"/>
+  <text x="750" y="606" text-anchor="middle" class="sans ink" font-size="11">load each module only when its stage starts;</text>
+  <text x="750" y="619" text-anchor="middle" class="sans muted" font-size="10.5">hand off through versioned protocols</text>
+  <line x1="750" y1="624" x2="750" y2="646" class="line" marker-end="url(#fa)"/>
 
-  <polygon points="450,980 640,1058 450,1136 260,1058" fill="none" stroke="#a65d3f" stroke-width="1.6"/>
-  <text x="450" y="1050" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="11.5" font-weight="600" fill="#a65d3f">ALL SIX CHECKS</text>
-  <text x="450" y="1066" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="11.5" font-weight="600" fill="#a65d3f">PASS?</text>
+  <!-- Quality gate -->
+  <rect x="580" y="648" width="340" height="160" rx="10" fill="#fffdf8" stroke="#241f18" stroke-width="1.5"/>
+  <text x="750" y="672" text-anchor="middle" class="mono ink" font-size="12.5" font-weight="700" letter-spacing="1">FINAL QUALITY GATE</text>
+  <g class="sans ink" font-size="11">
+    <text x="602" y="696">1  deliverable exists</text>
+    <text x="602" y="714">2  evidence verified or limitation declared</text>
+    <text x="602" y="732">3  argument integrity passed</text>
+    <text x="602" y="750">4  no fabricated or unlabelled citations</text>
+    <text x="602" y="768">5  journal claims current where required</text>
+    <text x="602" y="786">6  compatible protocol versions used</text>
+  </g>
+  <text x="750" y="802" text-anchor="middle" class="sans muted" font-size="10" font-style="italic">a module's PARTIAL result or open flag is never laundered</text>
+  <line x1="750" y1="808" x2="750" y2="830" class="line" marker-end="url(#fa)"/>
 
-  <!-- repair loop, bounded -->
-  <line x1="640" y1="1058" x2="740" y2="1058" stroke="#241f18" stroke-opacity="0.6" marker-end="url(#ofArrow)"/>
-  <text x="690" y="1048" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="10.5" fill="#241f18" fill-opacity="0.7">not yet</text>
-  <rect x="700" y="1078" width="190" height="88" rx="9" fill="none" stroke="#241f18" stroke-opacity="0.45"/>
-  <text x="795" y="1102" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="11" font-weight="600" fill="#241f18">ONE TARGETED</text>
-  <text x="795" y="1118" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="11" font-weight="600" fill="#241f18">REPAIR PASS</text>
-  <text x="795" y="1138" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="9.5" fill="#241f18" fill-opacity="0.6">bounded: at most once --</text>
-  <text x="795" y="1152" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="9.5" fill="#241f18" fill-opacity="0.6">no repeated Voice/Journal cycling</text>
-  <line x1="795" y1="1078" x2="795" y2="1040" stroke="#241f18" stroke-opacity="0.45" stroke-dasharray="4 4"/>
-  <line x1="795" y1="1040" x2="642" y2="1040" stroke="#241f18" stroke-opacity="0.45" stroke-dasharray="4 4" marker-end="url(#ofArrow)"/>
+  <rect x="650" y="832" width="200" height="34" rx="17" fill="#241f18"/>
+  <text x="750" y="854" text-anchor="middle" class="mono" font-size="11.5" font-weight="700" letter-spacing="1" fill="#f6f3ec">ALL SIX PASS?</text>
 
-  <!-- yes branch to three outcomes -->
-  <line x1="450" y1="1136" x2="450" y2="1174" stroke="#241f18" stroke-opacity="0.6"/>
-  <text x="466" y="1156" font-family="SFMono-Regular,Consolas,monospace" font-size="10.5" fill="#241f18" fill-opacity="0.7">yes / repaired</text>
+  <!-- Repair loop -->
+  <path d="M650 849 L560 849 L560 790" class="line" marker-end="url(#fa)"/>
+  <text x="604" y="843" text-anchor="middle" class="sans muted" font-size="10.5">no</text>
+  <rect x="330" y="712" width="230" height="76" rx="10" class="box"/>
+  <text x="445" y="736" text-anchor="middle" class="mono ink" font-size="12" font-weight="700">ONE TARGETED REPAIR</text>
+  <text x="445" y="756" text-anchor="middle" class="sans ink" font-size="11">fix only what failed, at most once;</text>
+  <text x="445" y="772" text-anchor="middle" class="sans ink" font-size="11">never cycle between modules</text>
+  <path d="M445 712 L445 690 L578 690" class="line" marker-end="url(#fa)"/>
 
-  <line x1="180" y1="1174" x2="720" y2="1174" stroke="#241f18" stroke-opacity="0.5"/>
-  <line x1="180" y1="1174" x2="180" y2="1206" stroke="#241f18" stroke-opacity="0.5" marker-end="url(#ofArrow)"/>
-  <line x1="450" y1="1174" x2="450" y2="1206" stroke="#241f18" stroke-opacity="0.5" marker-end="url(#ofArrow)"/>
-  <line x1="720" y1="1174" x2="720" y2="1206" stroke="#241f18" stroke-opacity="0.5" marker-end="url(#ofArrow)"/>
-
-  <!-- outcome: COMPLETE -->
-  <rect x="70" y="1208" width="220" height="72" rx="12" fill="none" stroke="#3f7a9e" stroke-width="2"/>
-  <text x="180" y="1240" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="12.5" font-weight="600" fill="#3f7a9e">COMPLETE</text>
-  <text x="180" y="1258" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="9.5" fill="#241f18" fill-opacity="0.6">every check passed cleanly</text>
-
-  <!-- outcome: COMPLETE_WITH_LIMITATIONS -->
-  <rect x="340" y="1208" width="220" height="72" rx="12" fill="none" stroke="#241f18" stroke-opacity="0.55"/>
-  <text x="450" y="1235" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="11.5" font-weight="600" fill="#241f18">COMPLETE_WITH_</text>
-  <text x="450" y="1251" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="11.5" font-weight="600" fill="#241f18">LIMITATIONS</text>
-  <text x="450" y="1269" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="9.5" fill="#241f18" fill-opacity="0.6">checks 2-5 recoverable via a stated limitation</text>
-
-  <!-- outcome: BLOCKED -->
-  <rect x="610" y="1208" width="220" height="72" rx="12" fill="none" stroke="#a65d3f" stroke-width="1.6"/>
-  <text x="720" y="1235" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="11.5" font-weight="600" fill="#a65d3f">BLOCKED_BY_EVIDENCE</text>
-  <text x="720" y="1251" text-anchor="middle" font-family="SFMono-Regular,Consolas,monospace" font-size="11.5" font-weight="600" fill="#a65d3f">/ BLOCKED_BY_TOOL</text>
-  <text x="720" y="1269" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="9.5" fill="#241f18" fill-opacity="0.6">deliverable missing or protocol mismatch</text>
-
-  <text x="450" y="1330" text-anchor="middle" font-family="-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11" font-style="italic" fill="#241f18" fill-opacity="0.6">See skills/scholarly-agent/references/orchestration-state.md for the exact state model.</text>
+  <!-- Outcomes -->
+  <path d="M750 866 L750 884 L330 884 L330 904" class="line" marker-end="url(#fa)"/>
+  <path d="M750 884 L560 884 L560 904" class="line" marker-end="url(#fa)"/>
+  <path d="M750 884 L790 884 L790 904" class="line" marker-end="url(#fa)"/>
+  <text x="768" y="879" class="sans muted" font-size="10.5">outcome, after at most one repair</text>
+  <g class="mono" font-size="11.5" font-weight="700">
+    <rect x="235" y="906" width="190" height="32" rx="16" fill="#e6efe7" stroke="#4f7d5a"/>
+    <text x="330" y="927" text-anchor="middle" fill="#3d6647">COMPLETE</text>
+    <rect x="440" y="906" width="240" height="32" rx="16" fill="#f6ecdb" stroke="#b07a2a"/>
+    <text x="560" y="927" text-anchor="middle" fill="#8a5e1f">COMPLETE_WITH_LIMITATIONS</text>
+    <rect x="695" y="906" width="190" height="32" rx="16" fill="#f4e2df" stroke="#a8473b"/>
+    <text x="790" y="927" text-anchor="middle" fill="#8e3a30">BLOCKED</text>
+  </g>
+  <g class="sans muted" font-size="10.5" text-anchor="middle">
+    <text x="330" y="954">every check passed</text>
+    <text x="560" y="954">a gap is stated, not hidden</text>
+    <text x="790" y="954">missing evidence, tool failure, or protocol mismatch</text>
+  </g>
+  <text x="480" y="984" text-anchor="middle" class="sans muted" font-size="10.5" font-style="italic">State model: skills/scholarly-agent/references/orchestration-state.md</text>
 </svg>

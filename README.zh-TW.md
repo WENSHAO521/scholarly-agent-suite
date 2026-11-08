@@ -55,7 +55,7 @@
 
 每收到一個需求，調度器會在三條路徑中擇一：簡單問題直接回答、載入單一模組，或執行跨模組的工作流程。在工作流程中，它會重用先前步驟仍然新鮮的結果，把硬性限制（APC 上限、字數、開放取用要求）一路帶下去，允許一次有上限的修正，最後誠實地以三種狀態之一結束：`COMPLETE`、`COMPLETE_WITH_LIMITATIONS` 或 `BLOCKED`。
 
-![調度流程圖：判斷是否需要兩個以上模組、選擇工作流程、重用新鮮產物、傳遞硬性限制、載入最小模組組合、允許一次有限修正，最後經品質關卡分流為 COMPLETE、COMPLETE_WITH_LIMITATIONS 或 BLOCKED。](assets/orchestration-flowchart.svg)
+![需求處理流程圖：調度器先判斷交付成果與需要的模組，再分三條路：直接回答、載入單一模組，或執行跨模組工作流程（選擇流程、重用新鮮產物、帶入硬性限制、透過有版本的協定依序執行各階段），最後經六項品質關卡，最多修正一次，結果為 COMPLETE、COMPLETE_WITH_LIMITATIONS 或 BLOCKED。](assets/orchestration-flowchart.svg)
 
 模組之間透過 [`protocols/`](skills/scholarly-agent/protocols/) 中十份有版本的 JSON Schema 交接工作。例如期刊匹配模組產出 `JOURNAL_STYLE_CONTEXT_V1` 給寫作引擎使用，確保期刊的「官方要求」與「僅觀察到的慣用風格」不會混為一談。
 
@@ -85,7 +85,7 @@ pytest tests/                      # 測試
 
 ## 開發與發行
 
-包括四個模組在內，所有內容都在本倉庫中開發。v1.2.1 以前這些模組是各自獨立、從自己倉庫同步進來的 Skill；v2.0.0 將它們合併（見 [`CHANGELOG.md`](CHANGELOG.md)）。目錄規則、版本、測試、打包與已知限制請見 [`docs/development.md`](docs/development.md)（英文），發行流程見 [`RELEASE_CHECKLIST.md`](RELEASE_CHECKLIST.md)。
+包括四個模組在內，所有內容都在本倉庫中開發。v1.2.1 以前這些模組是各自獨立、從自己倉庫同步進來的 Skill；v2.0.0 將它們合併（見 [`CHANGELOG.md`](CHANGELOG.md)）。目錄規則、版本、測試、打包與已知限制請見 [`docs/development.md`](docs/development.md)（英文），發行為全自動：把新的 `VERSION` 合併進 `master`，就會自動打包並發佈成 GitHub release（見 [`RELEASE_CHECKLIST.md`](RELEASE_CHECKLIST.md)）。
 
 ## 授權
 

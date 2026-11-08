@@ -1,7 +1,15 @@
 # Release checklist
 
-Before tagging a Suite release (e.g. `v1.0.0`), confirm every item below.
-This is the concrete procedure behind rule 97 / rule 145.
+Releases are published automatically. On every push to `master`,
+`.github/workflows/release.yml` checks whether release `v<VERSION>` exists;
+if not, it validates, runs the tests, builds the runtime ZIP twice (they
+must be byte-identical), and publishes the release with the ZIP,
+`release-manifest.json`, `SHA256SUMS`, and the version's CHANGELOG section
+as notes. An existing release is never overwritten.
+
+So a release is: bump the version, write the CHANGELOG section, and merge.
+Before merging a version bump, confirm the items below. This is the
+concrete procedure behind rule 97 / rule 145.
 
 ## Layout
 
@@ -52,17 +60,22 @@ This is the concrete procedure behind rule 97 / rule 145.
 
 ## Version consistency
 
-- [ ] `VERSION` == `.codex-plugin/plugin.json` `version` == the git tag being
-      created (without the `v` prefix, e.g. `VERSION` = `1.0.0`, tag =
-      `v1.0.0`).
-- [ ] `CHANGELOG.md` has an entry for this version.
-- [ ] The tag does not already exist -- never overwrite an existing tag.
+- [ ] `VERSION` == `.codex-plugin/plugin.json` `version` ==
+      `COMPONENTS.json` `suite_version` (the release tag is `v<VERSION>`).
+- [ ] `CHANGELOG.md` has a `## v<VERSION> -- <date>` section;
+      `python scripts/release_notes.py` prints it. The workflow refuses to
+      publish without one.
+- [ ] Merging a change *without* a version bump publishes nothing. Merging
+      the first commit with a new `VERSION` publishes it -- bump only when
+      the release is meant to go out.
 
 ## Publication state
 
 - [ ] Report the release using exactly one of the two defined states:
-      `v<VERSION> PREPARED -- NOT PUBLISHED` or `v<VERSION> PUBLISHED`. Local
-      validation passing never by itself implies "PUBLISHED" (rule 152).
+      `v<VERSION> PREPARED -- NOT PUBLISHED` (merged or merging, workflow not
+      yet green) or `v<VERSION> PUBLISHED` (the GitHub release exists).
+      Local validation passing never by itself implies "PUBLISHED"
+      (rule 152). The GitHub release is the record of publication.
 
 ## After release
 

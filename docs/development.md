@@ -57,6 +57,13 @@ major protocol version and a Suite major version (see
 reported as exactly one of `v<VERSION> PREPARED -- NOT PUBLISHED` or
 `v<VERSION> PUBLISHED`; see `RELEASE_CHECKLIST.md`.
 
+Publishing is automatic (`.github/workflows/release.yml`): every push to
+`master` publishes release `v<VERSION>` if it does not exist yet, after
+validation, tests, and a two-build determinism check, with
+`scripts/release_notes.py` extracting the CHANGELOG section as release
+notes. Pushes that do not change `VERSION` publish nothing; a hand-pushed
+`v*` tag must match `VERSION`; an existing release is never overwritten.
+
 ## Development model
 
 All four modules are developed in this repository. `COMPONENTS.json`
@@ -104,6 +111,9 @@ pytest tests/
   POSI evidence source against a fixture cut from a real POSI snapshot.
 - `evals/modules/<module>/` -- each module's own eval cases, merged from its
   former repository; `tests/test_evals.py` checks they parse.
+- `tests/test_release_automation.py` -- release-notes extraction and the
+  release workflow's guards (no overwrite, validate and test first,
+  deterministic package).
 - `tests/test_workflow_packaging.py`, `test_workflow_install_smoke.py`,
   `test_packaging.py`, `test_diagrams.py` -- release ZIP contents,
   determinism, and installed-Skill layout.
