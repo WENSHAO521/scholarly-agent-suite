@@ -77,12 +77,13 @@ jobs:
               names = zf.namelist()
               assert all(n.startswith("scholarly-agent-suite/") for n in names)
               assert "scholarly-agent-suite/.codex-plugin/plugin.json" in names
-              for skill in [
-                  "scholarly-agent", "adaptive-model-router",
-                  "scholarly-corpus-builder", "scholarly-voice-engine",
-                  "journal-fit-engine",
+              skill_mds = [n for n in names if n.endswith("/SKILL.md")]
+              assert skill_mds == ["scholarly-agent-suite/skills/scholarly-agent/SKILL.md"], skill_mds
+              for module in [
+                  "adaptive-model-router", "scholarly-corpus-builder",
+                  "scholarly-voice-engine", "journal-fit-engine",
               ]:
-                  assert f"scholarly-agent-suite/skills/{skill}/SKILL.md" in names
+                  assert f"scholarly-agent-suite/skills/scholarly-agent/modules/{module}/MODULE.md" in names
               assert not any(n.split("/")[1] in ("tests", "evals", ".github", "scripts") for n in names if len(n.split("/")) > 1)
           print("Runtime package sanity check passed.")
           PY
