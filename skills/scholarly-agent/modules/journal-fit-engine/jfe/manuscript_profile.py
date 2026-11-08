@@ -6,6 +6,7 @@ manuscript.
 """
 from __future__ import annotations
 
+import re
 from dataclasses import dataclass, field
 from typing import Optional
 
@@ -100,3 +101,70 @@ class ManuscriptProfile:
         if errors:
             raise ProfileError("; ".join(errors))
         return profile
+
+
+# --- Shared-protocol interoperability ---------------------------------------
+#
+# protocols/manuscript-profile.schema.json (MANUSCRIPT_PROFILE_V1) is the
+# envelope the voice module or the user hands to this module. Its field
+# names and article_type vocabulary differ from ManuscriptProfile's own
+# richer shape, so ManuscriptProfile.from_dict() rejects it outright
+# ("unknown field: protocol"). from_manuscript_profile_v1() is the explicit
+# translation; it never guesses a value the envelope does not carry.
+
+# Envelope article_type -> (this module's article_type, contribution_type).
+_V1_ARTICLE_TYPE_MAP = {
+    "empirical": ("original-research", None),
+    "theory": ("other", "theoretical"),
+    "review": ("review", None),
+    "commentary": ("commentary", None),
+    "case-study": ("case-study", None),
+    "book-chapter": ("book-chapter", None),
+    "other": ("other", None),
+}
+
+
+def _split_methods(methods) -> list:
+    if methods is None:
+        return []
+    if isinstance(methods, list):
+        return [str(m).strip() for m in methods if str(m).strip()]
+    parts = re.split(r"[;,]", str(methods))
+    return [p.strip() for p in parts if p.strip()]
+
+
+def from_manuscript_profile_v1(data: dict) -> "ManuscriptProfile":
+    """Translate a MANUSCRIPT_PROFILE_V1 envelope into a ManuscriptProfile.
+
+    Raises ProfileError on a wrong protocol, a missing required field
+    (discipline, article_type), or an article_type outside the envelope's
+    enum. `contribution` maps to central_contribution; a "theory" envelope
+    becomes article_type "other" with contribution_type "theoretical", since
+    this module has no separate theory article type.
+    """
+    if not isinstance(data, dict) or data.get("protocol") != "MANUSCRIPT_PROFILE_V1":
+        raise ProfileError(f"not a MANUSCRIPT_PROFILE_V1 envelope: protocol={data.get('protocol') if isinstance(data, dict) else None!r}")
+    for required in ("discipline", "article_type"):
+        if not data.get(required):
+            raise ProfileError(f"MANUSCRIPT_PROFILE_V1 missing required field '{required}'")
+    mapped = _V1_ARTICLE_TYPE_MAP.get(data["article_type"])
+    if mapped is None:
+        raise ProfileError(f"unrecognized MANUSCRIPT_PROFILE_V1 article_type: {data['article_type']!r}")
+    article_type, contribution_type = mapped
+    profile = ManuscriptProfile(
+        discipline=data.get("discipline"),
+        topic=data.get("topic"),
+        research_question=data.get("research_question"),
+        central_contribution=data.get("contribution"),
+        contribution_type=contribution_type,
+        methods=_split_methods(data.get("methods")),
+        data=data.get("data"),
+        article_type=article_type,
+        audience=data.get("audience"),
+        geography=data.get("geography"),
+        constraints=dict(data.get("constraints") or {}),
+    )
+    errors = profile.validate()
+    if errors:
+        raise ProfileError("; ".join(errors))
+    return profile

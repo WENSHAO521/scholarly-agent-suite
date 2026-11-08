@@ -3,21 +3,20 @@
 Before tagging a Suite release (e.g. `v1.0.0`), confirm every item below.
 This is the concrete procedure behind rule 97 / rule 145.
 
-## Pin and sync
+## Layout
 
-- [ ] Every component's `ref` in `scripts/component-sources.json` is a commit
-      SHA (never a branch name).
-- [ ] `python scripts/sync_components.py` runs clean (exit 0) from a fresh
-      checkout.
-- [ ] `COMPONENTS.json` versions and `source_commit` values match what was
-      just synced.
+- [ ] `skills/` contains exactly one Skill, `skills/scholarly-agent/`, and the
+      four modules live at `skills/scholarly-agent/modules/<name>/MODULE.md`
+      with no `SKILL.md` or frontmatter of their own.
+- [ ] `COMPONENTS.json` lists the four modules with their `merged_from`
+      origin, and its `suite_version` matches `VERSION`.
 
 ## Validate
 
 - [ ] `python scripts/validate_suite.py` passes with 0 failures.
 - [ ] `pytest tests/` passes.
-- [ ] Each bundled component still installs and runs standalone (outside
-      `skills/`, with no `../shared` or `../protocols` reference) --
+- [ ] The Skill is self-contained: modules, `protocols/`, `shared/`, and
+      workflow recipes all resolve from inside `skills/scholarly-agent/` --
       verified by `tests/test_standalone_independence.py`.
 - [ ] Every required workflow recipe (`scripts/workflow_manifest.
       REQUIRED_WORKFLOWS`) exists at the runtime-canonical path
@@ -67,5 +66,6 @@ This is the concrete procedure behind rule 97 / rule 145.
 
 ## After release
 
-- [ ] Component repositories remain independently maintained and are not
-      deleted, archived, or deprecated because of this release (rule 88-89).
+- [ ] Since v2.0.0 module changes are made in this repository. The former
+      component repositories are not synced from; archiving them is a
+      separate, deliberate owner decision, not part of a release.

@@ -8,7 +8,7 @@ import pytest
 from conftest import load_module
 
 ROOT = Path(__file__).resolve().parent.parent
-PROTOCOLS_DIR = ROOT / "protocols"
+PROTOCOLS_DIR = ROOT / "skills" / "scholarly-agent" / "protocols"
 schema_lite = load_module("schema_lite", "schema_lite.py")
 
 PROTOCOL_FILES = [
@@ -141,7 +141,7 @@ def test_journal_fit_engines_real_target_journal_profile_producer_validates():
     tests/test_e2e_protocol_handoff.py's TestE2E07-TestE2E12."""
     import sys
 
-    jfe_skill_dir = str(ROOT / "skills" / "journal-fit-engine")
+    jfe_skill_dir = str(ROOT / "skills" / "scholarly-agent" / "modules" / "journal-fit-engine")
     if jfe_skill_dir not in sys.path:
         sys.path.insert(0, jfe_skill_dir)
     from jfe.apc_oa import APCClassification, MANDATORY_APC

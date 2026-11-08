@@ -74,6 +74,92 @@ def compile_scholarly_profile_v1(
     }
 
 
+# --- Schema-conformant SCHOLARLY_PROFILE_V1 (protocols/scholarly-profile.schema.json)
+#
+# compile_scholarly_profile_v1() above predates the shared protocol schema and
+# emits a looser shape (provenance_summary instead of a PROVENANCE_RECORD_V1,
+# a per-feature confidence dict, scb-internal stability labels). It is kept
+# unchanged for existing callers. compile_scholarly_profile_protocol_v1() is
+# the producer other modules consume: its output validates against the
+# schema (additionalProperties: false), and every narrowing it performs is
+# recorded in `biases` rather than silently dropped.
+
+_SCHEMA_CONFIDENCE = {"low": "low", "medium": "moderate", "moderate": "moderate", "high": "high"}
+_CONFIDENCE_ORDER = ["low", "moderate", "high"]
+_MEASURED_KEYS = ("sentence", "paragraph", "lexical", "citations")
+_INFERRED_KEYS = ("claims", "rhetorical_moves", "intellectual_rhythm")
+
+
+def _overall_schema_confidence(confidence: Any) -> str:
+    """The weakest measured-feature confidence, mapped onto the schema enum.
+    Inferred features are excluded because they are reported separately and
+    are low-confidence by design; taking the minimum never overstates."""
+    if isinstance(confidence, str):
+        return _SCHEMA_CONFIDENCE.get(confidence, "low")
+    if not isinstance(confidence, dict) or not confidence:
+        return "low"
+    values = [confidence.get(k) for k in _MEASURED_KEYS if confidence.get(k)]
+    if not values:
+        values = [confidence.get("overall") or "low"]
+    mapped = [_SCHEMA_CONFIDENCE.get(v, "low") for v in values]
+    return min(mapped, key=_CONFIDENCE_ORDER.index)
+
+
+def compile_scholarly_profile_protocol_v1(
+    style_profile: Dict[str, Any],
+    provenance: Dict[str, Any],
+    stability_status: Optional[str] = None,
+    freshness: Optional[str] = None,
+) -> Dict[str, Any]:
+    """Build a SCHOLARLY_PROFILE_V1 that validates against the shared schema.
+
+    `style_profile` is StyleProfile.to_dict() output. `provenance` must be a
+    PROVENANCE_RECORD_V1 dict; it is required by the schema and is never
+    invented here -- a missing or wrong-protocol record raises ValueError.
+    `stability_status` takes scb.stability's labels (STABLE, MOSTLY_STABLE,
+    UNSTABLE, INSUFFICIENT_SAMPLE) or None.
+    """
+    if not isinstance(provenance, dict) or provenance.get("protocol") != "PROVENANCE_RECORD_V1":
+        raise ValueError("SCHOLARLY_PROFILE_V1 requires a PROVENANCE_RECORD_V1 provenance record")
+
+    biases = list(style_profile.get("known_biases") or [])
+    label = style_profile.get("sample_size_label")
+    if label:
+        biases.append("sample size label: %s" % label)
+
+    if stability_status == "STABLE":
+        stability = "stable"
+    elif stability_status in ("MOSTLY_STABLE", "UNSTABLE"):
+        stability = "unstable"
+        if stability_status == "MOSTLY_STABLE":
+            biases.append(
+                "split-corpus stability was MOSTLY_STABLE: some features differ between "
+                "corpus halves, so the profile is reported as unstable rather than stable"
+            )
+    else:
+        stability = "untested"
+        if stability_status == "INSUFFICIENT_SAMPLE":
+            biases.append("split-corpus stability not testable: insufficient sample")
+
+    profile: Dict[str, Any] = {
+        "protocol": PROTOCOL_SCHOLARLY_PROFILE_V1,
+        "profile_type": style_profile["profile_type"],
+        "target": style_profile["target"],
+        "sample_size": int(style_profile.get("sample_size") or 0),
+        "measured_features": {k: style_profile.get(k) or {} for k in _MEASURED_KEYS},
+        "inferred_features": {k: style_profile.get(k) or ({} if k != "intellectual_rhythm" else []) for k in _INFERRED_KEYS},
+        "confidence": _overall_schema_confidence(style_profile.get("confidence")),
+        "stability": stability,
+        "biases": biases,
+        "provenance": provenance,
+    }
+    if freshness is not None:
+        if freshness not in ("current", "aging", "stale"):
+            raise ValueError("freshness must be one of current, aging, stale")
+        profile["freshness"] = freshness
+    return profile
+
+
 def _author_voice_statements(author_profile: Dict[str, Any]) -> List[PolicyStatement]:
     statements = []
     variation = (author_profile.get("sentence_style") or {}).get("variation")

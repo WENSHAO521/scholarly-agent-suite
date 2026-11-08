@@ -4,4 +4,3 @@ __pycache__/
 .sync_work/
 dist/
 .cache/
-scripts/component-sources.local.json

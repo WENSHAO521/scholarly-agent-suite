@@ -1,9 +1,88 @@
 # Changelog
 
 All notable changes to the Scholarly Agent Suite are documented in this file.
-Suite versioning follows `docs/development.md#component-versioning` /
-`shared/protocol-versioning.md`; component versions are tracked separately in
-`COMPONENTS.json`.
+Suite versioning follows `docs/development.md#suite-versioning` /
+`skills/scholarly-agent/shared/protocol-versioning.md`. Since v2.0.0 modules
+have no versions of their own; `COMPONENTS.json` records where each module
+was merged from.
+
+## v2.0.0 -- 2026-11-08
+
+v2.0.0 PREPARED -- NOT PUBLISHED
+
+**The four specialist Skills are merged into one Skill.** The Suite now
+ships a single Skill, `scholarly-agent`, with the former specialists as
+on-demand internal modules. This is a breaking change for anyone who
+installed or invoked a specialist Skill by name (`$scholarly-voice-engine`,
+etc.): those names no longer register as Skills.
+
+### Changed
+
+- `skills/adaptive-model-router/`, `skills/scholarly-corpus-builder/`,
+  `skills/scholarly-voice-engine/`, `skills/journal-fit-engine/` moved to
+  `skills/scholarly-agent/modules/<name>/`. Each `SKILL.md` became a
+  frontmatter-free `MODULE.md` with a header stating its scope and that its
+  paths are module-relative. Per-module `agents/openai.yaml` files were
+  folded into the one `skills/scholarly-agent/agents/openai.yaml`. Module
+  content is otherwise unchanged from the merged releases (router v0.3.0,
+  corpus v0.9.2, voice v1.1.0, journal fit v0.4.0) apart from the two
+  handoff fixes below.
+- `protocols/` and `shared/` moved inside the Skill
+  (`skills/scholarly-agent/protocols/`, `skills/scholarly-agent/shared/`),
+  so everything the Skill needs resolves from its own directory under every
+  install mode -- the same lesson as the v1.2.1 workflow-recipe fix.
+- `SKILL.md` rewritten as a dispatcher: a module map, three dispatch paths
+  (no module / single module / multi-module workflow recipe), a protocol
+  handoff table, module boundaries, and the existing workflow, state,
+  constraint, and quality-gate rules. The description now covers every
+  module's domain instead of only "two or more specialists."
+- `COMPONENTS.json` now lists one `skill` and four `modules`, each with a
+  `merged_from` record (repository, release, commit). Suite version 2.0.0.
+- `shared/capability-boundaries.md` and `shared/integrity-policy.md` updated
+  for modules inside one Skill; the boundaries themselves are unchanged.
+- `validate_suite.py`, `package_suite.py`, and the tests now enforce the
+  single-Skill layout: exactly one Skill under `skills/`, no `SKILL.md` or
+  frontmatter inside modules, and every module/protocol/shared reference
+  resolving inside the Skill.
+- README (English and Traditional Chinese) rewritten for the single-Skill
+  design, with a new architecture diagram
+  (`assets/scholarly-agent-architecture.svg`, replacing
+  `suite-architecture-diagram.svg`) and an updated orchestration flowchart.
+  `docs/development.md` rewritten for the in-tree development model.
+
+### Fixed
+
+- **SCHOLARLY_PROFILE_V1 handoff (corpus -> voice).**
+  `scb.compiler.compile_scholarly_profile_v1()` never produced a
+  schema-valid `SCHOLARLY_PROFILE_V1`: no required `provenance` record,
+  `provenance_summary`/`known_biases`/`sample_size_label` fields the schema
+  forbids, a confidence value (`medium`) outside the schema enum, and
+  scb-internal stability labels. Added
+  `compile_scholarly_profile_protocol_v1()`, which requires a real
+  `PROVENANCE_RECORD_V1`, takes the weakest measured-feature confidence
+  (never overstating), maps `MOSTLY_STABLE` to `unstable` with the reason
+  recorded in `biases`, and validates against the shared schema. The old
+  function is kept unchanged for existing callers.
+- **MANUSCRIPT_PROFILE_V1 handoff (envelope -> journal fit).** A
+  schema-valid envelope was rejected by `jfe`'s
+  `ManuscriptProfile.from_dict()` (unknown `protocol` field, `contribution`
+  vs `central_contribution`, string vs list `methods`, a different
+  article-type vocabulary). Added
+  `jfe.manuscript_profile.from_manuscript_profile_v1()`.
+- New `tests/test_e2e_module_handoffs.py` drives both handoffs with real
+  module code, including the real journal-fit model.
+
+### Removed
+
+- `scripts/sync_components.py`, `scripts/component-sources.json`,
+  `scripts/check_component_drift.py`, `.github/workflows/component-drift.yml`,
+  and `tests/test_component_drift.py`. Modules are developed in this
+  repository now; there is nothing to sync or drift from.
+
+### Not changed
+
+- The former component repositories were not modified, archived, or
+  deleted. Whether to archive them is a separate owner decision.
 
 ## v1.2.1 -- 2026-09-13
 

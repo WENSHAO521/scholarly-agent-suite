@@ -1,7 +1,12 @@
----
-name: adaptive-model-router
-description: Apply cost-aware model routing for model selection, multi-stage research, large-context analysis, complex coding, evidence-intensive academic work, and difficult validation or repair. Use bounded delegation and controlled expert escalation when the host supports dispatch; ordinary tiny writing tasks do not need this workflow.
----
+<!-- Module of the scholarly-agent Skill (formerly the standalone `adaptive-model-router` Skill).
+     Loaded on demand by ../../SKILL.md; paths below are relative to this module's directory. -->
+
+> **Module `adaptive-model-router`** -- part of the single `scholarly-agent` Skill. Load this file only when the
+> dispatcher in `SKILL.md` selects this module. Wherever this file says "this Skill" or names
+> another former Skill (e.g. `scholarly-voice-engine`), read it as "this module" / the sibling
+> module at `modules/<name>/`. Paths such as `references/...` are relative to `modules/adaptive-model-router/`.
+>
+> Scope: Apply cost-aware model routing for model selection, multi-stage research, large-context analysis, complex coding, evidence-intensive academic work, and difficult validation or repair. Use bounded delegation and controlled expert escalation when the host supports dispatch; ordinary tiny writing tasks do not need this workflow.
 
 # Adaptive Model Router
 

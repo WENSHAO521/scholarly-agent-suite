@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """Suite-level validator for scholarly-agent-suite.
 
-Checks the acceptance criteria from the Suite spec (plugin manifest,
-component presence/frontmatter/uniqueness, protocol schema validity,
+Checks the acceptance criteria for the v2 single-Skill layout (plugin
+manifest, exactly one Skill with its four modules, protocol schema validity,
 COMPONENTS.json consistency, and workflow recipe references). Offline and
 deterministic -- no network calls (rule 95).
 
@@ -23,8 +23,9 @@ from schema_lite import validate as schema_validate  # noqa: E402
 from workflow_manifest import CANONICAL_WORKFLOWS_DIR, REQUIRED_WORKFLOWS  # noqa: E402
 import sync_workflows  # noqa: E402
 
-SKILL_NAMES = [
-    "scholarly-agent",
+SKILL_NAME = "scholarly-agent"
+SKILL_DIR = ROOT / "skills" / SKILL_NAME
+MODULE_NAMES = [
     "adaptive-model-router",
     "scholarly-corpus-builder",
     "scholarly-voice-engine",
@@ -112,45 +113,39 @@ def validate_plugin_manifest(report: Report) -> None:
         )
 
 
-def validate_components_present_and_unique(report: Report) -> dict[str, dict]:
+def validate_skill_and_modules(report: Report) -> dict[str, dict]:
+    """v2 layout: exactly one Skill under skills/, four modules inside it."""
     skills_dir = ROOT / "skills"
+    skill_dirs = sorted(p.name for p in skills_dir.iterdir() if p.is_dir()) if skills_dir.is_dir() else []
+    report.check("skills/ contains exactly one Skill (scholarly-agent)", skill_dirs == [SKILL_NAME], f"found {skill_dirs}")
+    stray = sorted(p.relative_to(ROOT).as_posix() for p in skills_dir.rglob("SKILL.md") if p.parent != SKILL_DIR)
+    report.check("no SKILL.md outside skills/scholarly-agent/", not stray, f"found {stray}")
+    skill_md = SKILL_DIR / "SKILL.md"
+    report.check("skills/scholarly-agent/SKILL.md exists", skill_md.exists())
     frontmatters: dict[str, dict] = {}
-    seen_names: dict[str, str] = {}
-    for skill_name in SKILL_NAMES:
-        skill_dir = skills_dir / skill_name
-        skill_md = skill_dir / "SKILL.md"
-        report.check(f"skills/{skill_name}/ exists", skill_dir.is_dir())
-        report.check(f"skills/{skill_name}/SKILL.md exists", skill_md.exists())
-        if not skill_md.exists():
-            continue
-        # Reject double-nesting (rule 14): skills/<name>/<name>/SKILL.md must not exist.
-        nested = skill_dir / skill_name
-        report.check(f"skills/{skill_name}/ is not double-nested", not nested.is_dir())
+    if skill_md.exists():
+        text = skill_md.read_text(encoding="utf-8")
         try:
-            fm = parse_frontmatter(skill_md.read_text(encoding="utf-8"))
+            fm = parse_frontmatter(text)
         except ValueError as exc:
-            report.check(f"skills/{skill_name}/SKILL.md has valid frontmatter", False, str(exc))
-            continue
-        report.check(f"skills/{skill_name}/SKILL.md has valid frontmatter", True)
-        report.check(
-            f"skills/{skill_name}/SKILL.md name matches directory",
-            fm.get("name") == skill_name,
-            f"found name={fm.get('name')!r}",
-        )
-        report.check(
-            f"skills/{skill_name}/SKILL.md has non-empty description",
-            bool(fm.get("description")),
-        )
-        frontmatters[skill_name] = fm
-        name = fm.get("name")
-        if name in seen_names:
-            report.check(f"skill name '{name}' is unique", False, f"also used by {seen_names[name]}")
+            report.check("skills/scholarly-agent/SKILL.md has valid frontmatter", False, str(exc))
+            fm = {}
         else:
-            seen_names[name] = skill_name
-    report.check(
-        "no duplicate Skill names across bundled skills",
-        len(seen_names) == len([f for f in frontmatters.values() if f.get("name")]),
-    )
+            report.check("skills/scholarly-agent/SKILL.md has valid frontmatter", True)
+            frontmatters[SKILL_NAME] = fm
+        report.check("SKILL.md name is 'scholarly-agent'", fm.get("name") == SKILL_NAME, f"found {fm.get('name')!r}")
+        report.check("SKILL.md has non-empty description", bool(fm.get("description")))
+    else:
+        text = ""
+    for name in MODULE_NAMES:
+        module_md = SKILL_DIR / "modules" / name / "MODULE.md"
+        report.check(f"modules/{name}/MODULE.md exists", module_md.exists())
+        if module_md.exists():
+            report.check(
+                f"modules/{name}/MODULE.md has no Skill frontmatter",
+                not module_md.read_text(encoding="utf-8").startswith("---"),
+            )
+        report.check(f"SKILL.md references modules/{name}/MODULE.md", f"modules/{name}/MODULE.md" in text)
     return frontmatters
 
 
@@ -161,93 +156,47 @@ def validate_components_json(report: Report) -> None:
         return
     data = json.loads(components_path.read_text(encoding="utf-8"))
     report.check("COMPONENTS.json has 'suite'", data.get("suite") == "scholarly-agent-suite")
-    report.check("COMPONENTS.json has 'suite_version'", "suite_version" in data)
+    report.check("COMPONENTS.json skill is 'scholarly-agent'", data.get("skill") == SKILL_NAME)
     version_file = ROOT / "VERSION"
     if version_file.exists():
         suite_version = version_file.read_text(encoding="utf-8").strip()
         report.check(
             "COMPONENTS.json suite_version matches VERSION file",
             data.get("suite_version") == suite_version,
-            f"COMPONENTS.json={data.get('suite_version')!r} VERSION={suite_version!r} "
-            "-- run `python scripts/sync_components.py` to regenerate COMPONENTS.json after bumping VERSION",
+            f"COMPONENTS.json={data.get('suite_version')!r} VERSION={suite_version!r}",
         )
-        scholarly_agent_entry = data.get("components", {}).get("scholarly-agent", {})
-        report.check(
-            "COMPONENTS.json scholarly-agent version matches VERSION file",
-            scholarly_agent_entry.get("version") == suite_version,
-            f"COMPONENTS.json scholarly-agent.version={scholarly_agent_entry.get('version')!r} "
-            f"VERSION={suite_version!r}",
-        )
-    components = data.get("components", {})
-    for name in SKILL_NAMES:
-        entry = components.get(name)
-        report.check(f"COMPONENTS.json has entry for {name}", entry is not None)
+    modules = data.get("modules", {})
+    report.check("COMPONENTS.json lists exactly the four modules", sorted(modules) == sorted(MODULE_NAMES), f"found {sorted(modules)}")
+    sha_re = re.compile(r"^[0-9a-f]{40}$")
+    for name in MODULE_NAMES:
+        entry = modules.get(name)
         if entry is None:
             continue
-        report.check(f"COMPONENTS.json {name} has version", bool(entry.get("version")))
+        report.check(f"COMPONENTS.json {name} path exists", (ROOT / entry.get("path", "")).is_dir())
         report.check(f"COMPONENTS.json {name} has role", bool(entry.get("role")))
-        report.check(f"COMPONENTS.json {name} has source_repository", bool(entry.get("source_repository")))
-        report.check(f"COMPONENTS.json {name} has source_commit", bool(entry.get("source_commit")))
-
-    compatibility = data.get("compatibility", {})
-    version_re = re.compile(r"^(>=|<)(\d+(?:\.\d+)*)$")
-    for name in ["adaptive-model-router", "scholarly-corpus-builder", "scholarly-voice-engine", "journal-fit-engine"]:
-        range_expr = compatibility.get(name)
-        report.check(f"compatibility range declared for {name}", bool(range_expr))
-        if not range_expr:
-            continue
-        parts = [p.strip() for p in range_expr.split(",")]
-        parsed_ok = all(version_re.match(p) for p in parts)
-        report.check(f"compatibility range for {name} parses ('{range_expr}')", parsed_ok)
-        if not parsed_ok:
-            continue
-        packaged_version = components.get(name, {}).get("version", "")
-        report.check(
-            f"packaged {name} version {packaged_version!r} satisfies declared range {range_expr!r}",
-            _version_in_range(packaged_version, parts),
-        )
-
-
-def _version_tuple(v: str) -> tuple[int, ...]:
-    return tuple(int(p) for p in v.split("."))
-
-
-def _version_in_range(version: str, parts: list[str]) -> bool:
-    if not version:
-        return False
-    v = _version_tuple(version)
-    for part in parts:
-        op, bound = (part[:2], part[2:]) if part.startswith(">=") else (part[0], part[1:])
-        bound_t = _version_tuple(bound)
-        # pad shorter tuple for comparison
-        length = max(len(v), len(bound_t))
-        vv = v + (0,) * (length - len(v))
-        bb = bound_t + (0,) * (length - len(bound_t))
-        if op == ">=" and not vv >= bb:
-            return False
-        if op == "<" and not vv < bb:
-            return False
-    return True
+        origin = entry.get("merged_from", {})
+        report.check(f"COMPONENTS.json {name} merged_from has repository and version", bool(origin.get("repository")) and bool(origin.get("version")))
+        report.check(f"COMPONENTS.json {name} merged_from commit is a full sha", bool(sha_re.match(origin.get("commit", ""))))
 
 
 def validate_protocols(report: Report) -> None:
-    protocols_dir = ROOT / "protocols"
+    protocols_dir = SKILL_DIR / "protocols"
     for filename, protocol_id in PROTOCOL_FILES.items():
         path = protocols_dir / filename
-        report.check(f"protocols/{filename} exists", path.exists())
+        report.check(f"skills/scholarly-agent/protocols/{filename} exists", path.exists())
         if not path.exists():
             continue
         try:
             schema = json.loads(path.read_text(encoding="utf-8"))
         except json.JSONDecodeError as exc:
-            report.check(f"protocols/{filename} is valid JSON", False, str(exc))
+            report.check(f"skills/scholarly-agent/protocols/{filename} is valid JSON", False, str(exc))
             continue
-        report.check(f"protocols/{filename} is valid JSON", True)
+        report.check(f"skills/scholarly-agent/protocols/{filename} is valid JSON", True)
         report.check(
             f"protocols/{filename} title == {protocol_id}",
             schema.get("title") == protocol_id,
         )
-        report.check(f"protocols/{filename} declares 'type': 'object'", schema.get("type") == "object")
+        report.check(f"skills/scholarly-agent/protocols/{filename} declares 'type': 'object'", schema.get("type") == "object")
         # Structural self-check: every property referenced in 'required' must
         # be declared in 'properties' (a schema bug would break every producer/consumer).
         required = set(schema.get("required", []))
@@ -282,7 +231,7 @@ def validate_shared_docs(report: Report) -> None:
         "integrity-policy.md", "provenance-policy.md", "terminology.md",
         "protocol-versioning.md", "capability-boundaries.md",
     ]:
-        report.check(f"shared/{filename} exists", (ROOT / "shared" / filename).exists())
+        report.check(f"skills/scholarly-agent/shared/{filename} exists", (SKILL_DIR / "shared" / filename).exists())
 
 
 def validate_no_double_nesting(report: Report) -> None:
@@ -297,7 +246,7 @@ def validate_no_double_nesting(report: Report) -> None:
 def main() -> int:
     report = Report()
     validate_plugin_manifest(report)
-    frontmatters = validate_components_present_and_unique(report)
+    frontmatters = validate_skill_and_modules(report)
     validate_components_json(report)
     validate_protocols(report)
     validate_workflows(report, "scholarly-agent" in frontmatters)

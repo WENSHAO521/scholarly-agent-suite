@@ -1,4 +1,4 @@
-# Scholarly Agent Suite
+# Scholarly Agent
 
 **English** · [繁體中文](README.zh-TW.md)
 
@@ -7,9 +7,13 @@ It helps you go from an idea, a pile of notes, or a draft manuscript to a
 well-argued paper and a defensible submission plan, while keeping every
 citation, metric, and claim traceable to a real source.
 
-The Suite is one installable package made of five cooperating Agent Skills:
-a small orchestrator that plans the work, and four specialists that each own
-one part of the scholarly process.
+It is a single Agent Skill, `scholarly-agent`, with four built-in modules:
+execution planning, research evidence, scholarly writing, and publication
+strategy. A dispatcher reads each request and loads only the modules that
+request needs, so a quick paragraph edit stays quick and a full
+idea-to-submission project gets the whole pipeline.
+
+![Architecture of the Scholarly Agent: requests enter one Skill whose dispatcher answers directly, loads one module, or runs a multi-module workflow recipe across the Model Router, Corpus Builder, Voice Engine, and Journal Fit modules, which share versioned protocols and one integrity policy and end at a final quality gate.](assets/scholarly-agent-architecture.svg)
 
 > **What it is not.** It is not a one-click paper generator, it does not
 > predict acceptance, and it never invents citations, DOIs, quotations,
@@ -18,10 +22,11 @@ one part of the scholarly process.
 
 ## What you can ask it
 
-Ask in plain language. The orchestrator picks the matching workflow recipe
-and calls only the specialists that recipe actually needs.
+Ask in plain language. The dispatcher picks the matching workflow recipe and
+loads only the modules that recipe actually uses (Corpus = Corpus Builder,
+Voice = Voice Engine).
 
-| You want to... | Workflow recipe | Specialists involved |
+| You want to... | Workflow recipe | Modules used |
 |---|---|---|
 | Turn a research idea into a manuscript | [paper-from-idea](skills/scholarly-agent/references/workflows/paper-from-idea.md) | (Corpus), Voice, (Journal Fit) |
 | Turn notes or fragments into a paper | [paper-from-notes](skills/scholarly-agent/references/workflows/paper-from-notes.md) | (Corpus), Voice, (Journal Fit) |
@@ -38,13 +43,12 @@ and calls only the specialists that recipe actually needs.
 | Learn your own writing voice from past papers | [author-voice-calibration](skills/scholarly-agent/references/workflows/author-voice-calibration.md) | Corpus, Voice |
 | Build a discipline, journal, or historical style profile | [corpus-profile-build](skills/scholarly-agent/references/workflows/corpus-profile-build.md) | Corpus |
 
-Specialists in parentheses join only when the request calls for them, and
-the Adaptive Model Router can sit under any recipe as an optional execution
-layer. The
+Modules in parentheses join only when the request calls for them, and the
+Model Router can sit under any recipe as an optional execution layer. The
 exact routing rules live in
 [`routing-matrix.md`](skills/scholarly-agent/references/routing-matrix.md).
-A small single-step task, such as polishing one paragraph, skips the
-orchestrator and goes straight to the one specialist that owns it.
+A single-step task, such as polishing one paragraph, needs no recipe: the
+agent loads just the one module that owns it.
 
 Example prompts:
 
@@ -55,86 +59,67 @@ Example prompts:
 - "Which open-access journals in education policy fit this paper, with no
   APC above 2,000 USD?"
 
-## The five Skills
+## The four modules
 
-| Skill | Owns | What it does |
+| Module | Owns | What it does |
 |---|---|---|
-| [scholarly-agent](skills/scholarly-agent/SKILL.md) | Orchestration | Breaks a multi-stage task into steps, picks a workflow recipe, hands data between specialists, and runs a final integrity and completeness check. |
-| [adaptive-model-router](skills/adaptive-model-router/SKILL.md) | Execution | Decides how a task is executed: model tier, when to delegate to subagents, and when escalation is justified. |
-| [scholarly-corpus-builder](skills/scholarly-corpus-builder/SKILL.md) | Research evidence | Retrieves open scholarly literature (OpenAlex, Crossref, PubMed/PMC, arXiv, DOAJ, your own files) with provenance, and builds discipline, journal, historical, and author-voice style profiles. |
-| [scholarly-voice-engine](skills/scholarly-voice-engine/SKILL.md) | Writing and argument | Writes and edits discipline-aware, genre-aware academic prose, calibrates claims, checks citation integrity, and keeps long projects consistent. |
-| [journal-fit-engine](skills/journal-fit-engine/SKILL.md) | Publication strategy | Profiles the manuscript, generates candidate journals, applies hard filters (scope, APC, open access, indexing), scores fit with evidence, and produces a submission strategy. |
+| [Model Router](skills/scholarly-agent/modules/adaptive-model-router/MODULE.md) | Execution planning | Decides how a large task is executed: model tier, reasoning effort, when to delegate to subagents, and when escalation is justified. Used only when the host can actually dispatch. |
+| [Corpus Builder](skills/scholarly-agent/modules/scholarly-corpus-builder/MODULE.md) | Research evidence | Retrieves open scholarly literature (OpenAlex, Crossref, PubMed/PMC, arXiv, DOAJ, your own files) with provenance, and builds discipline, journal, historical, and author-voice style profiles. |
+| [Voice Engine](skills/scholarly-agent/modules/scholarly-voice-engine/MODULE.md) | Writing and argument | Writes and edits discipline-aware, genre-aware academic prose, calibrates claims, checks citation integrity, and keeps long projects such as books consistent. |
+| [Journal Fit](skills/scholarly-agent/modules/journal-fit-engine/MODULE.md) | Publication strategy | Profiles the manuscript, generates candidate journals, applies hard filters (scope, APC, open access, indexing), assesses fit with evidence, and produces a submission strategy. |
 
-Each Skill keeps its own trigger boundary, references, tests, and version,
-and still works on its own if installed separately. Exact bundled versions
-and source commits are recorded in [`COMPONENTS.json`](COMPONENTS.json),
-which is the single source of truth.
+The dispatcher itself lives in
+[`SKILL.md`](skills/scholarly-agent/SKILL.md). Modules keep separate
+responsibilities even inside one Skill: the corpus module never recommends
+journals, the voice module never picks models, and so on
+([`capability-boundaries.md`](skills/scholarly-agent/shared/capability-boundaries.md)).
+Corpus Builder, Voice Engine, and Journal Fit also ship tested Python
+engines (`scb/`, `scripts/voice/`, `jfe/`) for the mechanical parts.
 
 ## How it works
 
-![Scholarly Agent Suite architecture: the user talks to Scholarly Agent, which coordinates four specialists sitting on a shared layer of protocols, policy, and workflow recipes.](assets/suite-architecture-diagram.svg)
+For every request the dispatcher chooses one of three paths: answer a
+trivial question directly, load a single module, or run a multi-module
+workflow recipe. In a workflow it reuses fresh results from earlier steps,
+carries hard constraints (APC limits, word counts, open-access
+requirements) forward, allows one bounded repair pass, and ends in one of
+three honest states: `COMPLETE`, `COMPLETE_WITH_LIMITATIONS`, or `BLOCKED`.
 
-```
-User
- |
- v
-Scholarly Agent (orchestration)
- |
- +-- Adaptive Model Router      (execution)
- +-- Scholarly Corpus Builder   (research evidence)
- +-- Scholarly Voice Engine     (writing and argument)
- +-- Journal Fit Engine         (publication strategy)
+![Flowchart of the dispatcher's decision process: check whether two or more modules are genuinely needed, select a workflow recipe, reuse fresh artifacts, propagate hard constraints, load the minimal module set, allow one bounded repair pass, then apply a final quality gate that branches into COMPLETE, COMPLETE_WITH_LIMITATIONS, or a BLOCKED state.](assets/orchestration-flowchart.svg)
 
-Shared layer:
- protocols/   versioned JSON data contracts between Skills
- shared/      integrity, provenance, terminology, capability boundaries
-```
-
-The orchestrator is not a fixed pipeline. For every request it checks
-whether two or more specialists are genuinely needed, reuses fresh results
-from earlier steps, carries hard constraints (APC limits, word counts,
-open-access requirements) forward, allows one bounded repair pass, and ends
-in one of three honest states: `COMPLETE`, `COMPLETE_WITH_LIMITATIONS`, or
-`BLOCKED`.
-
-![Flowchart of Scholarly Agent's orchestration decision process: check whether two or more specialists are genuinely needed, select a workflow recipe, reuse fresh artifacts, propagate hard constraints, invoke the minimal specialist set, allow one bounded repair pass, then apply a final quality gate that branches into COMPLETE, COMPLETE_WITH_LIMITATIONS, or a BLOCKED state.](assets/orchestration-flowchart.svg)
-
-Specialists hand work to each other through ten versioned JSON Schemas in
-[`protocols/`](protocols/): `EXECUTION_POLICY_V1`, `SCHOLARLY_PROFILE_V1`,
-`VOICE_REQUEST_V1`, `VOICE_CONTEXT_V1`, `VOICE_OUTPUT_V1`,
-`MANUSCRIPT_PROFILE_V1`, `TARGET_JOURNAL_PROFILE_V1`,
+Modules hand work to each other through ten versioned JSON Schemas in
+[`protocols/`](skills/scholarly-agent/protocols/): `EXECUTION_POLICY_V1`,
+`SCHOLARLY_PROFILE_V1`, `VOICE_REQUEST_V1`, `VOICE_CONTEXT_V1`,
+`VOICE_OUTPUT_V1`, `MANUSCRIPT_PROFILE_V1`, `TARGET_JOURNAL_PROFILE_V1`,
 `JOURNAL_STYLE_CONTEXT_V1`, `CONTINUITY_STATE_V1`, and
-`PROVENANCE_RECORD_V1`. For example, Journal Fit Engine produces a
-`JOURNAL_STYLE_CONTEXT_V1` that Voice Engine consumes, so a journal's
+`PROVENANCE_RECORD_V1`. For example, Journal Fit produces a
+`JOURNAL_STYLE_CONTEXT_V1` that the Voice Engine consumes, so a journal's
 official requirements and its merely observed house style never get mixed
 up.
 
 ## Install
 
-**Option A: the whole Suite (recommended).** Install the repository as a
-plugin through [`.codex-plugin/plugin.json`](.codex-plugin/plugin.json), or
-unzip a release package (`scholarly-agent-suite-v<version>.zip`). All five
-Skills, the workflow recipes, the protocols, and the shared policies become
-available together.
+**As a plugin.** Install this repository through
+[`.codex-plugin/plugin.json`](.codex-plugin/plugin.json), or unzip a
+release package (`scholarly-agent-suite-v<version>.zip`).
 
-**Option B: one Skill on its own.** Copy any folder under `skills/` into
-your host's skills directory, or install it from its own repository. Every
-Skill is self-contained: none of them needs `shared/` or `protocols/` next
-to it to run.
+**As a plain Skill.** Copy `skills/scholarly-agent/` into your host's skills
+directory. It is self-contained: modules, protocols, shared policy, and
+workflow recipes all live inside that one folder.
 
 To check a local checkout:
 
 ```bash
 pip install pytest jsonschema
 python scripts/validate_suite.py   # acceptance checks
-pytest tests/                      # suite tests
+pytest tests/                      # tests
 ```
 
 ## Integrity guarantees
 
-These rules apply to every bundled Skill and are enforced by the
-orchestrator's final quality gate
-([`shared/integrity-policy.md`](shared/integrity-policy.md)):
+These rules apply to every module and are enforced by the final quality
+gate
+([`integrity-policy.md`](skills/scholarly-agent/shared/integrity-policy.md)):
 
 - No fabricated citations, DOIs, quotations, journal metrics, corpus
   counts, or acceptance probabilities. Anything unverified is labelled as
@@ -144,38 +129,40 @@ orchestrator's final quality gate
 - No imitation of a living author's voice; author-voice calibration is for
   your own writing.
 - No AI-detector evasion as a goal.
-- A specialist's unresolved integrity flag is never silently dropped on the
-  way to a "complete" result.
+- A module's unresolved integrity flag is never silently dropped on the way
+  to a "complete" result.
 
 ## Repository layout
 
 ```
-skills/            the five Skills (four synced from their own repos, one in-tree)
-protocols/         JSON Schemas for the shared data contracts
-shared/            cross-Skill policies and terminology
-workflows/         generated read-only mirror of the orchestrator's recipes
-assets/            README diagrams (not shipped in the runtime package)
-scripts/           sync, drift check, validation, and packaging tools
-tests/, evals/     suite tests and orchestration fixtures
-docs/              maintainer documentation
+skills/scholarly-agent/   the one Skill
+  SKILL.md                dispatcher
+  modules/                the four modules (MODULE.md + references + engines)
+  references/             routing matrix, orchestration state, workflow recipes
+  protocols/              JSON Schemas for module handoffs
+  shared/                 integrity, provenance, terminology, boundaries
+workflows/                generated read-only mirror of the workflow recipes
+assets/                   README diagrams (not shipped in the runtime package)
+scripts/                  validation, packaging, and workflow-mirror tools
+tests/, evals/            tests and dispatch fixtures
+docs/                     maintainer documentation
 ```
 
 ## Development and releases
 
-The four specialist Skills are developed in their own repositories and
-pinned here by exact commit; the orchestrator lives in this repository.
-Syncing, component drift detection, packaging, test coverage, versioning
-rules, and known limitations are documented in
-[`docs/development.md`](docs/development.md). The release procedure is in
-[`RELEASE_CHECKLIST.md`](RELEASE_CHECKLIST.md) and the history in
-[`CHANGELOG.md`](CHANGELOG.md).
+Everything, including all four modules, is developed in this repository.
+Until v1.2.1 the modules were separate Skills synced from their own
+repositories; v2.0.0 merged them (see [`CHANGELOG.md`](CHANGELOG.md)).
+Layout rules, versioning, testing, packaging, and known limitations are in
+[`docs/development.md`](docs/development.md), and the release procedure is
+in [`RELEASE_CHECKLIST.md`](RELEASE_CHECKLIST.md).
 
 ## Roadmap
 
-New specialists (for example a peer-review, systematic-review, or
-grant-writing engine) are added only when each has a distinct trigger
-boundary, substantial policy of its own, and standalone usefulness, not
-merely because a feature could be split out.
+New capabilities (for example peer-review simulation, grant writing, or
+reference-manager import) are added as new modules when each has a
+distinct responsibility and enough policy of its own, not merely because a
+feature could be split out.
 
 ## License
 

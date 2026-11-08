@@ -1,7 +1,12 @@
----
-name: journal-fit-engine
-description: Analyze manuscript–journal fit across disciplines using current scope, article type, methodology, audience, contribution, journal evidence, practical submission constraints, and publication-integrity checks to produce evidence-backed venue shortlists and submission strategies.
----
+<!-- Module of the scholarly-agent Skill (formerly the standalone `journal-fit-engine` Skill).
+     Loaded on demand by ../../SKILL.md; paths below are relative to this module's directory. -->
+
+> **Module `journal-fit-engine`** -- part of the single `scholarly-agent` Skill. Load this file only when the
+> dispatcher in `SKILL.md` selects this module. Wherever this file says "this Skill" or names
+> another former Skill (e.g. `scholarly-voice-engine`), read it as "this module" / the sibling
+> module at `modules/<name>/`. Paths such as `references/...` are relative to `modules/journal-fit-engine/`.
+>
+> Scope: Analyze manuscript–journal fit across disciplines using current scope, article type, methodology, audience, contribution, journal evidence, practical submission constraints, and publication-integrity checks to produce evidence-backed venue shortlists and submission strategies.
 
 # Journal Fit Engine
 
@@ -132,7 +137,10 @@ inferred), a `JOURNAL_STYLE_CONTEXT_V1` protocol builder
 `TARGET_JOURNAL_PROFILE_V1` protocol builder (`target_journal_profile.py`)
 that composes evidence/APC-OA/fit/indexing results already computed by the
 modules above into one canonical resolved-candidate envelope for
-downstream orchestration (see
+downstream orchestration. A `MANUSCRIPT_PROFILE_V1` envelope from the voice
+module or the user enters through
+`jfe.manuscript_profile.from_manuscript_profile_v1()`, which maps the
+envelope's field names and article types onto this module's own profile (see
 [references/integration.md](references/integration.md)). It supplements
 this SKILL.md's reasoning workflow; it does not replace the LLM's own
 judgment on candidate generation or submission strategy, and it never

@@ -1,0 +1,127 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 700" role="img" aria-label="Architecture of the Scholarly Agent: requests enter one Skill, whose dispatcher answers directly, loads one module, or runs a multi-module workflow recipe. The four modules are Model Router (execution planning), Corpus Builder (research evidence), Voice Engine (writing and argument), and Journal Fit (publication strategy). They exchange data through ten versioned JSON protocols and share one integrity policy, and every workflow ends at a final quality gate with one of three outcomes: COMPLETE, COMPLETE_WITH_LIMITATIONS, or BLOCKED.">
+  <title>Scholarly Agent -- one Skill, four modules</title>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#241f18" fill-opacity="0.7"/>
+    </marker>
+    <style>
+      .mono { font-family: SFMono-Regular, Consolas, 'Liberation Mono', Menlo, monospace; }
+      .sans { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; }
+      .ink { fill: #241f18; }
+      .muted { fill: #241f18; fill-opacity: 0.62; }
+      .line { stroke: #241f18; stroke-opacity: 0.55; fill: none; }
+    </style>
+  </defs>
+
+  <rect x="0" y="0" width="960" height="700" fill="#f6f3ec"/>
+
+  <!-- Example requests -->
+  <g class="sans" font-size="12.5">
+    <rect x="85" y="18" width="230" height="36" rx="18" fill="#fffdf8" stroke="#241f18" stroke-opacity="0.35"/>
+    <text x="200" y="41" text-anchor="middle" class="ink">"Turn my idea into a paper"</text>
+    <rect x="365" y="18" width="230" height="36" rx="18" fill="#fffdf8" stroke="#241f18" stroke-opacity="0.35"/>
+    <text x="480" y="41" text-anchor="middle" class="ink">"Polish this paragraph"</text>
+    <rect x="645" y="18" width="230" height="36" rx="18" fill="#fffdf8" stroke="#241f18" stroke-opacity="0.35"/>
+    <text x="760" y="41" text-anchor="middle" class="ink">"Which journals fit this?"</text>
+  </g>
+  <line x1="200" y1="54" x2="380" y2="94" class="line" marker-end="url(#arr)"/>
+  <line x1="480" y1="54" x2="480" y2="94" class="line" marker-end="url(#arr)"/>
+  <line x1="760" y1="54" x2="580" y2="94" class="line" marker-end="url(#arr)"/>
+
+  <!-- The one Skill -->
+  <rect x="30" y="96" width="900" height="464" rx="16" fill="#fffdf8" stroke="#3f7a9e" stroke-width="2"/>
+  <text x="480" y="126" text-anchor="middle" class="mono" font-size="17" font-weight="700" letter-spacing="1.5" fill="#3f7a9e">SCHOLARLY AGENT</text>
+  <text x="480" y="145" text-anchor="middle" class="sans muted" font-size="12" font-style="italic">one Skill · loads only the modules a request needs</text>
+
+  <!-- Dispatcher -->
+  <rect x="60" y="158" width="840" height="70" rx="10" fill="#eaf1f5" stroke="#3f7a9e" stroke-opacity="0.5"/>
+  <text x="480" y="178" text-anchor="middle" class="mono" font-size="12" font-weight="600" letter-spacing="1" fill="#3f7a9e">DISPATCHER · SKILL.md</text>
+  <g class="sans" font-size="11.5">
+    <rect x="120" y="190" width="220" height="26" rx="13" fill="#ffffff" stroke="#3f7a9e" stroke-opacity="0.45"/>
+    <text x="230" y="207" text-anchor="middle" class="ink">no module → answer directly</text>
+    <rect x="370" y="190" width="220" height="26" rx="13" fill="#ffffff" stroke="#3f7a9e" stroke-opacity="0.45"/>
+    <text x="480" y="207" text-anchor="middle" class="ink">one module → load its MODULE.md</text>
+    <rect x="620" y="190" width="220" height="26" rx="13" fill="#ffffff" stroke="#3f7a9e" stroke-opacity="0.45"/>
+    <text x="730" y="207" text-anchor="middle" class="ink">2+ modules → 1 of 14 recipes</text>
+  </g>
+
+  <!-- dispatcher to modules -->
+  <line x1="162" y1="228" x2="162" y2="250" class="line" marker-end="url(#arr)"/>
+  <line x1="374" y1="228" x2="374" y2="250" class="line" marker-end="url(#arr)"/>
+  <line x1="586" y1="228" x2="586" y2="250" class="line" marker-end="url(#arr)"/>
+  <line x1="798" y1="228" x2="798" y2="250" class="line" marker-end="url(#arr)"/>
+
+  <!-- Module cards -->
+  <g>
+    <rect x="60" y="252" width="204" height="138" rx="10" fill="#ffffff" stroke="#6b6f80" stroke-opacity="0.6"/>
+    <rect x="60" y="252" width="204" height="6" rx="3" fill="#6b6f80"/>
+    <text x="162" y="280" text-anchor="middle" class="mono" font-size="13" font-weight="700" fill="#6b6f80">MODEL ROUTER</text>
+    <text x="162" y="297" text-anchor="middle" class="sans muted" font-size="11" font-style="italic">execution planning</text>
+    <text x="162" y="320" text-anchor="middle" class="sans ink" font-size="11">model tier and effort</text>
+    <text x="162" y="336" text-anchor="middle" class="sans ink" font-size="11">subagent delegation</text>
+    <text x="162" y="352" text-anchor="middle" class="sans ink" font-size="11">validation and escalation</text>
+    <text x="162" y="377" text-anchor="middle" class="mono muted" font-size="10.5">policy only</text>
+  </g>
+  <g>
+    <rect x="272" y="252" width="204" height="138" rx="10" fill="#ffffff" stroke="#4f7d5a" stroke-opacity="0.6"/>
+    <rect x="272" y="252" width="204" height="6" rx="3" fill="#4f7d5a"/>
+    <text x="374" y="280" text-anchor="middle" class="mono" font-size="13" font-weight="700" fill="#4f7d5a">CORPUS BUILDER</text>
+    <text x="374" y="297" text-anchor="middle" class="sans muted" font-size="11" font-style="italic">research evidence</text>
+    <text x="374" y="320" text-anchor="middle" class="sans ink" font-size="11">OpenAlex · Crossref · PubMed</text>
+    <text x="374" y="336" text-anchor="middle" class="sans ink" font-size="11">arXiv · DOAJ · your files</text>
+    <text x="374" y="352" text-anchor="middle" class="sans ink" font-size="11">style profiles + provenance</text>
+    <text x="374" y="377" text-anchor="middle" class="mono muted" font-size="10.5">engine: scb/</text>
+  </g>
+  <g>
+    <rect x="484" y="252" width="204" height="138" rx="10" fill="#ffffff" stroke="#3f7a9e" stroke-opacity="0.6"/>
+    <rect x="484" y="252" width="204" height="6" rx="3" fill="#3f7a9e"/>
+    <text x="586" y="280" text-anchor="middle" class="mono" font-size="13" font-weight="700" fill="#3f7a9e">VOICE ENGINE</text>
+    <text x="586" y="297" text-anchor="middle" class="sans muted" font-size="11" font-style="italic">writing and argument</text>
+    <text x="586" y="320" text-anchor="middle" class="sans ink" font-size="11">discipline- and genre-aware</text>
+    <text x="586" y="336" text-anchor="middle" class="sans ink" font-size="11">claim calibration</text>
+    <text x="586" y="352" text-anchor="middle" class="sans ink" font-size="11">citation integrity · continuity</text>
+    <text x="586" y="377" text-anchor="middle" class="mono muted" font-size="10.5">engine: scripts/voice/</text>
+  </g>
+  <g>
+    <rect x="696" y="252" width="204" height="138" rx="10" fill="#ffffff" stroke="#b07a2a" stroke-opacity="0.6"/>
+    <rect x="696" y="252" width="204" height="6" rx="3" fill="#b07a2a"/>
+    <text x="798" y="280" text-anchor="middle" class="mono" font-size="13" font-weight="700" fill="#b07a2a">JOURNAL FIT</text>
+    <text x="798" y="297" text-anchor="middle" class="sans muted" font-size="11" font-style="italic">publication strategy</text>
+    <text x="798" y="320" text-anchor="middle" class="sans ink" font-size="11">candidates and hard filters</text>
+    <text x="798" y="336" text-anchor="middle" class="sans ink" font-size="11">scope · APC · OA · indexing</text>
+    <text x="798" y="352" text-anchor="middle" class="sans ink" font-size="11">evidence-backed fit</text>
+    <text x="798" y="377" text-anchor="middle" class="mono muted" font-size="10.5">engine: jfe/</text>
+  </g>
+
+  <!-- modules to protocol bus -->
+  <line x1="162" y1="390" x2="162" y2="408" class="line"/>
+  <line x1="374" y1="390" x2="374" y2="408" class="line"/>
+  <line x1="586" y1="390" x2="586" y2="408" class="line"/>
+  <line x1="798" y1="390" x2="798" y2="408" class="line"/>
+
+  <!-- Protocols -->
+  <rect x="60" y="408" width="840" height="58" rx="10" fill="#f1ede3" stroke="#241f18" stroke-opacity="0.25"/>
+  <text x="480" y="429" text-anchor="middle" class="sans ink" font-size="12.5"><tspan class="mono" font-weight="700">protocols/</tspan>  10 versioned JSON schemas carry every handoff between modules</text>
+  <text x="480" y="451" text-anchor="middle" class="mono muted" font-size="10">SCHOLARLY_PROFILE_V1 · MANUSCRIPT_PROFILE_V1 · JOURNAL_STYLE_CONTEXT_V1 · TARGET_JOURNAL_PROFILE_V1 · …</text>
+
+  <!-- Shared policy -->
+  <rect x="60" y="478" width="840" height="58" rx="10" fill="#f1ede3" stroke="#241f18" stroke-opacity="0.25"/>
+  <text x="480" y="499" text-anchor="middle" class="sans ink" font-size="12.5"><tspan class="mono" font-weight="700">shared/</tspan>  integrity · provenance · terminology · module boundaries</text>
+  <text x="480" y="521" text-anchor="middle" class="sans muted" font-size="11" font-style="italic">no fabricated citations, DOIs, metrics, or acceptance odds</text>
+
+  <!-- Quality gate and outcomes -->
+  <line x1="480" y1="560" x2="480" y2="586" class="line" marker-end="url(#arr)"/>
+  <rect x="370" y="588" width="220" height="32" rx="16" fill="#241f18"/>
+  <text x="480" y="609" text-anchor="middle" class="mono" font-size="12" font-weight="700" letter-spacing="1" fill="#f6f3ec">FINAL QUALITY GATE</text>
+  <line x1="430" y1="620" x2="250" y2="646" class="line" marker-end="url(#arr)"/>
+  <line x1="480" y1="620" x2="480" y2="646" class="line" marker-end="url(#arr)"/>
+  <line x1="530" y1="620" x2="710" y2="646" class="line" marker-end="url(#arr)"/>
+  <g class="mono" font-size="11.5" font-weight="700">
+    <rect x="160" y="648" width="180" height="30" rx="15" fill="#e6efe7" stroke="#4f7d5a"/>
+    <text x="250" y="668" text-anchor="middle" fill="#3d6647">COMPLETE</text>
+    <rect x="365" y="648" width="230" height="30" rx="15" fill="#f6ecdb" stroke="#b07a2a"/>
+    <text x="480" y="668" text-anchor="middle" fill="#8a5e1f">COMPLETE_WITH_LIMITATIONS</text>
+    <rect x="620" y="648" width="180" height="30" rx="15" fill="#f4e2df" stroke="#a8473b"/>
+    <text x="710" y="668" text-anchor="middle" fill="#8e3a30">BLOCKED</text>
+  </g>
+</svg>

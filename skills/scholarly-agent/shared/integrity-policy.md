@@ -42,11 +42,11 @@ or paper over a violation of this policy produced by a specialist (rule 76).
   the workflow to `COMPLETE_WITH_LIMITATIONS` rather than silently accept a
   specialist's unresolved integrity flag.
 
-## Standalone compatibility
+## Module copies
 
-Every component Skill ships a compact version of the rules relevant to its own
-domain directly in its own `SKILL.md` (rule 41) so that installing it outside
-the Suite does not lose these guarantees. This file is the canonical, detailed
-version; the in-Skill copies must not contradict it. If they ever appear to
-diverge, this file governs and the component's copy should be corrected on its
-next release.
+Each module keeps a compact version of the rules relevant to its own domain
+directly in its own `MODULE.md`, so the rules are in front of the model
+whichever module is loaded. This file is the canonical, detailed version;
+the in-module copies must not contradict it. If they ever appear to
+diverge, this file governs and the module's copy is corrected in the same
+change.

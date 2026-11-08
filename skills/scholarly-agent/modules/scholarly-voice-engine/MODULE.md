@@ -1,7 +1,12 @@
----
-name: scholarly-voice-engine
-description: Apply discipline-aware scholarly argument architecture, evidence-disciplined voice synthesis, author calibration, journal-aware adaptation, and long-form academic writing rules for research articles, reviews, commentaries, book chapters, monographs, and interdisciplinary scholarship across the sciences, mathematics, engineering, medicine, social sciences, economics, business, law, humanities, philosophy, history, education, and the arts — including multilingual and corpus/journal-integrated writing. Use for substantive academic drafting or revision; do not use for casual, marketing, or administrative writing.
----
+<!-- Module of the scholarly-agent Skill (formerly the standalone `scholarly-voice-engine` Skill).
+     Loaded on demand by ../../SKILL.md; paths below are relative to this module's directory. -->
+
+> **Module `scholarly-voice-engine`** -- part of the single `scholarly-agent` Skill. Load this file only when the
+> dispatcher in `SKILL.md` selects this module. Wherever this file says "this Skill" or names
+> another former Skill (e.g. `scholarly-voice-engine`), read it as "this module" / the sibling
+> module at `modules/<name>/`. Paths such as `references/...` are relative to `modules/scholarly-voice-engine/`.
+>
+> Scope: Apply discipline-aware scholarly argument architecture, evidence-disciplined voice synthesis, author calibration, journal-aware adaptation, and long-form academic writing rules for research articles, reviews, commentaries, book chapters, monographs, and interdisciplinary scholarship across the sciences, mathematics, engineering, medicine, social sciences, economics, business, law, humanities, philosophy, history, education, and the arts — including multilingual and corpus/journal-integrated writing. Use for substantive academic drafting or revision; do not use for casual, marketing, or administrative writing.
 
 # Scholarly Voice Engine
 

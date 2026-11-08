@@ -37,9 +37,9 @@ def test_runtime_allowlist_includes_voice_engine_runtime_package():
     fixed."""
     files = package_suite.iter_runtime_files()
     rel = {f.relative_to(ROOT).as_posix() for f in files}
-    assert "skills/scholarly-voice-engine/scripts/voice/profile_merge.py" in rel
-    assert "skills/scholarly-voice-engine/scripts/voice/journal_context.py" in rel
-    assert "skills/scholarly-voice-engine/scripts/voice/continuity.py" in rel
+    assert "skills/scholarly-agent/modules/scholarly-voice-engine/scripts/voice/profile_merge.py" in rel
+    assert "skills/scholarly-agent/modules/scholarly-voice-engine/scripts/voice/journal_context.py" in rel
+    assert "skills/scholarly-agent/modules/scholarly-voice-engine/scripts/voice/continuity.py" in rel
 
 
 def test_runtime_allowlist_excludes_voice_engine_dev_only_scripts():
@@ -52,18 +52,26 @@ def test_runtime_allowlist_excludes_voice_engine_dev_only_scripts():
     distinction precise."""
     files = package_suite.iter_runtime_files()
     rel = {f.relative_to(ROOT).as_posix() for f in files}
-    assert "skills/scholarly-voice-engine/scripts/validate_skill.py" not in rel
-    assert "skills/scholarly-voice-engine/scripts/package_runtime.py" not in rel
+    assert "skills/scholarly-agent/modules/scholarly-voice-engine/scripts/validate_skill.py" not in rel
+    assert "skills/scholarly-agent/modules/scholarly-voice-engine/scripts/package_runtime.py" not in rel
 
 
-def test_runtime_allowlist_includes_all_skill_md():
+def test_runtime_allowlist_includes_skill_and_all_modules():
     files = package_suite.iter_runtime_files()
     rel = {f.relative_to(ROOT).as_posix() for f in files}
+    assert "skills/scholarly-agent/SKILL.md" in rel
     for name in [
-        "scholarly-agent", "adaptive-model-router", "scholarly-corpus-builder",
+        "adaptive-model-router", "scholarly-corpus-builder",
         "scholarly-voice-engine", "journal-fit-engine",
     ]:
-        assert f"skills/{name}/SKILL.md" in rel
+        assert f"skills/scholarly-agent/modules/{name}/MODULE.md" in rel
+
+
+def test_runtime_allowlist_includes_protocols_and_shared_inside_skill():
+    files = package_suite.iter_runtime_files()
+    rel = {f.relative_to(ROOT).as_posix() for f in files}
+    assert "skills/scholarly-agent/protocols/journal-style-context.schema.json" in rel
+    assert "skills/scholarly-agent/shared/integrity-policy.md" in rel
 
 
 def test_package_builds_valid_zip_with_single_root(tmp_path, monkeypatch):
@@ -160,8 +168,9 @@ def test_release_manifest_has_no_private_machine_paths(tmp_path, monkeypatch):
     assert "C:\\" not in manifest_text
     assert manifest["zip_sha256"]
     assert manifest["file_count"] == len(files)
+    assert manifest["skill"] == "scholarly-agent"
     for name in [
-        "scholarly-agent", "adaptive-model-router", "scholarly-corpus-builder",
+        "adaptive-model-router", "scholarly-corpus-builder",
         "scholarly-voice-engine", "journal-fit-engine",
     ]:
-        assert name in manifest["components"]
+        assert name in manifest["modules"]

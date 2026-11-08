@@ -1,7 +1,12 @@
----
-name: scholarly-corpus-builder
-description: Build provenance-aware scholarly corpora and structured writing profiles from user-authorized, public-domain, metadata, abstract, and lawful open-access sources for discipline, journal, historical-scholar, and author-voice analysis.
----
+<!-- Module of the scholarly-agent Skill (formerly the standalone `scholarly-corpus-builder` Skill).
+     Loaded on demand by ../../SKILL.md; paths below are relative to this module's directory. -->
+
+> **Module `scholarly-corpus-builder`** -- part of the single `scholarly-agent` Skill. Load this file only when the
+> dispatcher in `SKILL.md` selects this module. Wherever this file says "this Skill" or names
+> another former Skill (e.g. `scholarly-voice-engine`), read it as "this module" / the sibling
+> module at `modules/<name>/`. Paths such as `references/...` are relative to `modules/scholarly-corpus-builder/`.
+>
+> Scope: Build provenance-aware scholarly corpora and structured writing profiles from user-authorized, public-domain, metadata, abstract, and lawful open-access sources for discipline, journal, historical-scholar, and author-voice analysis.
 
 # Scholarly Corpus Builder
 
@@ -201,7 +206,11 @@ corpus-sufficiency gate; measured style analytics plus a corpus-stability
 engine (split-corpus testing, never trusting a profile just because a corpus
 exists); profile builders matching every schema in `references/`; and a
 Profile Compiler producing `SCHOLARLY_PROFILE_V1` / `VOICE_CONTEXT_V1` /
-`JOURNAL_STYLE_CONTEXT_V1` for downstream skills. See `scb/__init__.py` for
+`JOURNAL_STYLE_CONTEXT_V1` for downstream skills. When handing a profile to
+another module, use `scb.compiler.compile_scholarly_profile_protocol_v1()`:
+its output validates against `protocols/scholarly-profile.schema.json` and
+requires a real `PROVENANCE_RECORD_V1` (the older
+`compile_scholarly_profile_v1()` shape does not). See `scb/__init__.py` for
 the module map, and `scripts/validate_skill.py`'s `check_scb_package` for how
 it's kept in sync with the runtime package. Where Python isn't available,
 this file's instructions remain fully usable on their own — see README.md

@@ -1,198 +1,144 @@
 # Development, release, and maintenance
 
 This page is for maintainers and contributors. If you just want to use the
-Suite, start with the [README](../README.md).
+Scholarly Agent, start with the [README](../README.md).
 
 Contents:
 
+- [Layout](#layout)
 - [Suite versioning](#suite-versioning)
-- [Component versioning](#component-versioning)
 - [Development model](#development-model)
-- [Component drift detection](#component-drift-detection)
-- [Standalone compatibility](#standalone-compatibility)
 - [Testing](#testing)
 - [Runtime package](#runtime-package)
 - [Limitations](#limitations)
+- [History: the v1 multi-Skill suite](#history-the-v1-multi-skill-suite)
+
+## Layout
+
+Since v2.0.0 the repository ships exactly one Skill:
+
+```
+skills/scholarly-agent/
+  SKILL.md                  dispatcher: the only file with Skill frontmatter
+  agents/openai.yaml        optional cross-runtime descriptor
+  references/               routing matrix, orchestration state, 14 workflow recipes
+  scripts/                  workflow_resolver.py, target_journal_adapter.py
+  modules/
+    adaptive-model-router/     MODULE.md, references/
+    scholarly-corpus-builder/  MODULE.md, references/, scb/
+    scholarly-voice-engine/    MODULE.md, references/, disciplines/, assets/, scripts/voice/
+    journal-fit-engine/        MODULE.md, references/, disciplines/, jfe/
+  protocols/                10 JSON Schemas (*_V1)
+  shared/                   integrity, provenance, terminology, versioning, boundaries
+```
+
+Rules that keep this layout honest (all checked by `validate_suite.py` and
+`tests/`):
+
+- Only `skills/scholarly-agent/SKILL.md` carries frontmatter. A `SKILL.md`
+  anywhere else under `skills/` would register a second, competing Skill.
+- Every runtime dependency resolves from inside `skills/scholarly-agent/`.
+  Nothing at the repository root (`workflows/`, `docs/`, `assets/`) is
+  needed at runtime; `workflows/` is a generated mirror of
+  `skills/scholarly-agent/references/workflows/` (`scripts/sync_workflows.py`).
+- Paths inside a `MODULE.md` are relative to that module's directory.
+- Modules exchange data only through `protocols/`; module boundaries are
+  defined in `shared/capability-boundaries.md`.
 
 ## Suite versioning
 
 The Suite follows semantic versioning on its own `VERSION`
-(== `.codex-plugin/plugin.json` `version` == the release tag without `v`).
-A breaking change to any shared protocol in `protocols/` requires a new major
-protocol version and, in practice, a Suite major version (see
-`shared/protocol-versioning.md`). Re-pinning a component to a new patch or
-minor release that stays inside the declared `compatibility` range is a
-Suite patch or minor release. Every release is reported as exactly one of
-`v<VERSION> PREPARED -- NOT PUBLISHED` or `v<VERSION> PUBLISHED`; see
-`RELEASE_CHECKLIST.md`.
-
-## Component versioning
-
-Component Skills are **not** forced to share the Suite's version number. A
-valid release can (and does) bundle `scholarly-corpus-builder` at `0.9.1`
-alongside `scholarly-voice-engine` at `1.1.0` -- see `COMPONENTS.json` for the
-exact versions and `compatibility` for the declared-compatible ranges. This is
-a declaration, not a dependency resolver: the Suite does not automatically
-install or upgrade components.
+(== `.codex-plugin/plugin.json` `version` == `COMPONENTS.json`
+`suite_version` == the release tag without `v`). Modules no longer carry
+independent versions; a module change is a Suite change. A breaking change to
+any shared protocol in `skills/scholarly-agent/protocols/` requires a new
+major protocol version and a Suite major version (see
+`skills/scholarly-agent/shared/protocol-versioning.md`). Every release is
+reported as exactly one of `v<VERSION> PREPARED -- NOT PUBLISHED` or
+`v<VERSION> PUBLISHED`; see `RELEASE_CHECKLIST.md`.
 
 ## Development model
 
-```
-component repository
-  -> component release/tag
-    -> scripts/sync_components.py (pinned commit, never a floating branch)
-      -> skills/<component>/
-        -> suite integration tests
-          -> suite release
-```
+All four modules are developed in this repository. `COMPONENTS.json`
+records, per module, the upstream repository, release, and commit it was
+merged from (`merged_from`), for provenance only. There is no sync step and
+no drift check any more; the former `scripts/sync_components.py`,
+`scripts/component-sources.json`, `scripts/check_component_drift.py`, and the
+weekly drift workflow were removed in v2.0.0.
 
-Component repositories (`adaptive-model-router`, `scholarly-corpus-builder`,
-`scholarly-voice-engine`, `journal-fit-engine`) remain the canonical
-development sources and are never deleted or deprecated because this Suite
-exists. `scripts/component-sources.json` records exactly which commit of each
-was pinned for this release, using only public `repo_url` + pinned commit sha
-(and a `tag` when that commit has a real published tag) -- it contains no
-machine-specific paths and syncs correctly on a clean machine with only
-network access to each `repo_url`.
-
-`sync_components.py` clones/fetches each `repo_url` into a local bare cache
-under `.cache/components/` (gitignored) and exports the exact pinned commit
-from there; `--offline` skips the clone/fetch and requires the commit to
-already be cached, for reproducible builds without network access. A
-contributor iterating on a component locally can add a gitignored
-`scripts/component-sources.local.json` with a `repo_path` override per
-component to sync from a local working copy instead of the network -- the
-pinned `ref` must still be reachable from that local copy; it is a faster
-source of the same bytes, not a way to sync a different revision.
-
-## Component drift detection
-
-`python scripts/check_component_drift.py` compares what's pinned in
-`scripts/component-sources.json` against each component repository's actual
-current state (its own tags, its own default-branch tip) and reports one of:
-`CURRENT`, `UNRELEASED_COMMITS_AHEAD`, `NEW_RELEASE_AVAILABLE`,
-`PIN_NOT_TAGGED`, `PIN_UNREACHABLE`, `VERSION_TAG_MISMATCH`,
-`SOURCE_VERSION_MISMATCH`, or `NO_LOCAL_SOURCE`. It only detects and
-reports -- it never edits `component-sources.json` or `COMPONENTS.json`,
-never re-pins, and never triggers a release; bumping a pin is always a
-deliberate maintainer action driven by `RELEASE_CHECKLIST.md`. A weekly
-`.github/workflows/component-drift.yml` run surfaces drift as an
-informational report; only a genuinely broken pin (`PIN_UNREACHABLE`,
-`VERSION_TAG_MISMATCH`, `SOURCE_VERSION_MISMATCH`) fails that workflow.
-
-**A newer component HEAD does not automatically mean the Suite is
-outdated.** The Suite pins published, integration-tested source states
-(see "Development model" above) -- `NEW_RELEASE_AVAILABLE` or
-`UNRELEASED_COMMITS_AHEAD` on a component is a prompt to evaluate whether
-picking that up is worth a new sync + integration test pass, not a
-standing failure.
-
-## Standalone compatibility
-
-Every bundled Skill still works if installed by itself, outside this Suite --
-none of them has a hard runtime dependency on a `../shared/*` or
-`../protocols/*` file living next to it. Suite-level shared policy and
-protocols standardize and supplement the family; they never become an
-unavailable hard dependency for a standalone install (rule 42). Each
-specialist keeps a compact copy of the integrity rules relevant to its own
-domain directly inside its own `SKILL.md`.
+Python engines are imported by putting the module directory on `sys.path`
+(`import scb`, `import jfe`). The voice module's engine lives under a
+directory named `scripts/`, which collides with the dispatcher's own
+`scripts/`; tests load those files by path with
+`tests/conftest.py:load_module_at()`.
 
 ## Testing
 
-- `tests/` -- suite-level tests: plugin manifest, component presence/
-  frontmatter/uniqueness, protocol schema validity and cross-schema
-  compatibility, workflow references, orchestration trigger tests (positive
-  and negative), packaging tests, and component-drift-detector tests.
-- `tests/test_e2e_protocol_handoff.py` -- true cross-Skill integration tests
-  that import each component's *actual code* from the synced `skills/` tree
-  (not a mock, not a routing-only check) and exercise a real protocol
-  handoff end to end. Two handoffs are covered: `journal-fit-engine`'s
-  `JOURNAL_STYLE_CONTEXT_V1` producer feeding `scholarly-voice-engine`'s
-  consumer (official requirements, observed patterns, freshness, and
-  limitations all survive the full round trip, and corpus-derived evidence
-  can never land in an official-requirement field or vice versa); and
-  `journal-fit-engine`'s `TARGET_JOURNAL_PROFILE_V1` producer feeding
-  `scholarly-agent`'s hard-compatibility-gate consumer
-  (`skills/scholarly-agent/scripts/target_journal_adapter.py`) -- a
-  confirmed APC mismatch is `REJECTED`, an unverifiable paid-index
-  requirement is `NEEDS_VERIFICATION` rather than a guessed pass/fail,
-  stale evidence with a checked hard constraint is `NEEDS_VERIFICATION`,
-  provenance survives the full handoff, and fit/APC/OA/indexing vocabulary
-  never leaks into the eventual `JOURNAL_STYLE_CONTEXT_V1`'s
-  `official_requirements`/`observed_patterns`.
-- `evals/` -- end-to-end orchestration fixtures (component selection,
-  negative triggers, cross-disciplinary and multilingual scenarios),
-  including a combined `theory-paper` + `target-journal-adaptation` routing
-  fixture for "develop a theoretical paper for an already-selected target
-  journal."
-- `tests/test_workflow_packaging.py` -- proves every required workflow
-  recipe (`scripts/workflow_manifest.REQUIRED_WORKFLOWS`, the single source
-  of truth) is present in the source runtime boundary, in
-  `package_suite.iter_runtime_files()`, in the built release ZIP, in
-  `release-manifest.json`, and in a standalone-copied scholarly-agent
-  package -- plus a negative test proving a genuinely missing recipe is
-  actually caught.
-- `tests/test_workflow_install_smoke.py` -- builds the filesystem layout an
-  *installed* scholarly-agent Skill actually receives (not the repository
-  root) and resolves `SKILL.md`, the workflow index, and specific recipes
-  (`theory-paper.md`, `empirical-paper.md`,
-  `target-journal-adaptation.md`) from inside it; fails if a recipe is only
-  reachable via the repository root's `workflows/` mirror.
-- Component-level correctness (adapters, analytics, validators) is owned by
-  each component's own repository and its own `tests/`/`evals/` -- this Suite
-  does not duplicate them.
+```bash
+pip install pytest jsonschema
+python scripts/validate_suite.py   # layout, manifest, protocols, workflows
+pytest tests/
+```
 
-Run `python scripts/validate_suite.py` for the acceptance-criteria checker,
-and `pytest tests/` for the full test suite. CI (`.github/workflows/
-validate.yml`) runs validation and tests across a Python 3.10-3.13
-compatibility matrix; the deterministic packaging build itself runs once,
-on the canonical Python 3.11 job, since packaging correctness doesn't vary
-by interpreter version and rebuilding it four times over would just be
-wasted CI time.
+- `tests/test_components.py`, `test_standalone_independence.py`,
+  `test_plugin_manifest.py` -- one Skill, four modules, no stray
+  frontmatter, everything resolvable inside the Skill.
+- `tests/test_orchestration_triggers.py`, `test_capability_boundaries.py`,
+  `evals/` -- trigger boundary, the three dispatch paths, negative examples,
+  and dispatcher scope creep.
+- `tests/test_protocols.py` -- schema validity and cross-schema
+  compatibility.
+- `tests/test_e2e_protocol_handoff.py` -- real producer code into real
+  consumer code for `JOURNAL_STYLE_CONTEXT_V1` (journal fit -> voice) and
+  `TARGET_JOURNAL_PROFILE_V1` (journal fit -> dispatcher gate).
+- `tests/test_e2e_module_handoffs.py` -- real handoffs for
+  `SCHOLARLY_PROFILE_V1` (corpus -> voice) and `MANUSCRIPT_PROFILE_V1`
+  (envelope -> journal fit), both added in v2.0.0 after the merge exposed
+  that neither producer/consumer pair actually conformed to the shared
+  schema.
+- `tests/test_workflow_packaging.py`, `test_workflow_install_smoke.py`,
+  `test_packaging.py`, `test_diagrams.py` -- release ZIP contents,
+  determinism, and installed-Skill layout.
+
+CI (`.github/workflows/validate.yml`) runs validation and tests across
+Python 3.10-3.13; the deterministic packaging build runs once, on the
+Python 3.11 job.
 
 ## Runtime package
 
 `scripts/package_suite.py` builds a self-contained runtime ZIP
-(`dist/scholarly-agent-suite-v<version>.zip`) containing only what an
-end-user install needs -- `.codex-plugin/`, `skills/`, `protocols/`,
-`shared/`, `workflows/`, `README.md`, `LICENSE`, `VERSION`, and
-`COMPONENTS.json`. It excludes `tests/`, `evals/`, `.github/`, development
-scripts, and any component `.git` metadata, and writes a
-`release-manifest.json` with the exact packaged versions, source commits,
-protocol versions, file list, and a SHA-256 checksum.
-
-Every workflow recipe scholarly-agent needs ships inside `skills/` (at
-`skills/scholarly-agent/references/workflows/`), so it is present in this
-ZIP under every consumption pattern -- the whole ZIP, `skills/` copied out
-on its own, or scholarly-agent extracted standalone. `tests/
-test_workflow_packaging.py` and `tests/test_workflow_install_smoke.py`
-assert this directly against the built ZIP, `release-manifest.json`, and a
-simulated installed-Skill-only filesystem layout, not just against the
-repository's source tree.
+(`dist/scholarly-agent-suite-v<version>.zip`) containing only
+`.codex-plugin/`, `skills/` (the one Skill, including its modules,
+protocols, and shared policy), `workflows/`, `README.md`, `LICENSE`,
+`VERSION`, and `COMPONENTS.json`. It excludes `tests/`, `evals/`,
+`.github/`, `docs/`, `assets/`, and development scripts, and writes a
+`release-manifest.json` with the suite version, module provenance, protocol
+versions, file list, and a SHA-256 checksum. The ZIP is byte-deterministic:
+sorted entries, a fixed timestamp, LF-normalized text, `ZIP_STORED`, and a
+pinned `create_system`.
 
 ## Limitations
 
-- No dependency resolver: component version compatibility is a declared
-  range (`COMPONENTS.json`), not an enforced constraint.
-- No protocol version adapters yet (only `V1` of each protocol exists);
-  a future breaking change requires a new major protocol version and, likely,
-  a Suite major version.
-- Live/network-dependent evidence retrieval (current journal metrics, current
-  APC policy) depends entirely on each component's own tool access at
-  runtime; the Suite adds no additional connectors (see rule 60, "optional
-  future connectors").
-- Suite-level end-to-end evals (`evals/`) exercise orchestration/routing
-  decisions, not the full correctness of each specialist's domain logic.
-  `tests/test_e2e_protocol_handoff.py` goes one level deeper for the
-  `JOURNAL_STYLE_CONTEXT_V1` and `TARGET_JOURNAL_PROFILE_V1` handoffs
-  specifically (real producer code into real consumer code, not
-  routing-only), but that coverage does not yet extend to every protocol in
-  `protocols/` -- `PROVENANCE_RECORD_V1` in particular stays `PARTIAL`
-  (preserved unchanged by both of the above, but with no independent
-  canonical provenance-handoff test of its own), and `SCHOLARLY_PROFILE_V1`
-  / `VOICE_CONTEXT_V1` / `MANUSCRIPT_PROFILE_V1` / `VOICE_REQUEST_V1` /
-  `VOICE_OUTPUT_V1` remain schema-only round-trip coverage rather than a
-  real cross-Skill handoff test.
-- `check_component_drift.py` requires each component's git history to be
-  locally reachable (a local override or a `.cache/components/` clone); it
-  is not itself a network service and does not run against GitHub's API.
+- No protocol version adapters yet (only `V1` of each protocol exists).
+- `scb.compiler.compile_scholarly_profile_v1()` (the pre-schema shape) is
+  kept for existing callers; new code should use
+  `compile_scholarly_profile_protocol_v1()`.
+- `PROVENANCE_RECORD_V1` is validated as part of the profiles that embed it
+  but has no handoff test of its own; `VOICE_CONTEXT_V1`,
+  `VOICE_REQUEST_V1`, and `VOICE_OUTPUT_V1` have schema round-trip coverage
+  only.
+- Live evidence retrieval (current journal metrics, APC policy) depends on
+  the host's network and tool access at runtime; the Skill adds no
+  connectors.
+- Each module's own historical tests and evals stayed in its former
+  repository and were not merged; module correctness here is covered by the
+  suite tests above.
+
+## History: the v1 multi-Skill suite
+
+Up to v1.2.1 the Suite bundled five separate Skills: the
+`scholarly-agent` orchestrator plus four specialist Skills synced from their
+own repositories at pinned commits, with a weekly drift report. v2.0.0
+merged the four specialists into `scholarly-agent` as modules, moved
+`protocols/` and `shared/` inside the Skill, and made this repository the
+only place modules are developed. See `CHANGELOG.md` for details.
