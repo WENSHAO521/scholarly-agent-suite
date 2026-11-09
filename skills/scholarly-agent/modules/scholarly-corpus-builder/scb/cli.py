@@ -8,7 +8,8 @@ Commands:
     search      --adapter NAME QUERY
     acquire     --corpus-type TYPE --purpose PURPOSE --target-records N --adapters a,b,c QUERY
     resolve-oa  reads a canonical record as JSON from stdin, prints AccessResolution
-    validate    runs scripts/validate_skill.py in the given mode (thin wrapper)
+    import-bib  PATH [--format bibtex|ris|csl-json]: reference-manager file -> canonical records
+    export-bib  --format bibtex|ris|csl-json: canonical records (JSON list on stdin) -> file text
 """
 
 from __future__ import annotations
@@ -26,6 +27,7 @@ from scb.adapters.doaj import DoajAdapter
 from scb.adapters.openalex import OpenAlexAdapter
 from scb.adapters.pmc import PMCAdapter
 from scb.adapters.pubmed import PubMedAdapter
+from scb.bibliography import BibliographyFormatError, PARSERS, export_bibliography, load_bibliography
 from scb.http_client import HttpClient
 from scb.oa_resolver import resolve_access
 from scb.records import CanonicalRecord
@@ -119,13 +121,28 @@ def cmd_resolve_oa(args: argparse.Namespace) -> int:
     return 0
 
 
-def cmd_validate(args: argparse.Namespace) -> int:
-    import subprocess
+def cmd_import_bib(args: argparse.Namespace) -> int:
+    try:
+        records = load_bibliography(args.path, args.format)
+    except (OSError, BibliographyFormatError) as exc:
+        print(json.dumps({"error": str(exc)}), file=sys.stderr)
+        return 2
+    _print_json({
+        "count": len(records),
+        "verification": "NEEDS_CHECK",
+        "note": "Imported metadata is user-supplied; verify via an adapter lookup before citing.",
+        "records": [r.to_dict() for r in records],
+    })
+    return 0
 
-    cmd = [sys.executable, "scripts/validate_skill.py", "--mode", args.mode]
-    if args.root:
-        cmd += ["--root", args.root]
-    return subprocess.call(cmd)
+
+def cmd_export_bib(args: argparse.Namespace) -> int:
+    data = json.load(sys.stdin)
+    if isinstance(data, dict):
+        data = data.get("records", [data])
+    records = [CanonicalRecord.from_dict(d) for d in data]
+    sys.stdout.write(export_bibliography(records, args.format))
+    return 0
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -158,10 +175,14 @@ def build_parser() -> argparse.ArgumentParser:
     resolve_p = sub.add_parser("resolve-oa", help="Read a CanonicalRecord as JSON from stdin, print its AccessResolution")
     resolve_p.set_defaults(func=cmd_resolve_oa)
 
-    validate_p = sub.add_parser("validate", help="Thin wrapper around scripts/validate_skill.py")
-    validate_p.add_argument("--mode", choices=["source", "runtime"], default="source")
-    validate_p.add_argument("--root")
-    validate_p.set_defaults(func=cmd_validate)
+    import_p = sub.add_parser("import-bib", help="Read a BibTeX/RIS/CSL-JSON file (Zotero, Mendeley, EndNote exports) into canonical records")
+    import_p.add_argument("path")
+    import_p.add_argument("--format", choices=sorted(PARSERS))
+    import_p.set_defaults(func=cmd_import_bib)
+
+    export_p = sub.add_parser("export-bib", help="Write canonical records (JSON list on stdin) as BibTeX/RIS/CSL-JSON")
+    export_p.add_argument("--format", required=True, choices=sorted(PARSERS))
+    export_p.set_defaults(func=cmd_export_bib)
 
     return parser
 
