@@ -5,7 +5,7 @@
 > dispatcher in `SKILL.md` selects this module. Sibling modules are at `modules/<name>/`.
 > Paths such as `references/...` are relative to `modules/peer-review-engine/`.
 >
-> Scope: Simulate journal peer review of a manuscript before submission: an editor desk screen, a panel of independent reviewer reports (run as isolated subagents when the host can dispatch), and an editorial decision letter with required changes; then check a revision and response-to-reviewers letter against that decision. A pre-submission aid, not a prediction of any real journal's decision.
+> Scope: Pre-submission journal peer review of a manuscript, written the way real reviewers and editors write: an editor desk screen, a panel of independent reviewer reports (run as isolated subagents when the host can dispatch), and an editorial decision letter with required changes; then check a revision and response-to-reviewers letter against that decision. It gives authors the review they would likely get, early enough to act on it, without claiming to be any journal's decision.
 
 # Peer Review Engine
 
@@ -35,10 +35,10 @@ the corpus module, not the reviewer, finds and verifies the sources.
 
 ## When to use
 
-- "Review my paper like a reviewer at *Journal X* would." / "模擬審稿"
+- "Review my paper like a reviewer at *Journal X* would." / "幫我審稿" / "投稿前審稿"
 - "What would the editor decide?" / "Give me reviewer comments before I submit."
 - "Check whether my revision answers the reviewers." (second round)
-- A workflow stage: the dispatcher's `peer-review-simulation` workflow
+- A workflow stage: the dispatcher's `pre-submission-review` workflow
   recipe (review, then revision and response letter).
 
 Not for: a one-paragraph polish (voice), "is my paper good?" with no
@@ -103,10 +103,20 @@ concerns the panel missed before reporting it.
 
 `shared/integrity-policy.md` applies in full. In addition:
 
-- **A simulation, labeled as one.** Every decision letter states it is a
-  simulated review. Never state or imply an acceptance probability, a
-  predicted real-world outcome, or what a named journal's actual reviewers
-  will say.
+- **Real in voice, honest in origin.** Reports and the decision letter read
+  exactly like a real journal's: an anonymous reviewer's first-person
+  report, an editor's letter, no hedging about being an AI or a
+  simulation in the body. The letter ends with one line, `prv.REVIEW_NOTICE`,
+  saying it was prepared before submission and is not a decision by any
+  journal. Never remove that line, never present the result as coming from
+  the named journal or its editors, and never state an acceptance
+  probability or a predicted outcome.
+- **Confidence from substance.** The way to give an author confidence is a
+  review that is specific and fair: real strengths named, every required
+  change concrete, and a readiness verdict (see
+  `references/editorial-decision.md`) that says plainly when a paper is
+  ready to submit. Do not soften concerns to make the author feel better;
+  a problem found here is one a journal's reviewers will not find first.
 - **No impersonation.** Reviewers are roles ("Reviewer 2, methods"), never a
   real, named scholar or editor, living or dead.
 - **Grounded criticism.** Every major or fatal concern points to a location

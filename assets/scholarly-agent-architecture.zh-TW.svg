@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 700" role="img" aria-label="Scholarly Agent 架構圖：需求進入同一個 Skill，由調度器決定直接回答、載入單一模組，或依工作流程串接多個模組。五個模組是模型路由（執行規劃）、語料建構（研究證據）、寫作引擎（寫作與論證）、期刊匹配（投稿策略）與同儕審稿（模擬審稿人與編輯決定）。模組透過十二份有版本的 JSON 協定交換資料、共用一套誠信政策，每個工作流程最後都經過品質關卡，結果為 COMPLETE、COMPLETE_WITH_LIMITATIONS 或 BLOCKED。">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 700" role="img" aria-label="Scholarly Agent 架構圖：需求進入同一個 Skill，由調度器決定直接回答、載入單一模組，或依工作流程串接多個模組。五個模組是模型路由（執行規劃）、語料建構（研究證據）、寫作引擎（寫作與論證）、期刊匹配（投稿策略）與同儕審稿（投稿前審稿人與編輯決定）。模組透過十二份有版本的 JSON 協定交換資料、共用一套誠信政策，每個工作流程最後都經過品質關卡，結果為 COMPLETE、COMPLETE_WITH_LIMITATIONS 或 BLOCKED。">
   <title>Scholarly Agent：一個 Skill、五個模組</title>
   <defs>
     <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
@@ -97,7 +97,7 @@
     <rect x="737" y="252" width="162" height="138" rx="10" fill="#ffffff" stroke="#7a5a8c" stroke-opacity="0.6"/>
     <rect x="737" y="252" width="162" height="6" rx="3" fill="#7a5a8c"/>
     <text x="818" y="280" text-anchor="middle" class="mono" font-size="12.5" font-weight="700" fill="#7a5a8c">同儕審稿</text>
-    <text x="818" y="297" text-anchor="middle" class="sans muted" font-size="11" font-style="italic">模擬審稿</text>
+    <text x="818" y="297" text-anchor="middle" class="sans muted" font-size="11" font-style="italic">投稿前審稿</text>
     <text x="818" y="320" text-anchor="middle" class="sans ink" font-size="10.5">編輯初審</text>
     <text x="818" y="336" text-anchor="middle" class="sans ink" font-size="10.5">審稿人子代理</text>
     <text x="818" y="352" text-anchor="middle" class="sans ink" font-size="10.5">編輯決定</text>

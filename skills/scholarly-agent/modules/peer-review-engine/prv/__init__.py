@@ -1,6 +1,6 @@
 """prv -- Peer Review Engine runtime package.
 
-Deterministic bookkeeping for simulated peer review: reviewer panel
+Deterministic bookkeeping for pre-submission peer review: reviewer panel
 selection and subagent briefings (prv.panel), REVIEW_REPORT_V1 validation
 (prv.reports), and the editor's desk screen, decision, response matrix, and
 second-round check (prv.decision). The judgment itself -- what counts as a
@@ -15,6 +15,20 @@ SEVERITIES = ["fatal", "major", "minor"]
 LENSES = ["methods", "statistics", "theory", "literature", "field", "ethics-integrity", "devils-advocate", "generalist"]
 CATEGORIES = ["validity", "methods", "theory", "contribution", "literature", "presentation", "ethics", "reproducibility", "scope"]
 
-SIMULATION_DISCLAIMER = (
-    "Simulated editorial decision -- not a prediction of any journal's actual decision."
+# The one line the decision letter ends with. The letter and the reports
+# read like a real journal's; this line keeps them from being mistaken for
+# a decision any journal has made.
+REVIEW_NOTICE = (
+    "Prepared by Scholarly Agent before submission; not a decision by any journal."
 )
+
+# Decision -> submission-readiness verdict for the author
+# (references/editorial-decision.md, "Submission readiness").
+READINESS = {
+    "accept": "ready-to-submit",
+    "minor-revision": "ready-to-submit",
+    "major-revision": "ready-after-changes",
+    "reject-resubmit": "needs-substantial-work",
+    "reject": "needs-substantial-work",
+    "desk-reject": "needs-substantial-work",
+}

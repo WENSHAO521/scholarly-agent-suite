@@ -32,6 +32,14 @@ check: `prv.reports.validate_report`.
 | `request` | What the authors should do |
 | `fixable` | `true` if a revision could resolve it; `false` if resolving it means a different paper |
 
+## Voice
+
+The JSON is for the editor role. When the report is shown to the author,
+render it as a real reviewer's report: "Reviewer 2" heading, a first-person
+summary ("The authors argue..."), strengths, numbered major and minor
+comments with locations, and questions. Direct and collegial; no mention of
+AI or simulation; never signed with a person's name.
+
 ## Severity scale
 
 - **fatal**: if true, the central claim does not stand (invalid

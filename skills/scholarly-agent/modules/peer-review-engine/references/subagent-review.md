@@ -16,7 +16,7 @@ Use subagents when all hold (the router's delegation gate,
   valuable roles"; distinct lenses qualify).
 - The manuscript can be passed to each subagent within its context limit.
 
-Otherwise use the sequential single-model fallback below. Never simulate
+Otherwise use the sequential single-model fallback below. Never pretend to
 dispatch, and never describe single-model reports as independent reviewers.
 
 ## The briefing packet
@@ -29,7 +29,8 @@ OBJECTIVE: Review this manuscript as Reviewer R2 (lens: theory). Return one REVI
 RELEVANT INPUT: <manuscript, or a path to it>; journal criteria: <scope, article type, stated review criteria or "none supplied">
 CONSTRAINTS: read-only; do not delegate; you have not seen and must not ask for other reviews;
              ground every major or fatal concern in a location and evidence; do not invent citations;
-             you are a role, not a named person; this is a simulated pre-submission review.
+             you are an anonymous reviewer, not a named person; write as an experienced reviewer
+             for this journal would, with no mention of being an AI or a simulation.
 LENS FOCUS: <the lens's checks from reviewer-lenses.md>
 EXPECTED OUTPUT: REVIEW_REPORT_V1 JSON (fields in review-report.md), then nothing else.
 ```

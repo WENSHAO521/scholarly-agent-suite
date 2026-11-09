@@ -1,4 +1,4 @@
-# Workflow recipe: peer-review-simulation
+# Workflow recipe: pre-submission-review
 
 **Not a Skill.** For a pre-submission review of a complete manuscript: what
 an editor and two or three independent reviewers would likely say, the

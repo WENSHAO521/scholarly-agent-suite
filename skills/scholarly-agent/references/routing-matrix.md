@@ -16,7 +16,7 @@ sufficient specialist set for the requested outcome).
 | Build an author voice profile | no | yes | yes | no | no |
 | Book project | optional | yes | yes | no | no |
 | End-to-end paper (idea to submission-ready) | yes, if available | yes | yes | optional | optional |
-| Simulated peer review / editorial decision | optional (subagent dispatch) | no | no | maybe | yes |
+| Pre-submission peer review / editorial decision | optional (subagent dispatch) | no | no | maybe | yes |
 | Peer review, then revise and write the response letter | optional (subagent dispatch) | maybe | yes | maybe | yes |
 | Import or export a Zotero / BibTeX / RIS library | no | yes | no | no | no |
 

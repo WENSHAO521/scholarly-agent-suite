@@ -10,7 +10,7 @@ was merged from.
 
 v2.1.0 PREPARED -- NOT PUBLISHED
 
-**A fifth module for simulated peer review, reference-manager import and
+**A fifth module for pre-submission peer review, reference-manager import and
 export, a platform-neutral model router, and fixes for problems the v2.0.0
 merge left behind.** Installing and invoking the Skill is unchanged. Two
 renames can affect scripts that read module files directly: two
@@ -32,14 +32,16 @@ Changed).
   reason, never more lenient without dismissing concerns explicitly.
   Reviewer disagreements are recorded, not hidden. Outputs a decision
   letter, a response matrix of numbered required changes, and one
-  second-round check of the revision and response letter. Every decision is
-  labelled a simulation; no acceptance probabilities, no impersonated
-  reviewers, and a stop-and-warn rule for confidential manuscripts the user
+  second-round check of the revision and response letter. Reports and letters read
+  like a real journal's (no "simulation" wording in the body), followed by
+  a submission-readiness verdict and one closing line saying the review was
+  prepared by Scholarly Agent before submission, not by any journal; no
+  acceptance probabilities, no impersonated named reviewers or editors, and a stop-and-warn rule for confidential manuscripts the user
   was sent as a reviewer. Runtime: `prv/` (panel, report validation,
   decision, response matrix, second round), standard library only.
 - Protocols `REVIEW_REPORT_V1` (`protocols/review-report.schema.json`) and
   `EDITORIAL_DECISION_V1` (`protocols/editorial-decision.schema.json`).
-- Workflow recipe `peer-review-simulation` (review, optional revision and
+- Workflow recipe `pre-submission-review` (review, optional revision and
   response letter by the voice module, one second round).
 - **Reference-manager import and export** in the corpus module
   (`scb/bibliography.py`, `references/reference-managers.md`): BibTeX (with

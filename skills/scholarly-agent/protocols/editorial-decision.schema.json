@@ -2,9 +2,9 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://scholarly-agent-suite/protocols/editorial-decision.schema.json",
   "title": "EDITORIAL_DECISION_V1",
-  "description": "A simulated editor's decision on a manuscript (desk screen, after review, or after one revision round), produced by peer-review-engine's editor role and consumed by the dispatcher and the voice module (revision and response letter). Never a prediction of a real journal's decision. See modules/peer-review-engine/references/editorial-decision.md.",
+  "description": "An editor's pre-submission decision on a manuscript (desk screen, after review, or after one revision round), produced by peer-review-engine's editor role and consumed by the dispatcher and the voice module (revision and response letter). Written like a journal's decision letter but never presented as one: review_notice carries the one-line statement of origin. See modules/peer-review-engine/references/editorial-decision.md.",
   "type": "object",
-  "required": ["protocol", "stage", "decision", "basis", "required_changes", "disagreements", "limitations", "simulation_disclaimer"],
+  "required": ["protocol", "stage", "decision", "basis", "required_changes", "disagreements", "limitations", "review_notice"],
   "properties": {
     "protocol": { "const": "EDITORIAL_DECISION_V1" },
     "stage": { "type": "string", "enum": ["desk", "after-review", "revision"] },
@@ -67,7 +67,8 @@
     },
     "desk_reasons": { "type": "array", "items": { "type": "string" } },
     "limitations": { "type": "array", "items": { "type": "string" } },
-    "simulation_disclaimer": { "type": "string", "minLength": 1 }
+    "review_notice": { "type": "string", "minLength": 1 },
+    "readiness": { "type": "string", "enum": ["ready-to-submit", "ready-after-changes", "needs-substantial-work"] }
   },
   "additionalProperties": false
 }

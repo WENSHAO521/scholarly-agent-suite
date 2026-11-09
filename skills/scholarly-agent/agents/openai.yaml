@@ -6,7 +6,7 @@ description: >
   One Skill with five on-demand internal modules -- execution planning
   (adaptive-model-router), research evidence (scholarly-corpus-builder),
   scholarly writing (scholarly-voice-engine), publication strategy
-  (journal-fit-engine), and simulated peer review (peer-review-engine) -- plus a dispatcher that loads only the module(s) a
+  (journal-fit-engine), and pre-submission peer review (peer-review-engine) -- plus a dispatcher that loads only the module(s) a
   request needs and hands data between them via versioned protocols.
 instructions_file: ../SKILL.md
 interface:
@@ -40,7 +40,7 @@ capabilities:
   - build_provenance_aware_corpora_and_style_profiles
   - draft_and_revise_scholarly_prose
   - evaluate_manuscript_journal_fit
-  - simulate_peer_review_and_editorial_decision
+  - pre_submission_peer_review_and_editorial_decision
   - propagate_shared_state_and_constraints
   - apply_final_quality_gate
 constraints:

@@ -57,25 +57,54 @@ Rules around the table:
 
 ## 3. The decision letter
 
+Write it the way a handling editor at the target journal would: formal,
+direct, collegial. No hedging about AI or simulation in the body.
+
 ```
-Simulated editorial decision -- not a prediction of any journal's actual decision.
+Re: "<manuscript title>"
 
-Decision: Major revision
+Dear <author name, or "Dear Author">,
 
-Summary of the assessment: <2-4 sentences: what the paper does, what the
-panel valued, what stands between it and publication>
+Thank you for submitting your manuscript to <journal, or "the journal">.
+It has been read by <n> reviewers, whose reports are below. Based on their
+advice and my own reading, my decision is: Major revision.
 
-Required changes:
- 1. <change> (R1-C1, R2-C4)
+<2-4 sentences: what the paper does, what the reviewers valued, what stands
+between it and publication.>
+
+To be considered further, the revision needs to address:
+ 1. <change> (Reviewer 1, point 1; Reviewer 2, point 4)
  2. ...
 
-Points of disagreement among reviewers and how to handle them:
- - <topic>: R1 ..., R3 ...; the editor's view: ...
+The reviewers differ on <topic>: Reviewer 1 ..., Reviewer 3 .... My view: ...
 
-Optional suggestions: <minor points; the authors may decline with a reason>
+The reviewers also make suggestions you may take up or decline with a reason:
+<minor points>
 
-Reviewer reports follow.
+Please include a point-by-point response with your revision.
+
+Sincerely,
+Handling Editor
+
+---
+Submission readiness: <Ready to submit | Ready after the listed changes | Needs substantial work first>
+<one or two sentences on why>
+
+Prepared by Scholarly Agent before submission; not a decision by any journal.
 ```
 
 Keep the letter about the paper, not the authors. Required changes are
-numbered so the response letter can answer each one.
+numbered so the response letter can answer each one. Sign as "Handling
+Editor", never as a real person or a named journal's editor.
+
+### Submission readiness
+
+The part after the rule is for the author, not part of the journal-style
+letter. Map the decision to a readiness verdict: `accept` or
+`minor-revision` → "Ready to submit" (minor items are what real reviewers
+ask for anyway); `major-revision` → "Ready after the listed changes";
+`reject-resubmit`, `reject`, `desk-reject` → "Needs substantial work first"
+(for a desk rejection, name the kind of venue that would fit). This is what
+gives an author justified confidence: a clear signal when the paper is
+ready, and a concrete list when it is not. `prv.decision` records the verdict in
+the decision's `readiness` field (`prv.READINESS`).

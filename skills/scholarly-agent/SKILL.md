@@ -1,13 +1,13 @@
 ---
 name: scholarly-agent
-description: Evidence-first academic research and writing agent for any discipline. Use for scholarly work such as drafting or revising research articles, reviews, commentaries, theses, book chapters and monographs; building literature corpora and discipline, journal, historical or author-voice style profiles; finding and adapting to target journals; simulating peer review with independent reviewer reports and an editorial decision before submission; and planning how a multi-stage research task should be executed. Loads only the internal module(s) a request needs. Do not invoke for casual, marketing or administrative writing, or for a one-line factual question that needs no scholarly workflow.
+description: Evidence-first academic research and writing agent for any discipline. Use for scholarly work such as drafting or revising research articles, reviews, commentaries, theses, book chapters and monographs; building literature corpora and discipline, journal, historical or author-voice style profiles; finding and adapting to target journals; reviewing a manuscript before submission with independent reviewer reports and an editorial decision before submission; and planning how a multi-stage research task should be executed. Loads only the internal module(s) a request needs. Do not invoke for casual, marketing or administrative writing, or for a one-line factual question that needs no scholarly workflow.
 ---
 
 # Scholarly Agent
 
 One Skill for the whole scholarly workflow. It contains five internal
 modules -- execution planning, research evidence, scholarly writing,
-publication strategy, and simulated peer review -- plus a dispatcher (this file) that decides which of
+publication strategy, and pre-submission peer review -- plus a dispatcher (this file) that decides which of
 them a request actually needs, loads only those, hands data between them
 through versioned protocols, and runs a final integrity gate.
 
@@ -24,7 +24,7 @@ built here as a module from the start.
 | `modules/scholarly-voice-engine/MODULE.md` | Writing and argument | drafting, revising, restructuring, claim calibration, citation-integrity checks, author-voice calibration, long-form continuity |
 | `modules/scholarly-corpus-builder/MODULE.md` | Research evidence | retrieving or verifying literature, building a corpus, or compiling a discipline / journal / historical / author-voice style profile |
 | `modules/journal-fit-engine/MODULE.md` | Publication strategy | a manuscript profile, journal candidates, hard filters (scope, APC, open access, indexing), fit scoring, submission strategy, or a target journal's style context |
-| `modules/peer-review-engine/MODULE.md` | Simulated peer review | a pre-submission review: editor desk screen, independent reviewer reports (as isolated subagents when the host can dispatch), an editorial decision with required changes, or a check of a revision and response-to-reviewers letter |
+| `modules/peer-review-engine/MODULE.md` | Pre-submission peer review | a pre-submission review: editor desk screen, independent reviewer reports (as isolated subagents when the host can dispatch), an editorial decision with required changes, or a check of a revision and response-to-reviewers letter |
 | `modules/adaptive-model-router/MODULE.md` | Execution planning | deciding model tier, reasoning effort, subagent delegation, validation depth, or escalation for a large or high-stakes task (only meaningful when the host can actually dispatch) |
 
 Load a `MODULE.md` only when it is selected; never load all of them "just in
@@ -88,7 +88,7 @@ Pick the closest matching recipe:
 `references/workflows/monograph-chapter.md`,
 `references/workflows/author-voice-calibration.md`,
 `references/workflows/corpus-profile-build.md`,
-`references/workflows/peer-review-simulation.md`.
+`references/workflows/pre-submission-review.md`.
 A recipe describes a stage order and default module set, not new logic.
 Adapt it to what already exists (skip a stage whose artifact is available
 and fresh) rather than following it mechanically.

@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://scholarly-agent-suite/protocols/review-report.schema.json",
   "title": "REVIEW_REPORT_V1",
-  "description": "One simulated reviewer's report on a manuscript, produced by a peer-review-engine reviewer role (often an isolated subagent) and consumed by the editor role. See modules/peer-review-engine/references/review-report.md.",
+  "description": "One reviewer's pre-submission report on a manuscript, produced by a peer-review-engine reviewer role (often an isolated subagent) and consumed by the editor role. See modules/peer-review-engine/references/review-report.md.",
   "type": "object",
   "required": ["protocol", "reviewer_id", "lens", "summary", "strengths", "concerns", "recommendation", "confidence", "independence"],
   "properties": {

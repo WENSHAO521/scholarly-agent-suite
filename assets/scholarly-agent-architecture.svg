@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 700" role="img" aria-label="Architecture of the Scholarly Agent: requests enter one Skill, whose dispatcher answers directly, loads one module, or runs a multi-module workflow recipe. The five modules are Model Router (execution planning), Corpus Builder (research evidence), Voice Engine (writing and argument), Journal Fit (publication strategy), and Peer Review (simulated reviewers and editorial decision). They exchange data through twelve versioned JSON protocols and share one integrity policy, and every workflow ends at a final quality gate with one of three outcomes: COMPLETE, COMPLETE_WITH_LIMITATIONS, or BLOCKED.">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 700" role="img" aria-label="Architecture of the Scholarly Agent: requests enter one Skill, whose dispatcher answers directly, loads one module, or runs a multi-module workflow recipe. The five modules are Model Router (execution planning), Corpus Builder (research evidence), Voice Engine (writing and argument), Journal Fit (publication strategy), and Peer Review (pre-submission reviewers and editorial decision). They exchange data through twelve versioned JSON protocols and share one integrity policy, and every workflow ends at a final quality gate with one of three outcomes: COMPLETE, COMPLETE_WITH_LIMITATIONS, or BLOCKED.">
   <title>Scholarly Agent -- one Skill, five modules</title>
   <defs>
     <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
@@ -97,7 +97,7 @@
     <rect x="737" y="252" width="162" height="138" rx="10" fill="#ffffff" stroke="#7a5a8c" stroke-opacity="0.6"/>
     <rect x="737" y="252" width="162" height="6" rx="3" fill="#7a5a8c"/>
     <text x="818" y="280" text-anchor="middle" class="mono" font-size="12.5" font-weight="700" fill="#7a5a8c">PEER REVIEW</text>
-    <text x="818" y="297" text-anchor="middle" class="sans muted" font-size="11" font-style="italic">simulated review</text>
+    <text x="818" y="297" text-anchor="middle" class="sans muted" font-size="11" font-style="italic">pre-submission review</text>
     <text x="818" y="320" text-anchor="middle" class="sans ink" font-size="10.5">editor desk screen</text>
     <text x="818" y="336" text-anchor="middle" class="sans ink" font-size="10.5">reviewer subagents</text>
     <text x="818" y="352" text-anchor="middle" class="sans ink" font-size="10.5">editorial decision</text>

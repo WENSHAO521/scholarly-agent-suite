@@ -12,7 +12,7 @@ from __future__ import annotations
 from collections import Counter
 from typing import Any, Dict, Iterable, List, Optional
 
-from prv import DECISIONS, SIMULATION_DISCLAIMER
+from prv import DECISIONS, READINESS, REVIEW_NOTICE
 from prv.reports import validate_report
 
 # Strictness order, strictest first.
@@ -168,6 +168,7 @@ def decide(
         "protocol": "EDITORIAL_DECISION_V1",
         "stage": "after-review",
         "decision": decision,
+        "readiness": READINESS[decision],
         "basis": basis,
         "rule_decision": rule,
         "reviewer_recommendations": recs,
@@ -178,7 +179,7 @@ def decide(
         "optional_suggestions": optional,
         "disagreements": disagreements,
         "limitations": limitations,
-        "simulation_disclaimer": SIMULATION_DISCLAIMER,
+        "review_notice": REVIEW_NOTICE,
     }
 
 
@@ -190,6 +191,7 @@ def desk_decision(screen: Dict[str, Any]) -> Dict[str, Any]:
         "protocol": "EDITORIAL_DECISION_V1",
         "stage": "desk",
         "decision": "desk-reject",
+        "readiness": READINESS["desk-reject"],
         "basis": "desk screen",
         "rule_decision": "desk-reject",
         "reviewer_recommendations": [],
@@ -201,7 +203,7 @@ def desk_decision(screen: Dict[str, Any]) -> Dict[str, Any]:
         "disagreements": [],
         "desk_reasons": list(screen["reasons"]),
         "limitations": list(screen.get("limitations", [])),
-        "simulation_disclaimer": SIMULATION_DISCLAIMER,
+        "review_notice": REVIEW_NOTICE,
     }
 
 
@@ -249,6 +251,7 @@ def check_revision(decision: Dict[str, Any], statuses: Dict[str, str]) -> Dict[s
         "protocol": "EDITORIAL_DECISION_V1",
         "stage": "revision",
         "decision": outcome,
+        "readiness": READINESS[outcome],
         "basis": note,
         "rule_decision": outcome,
         "reviewer_recommendations": decision.get("reviewer_recommendations", []),
@@ -260,5 +263,5 @@ def check_revision(decision: Dict[str, Any], statuses: Dict[str, str]) -> Dict[s
         "optional_suggestions": [],
         "disagreements": decision.get("disagreements", []),
         "limitations": decision.get("limitations", []),
-        "simulation_disclaimer": SIMULATION_DISCLAIMER,
+        "review_notice": REVIEW_NOTICE,
     }

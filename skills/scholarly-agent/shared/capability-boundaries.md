@@ -27,8 +27,8 @@ action, check here before extending its scope.
   a decision; the revision and response letter belong to
   scholarly-voice-engine, venue suggestions after a desk rejection to
   journal-fit-engine, and verifying a literature gap a reviewer names to
-  scholarly-corpus-builder. It never presents a simulated decision as a
-  prediction of a real journal's outcome.
+  scholarly-corpus-builder. It never presents its decision as a real
+  journal's decision or as a prediction of one.
 - **The scholarly-agent dispatcher (`SKILL.md`) does not duplicate module
   logic.** It decomposes tasks, selects the minimal module set, and
   assembles results -- it does not itself perform routing, corpus

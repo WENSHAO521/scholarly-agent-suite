@@ -6,7 +6,7 @@ from pathlib import Path
 import pytest
 from schema_lite import ValidationError, validate_file
 
-from prv import SIMULATION_DISCLAIMER
+from prv import DECISIONS, READINESS, REVIEW_NOTICE
 from prv.decision import DecisionError, check_revision, decide, desk_decision, desk_screen, response_matrix
 from prv.panel import PanelError, build_panel, subagent_packet
 from prv.reports import validate_report
@@ -114,19 +114,26 @@ def test_one_fatal_concern_outweighs_a_majority_of_lenient_votes():
     assert d["decision"] == "reject"
     assert d["consensus"] == "majority"
     assert any(x["topic"] == "overall recommendation" for x in d["disagreements"])
-    assert d["simulation_disclaimer"] == SIMULATION_DISCLAIMER
+    assert d["review_notice"] == REVIEW_NOTICE
 
 
-@pytest.mark.parametrize("severity,fixable,track,expected", [
-    ("fatal", True, True, "reject-resubmit"),
-    ("fatal", True, False, "major-revision"),
-    ("major", True, True, "major-revision"),
-    ("minor", True, True, "minor-revision"),
+@pytest.mark.parametrize("severity,fixable,track,expected,readiness", [
+    ("fatal", True, True, "reject-resubmit", "needs-substantial-work"),
+    ("fatal", True, False, "major-revision", "ready-after-changes"),
+    ("major", True, True, "major-revision", "ready-after-changes"),
+    ("minor", True, True, "minor-revision", "ready-to-submit"),
 ])
-def test_rule_table(severity, fixable, track, expected):
+def test_rule_table(severity, fixable, track, expected, readiness):
     d = decide([report("R1", "methods", "major-revision", [concern("R1", 1, severity, fixable)]),
                 report("R2", "theory", "major-revision")], has_reject_resubmit_track=track)
     assert d["decision"] == expected
+    assert d["readiness"] == readiness
+
+
+def test_every_decision_has_a_readiness_verdict_and_the_notice_avoids_simulation_wording():
+    assert set(READINESS) == set(DECISIONS)
+    assert "simulat" not in REVIEW_NOTICE.lower()
+    assert "not a decision by any journal" in REVIEW_NOTICE
 
 
 def test_minor_items_move_to_optional_under_major_revision():
@@ -188,6 +195,7 @@ def test_desk_screen():
     d = desk_decision(screen)
     validate_file(d, PROTOCOLS / "editorial-decision.schema.json")
     assert d["decision"] == "desk-reject" and d["stage"] == "desk"
+    assert d["readiness"] == "needs-substantial-work"
     with pytest.raises(DecisionError):
         desk_decision(passed)
 
@@ -220,6 +228,7 @@ def test_second_round(statuses, expected):
     out = check_revision(d, statuses)
     validate_file(out, PROTOCOLS / "editorial-decision.schema.json")
     assert out["decision"] == expected and out["stage"] == "revision"
+    assert out["readiness"] == READINESS[expected]
     assert all(rc["status"] not in ("addressed", "rebutted") for rc in out["required_changes"])
 
 

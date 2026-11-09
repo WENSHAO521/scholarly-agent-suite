@@ -74,7 +74,7 @@ KNOWN_WORKFLOWS = [
     "monograph-chapter.md",
     "author-voice-calibration.md",
     "corpus-profile-build.md",
-    "peer-review-simulation.md",
+    "pre-submission-review.md",
 ]
 
 

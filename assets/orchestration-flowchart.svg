@@ -63,7 +63,7 @@
 
   <rect x="580" y="300" width="340" height="52" rx="10" class="box"/>
   <text x="750" y="322" text-anchor="middle" class="mono ink" font-size="12" font-weight="700">SELECT WORKFLOW RECIPE</text>
-  <text x="750" y="340" text-anchor="middle" class="sans ink" font-size="11">1 of 15 · e.g. paper-from-idea, peer-review-simulation</text>
+  <text x="750" y="340" text-anchor="middle" class="sans ink" font-size="11">1 of 15 · e.g. paper-from-idea, pre-submission-review</text>
   <line x1="750" y1="352" x2="750" y2="374" class="line" marker-end="url(#fa)"/>
 
   <rect x="580" y="376" width="340" height="52" rx="10" class="box"/>

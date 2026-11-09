@@ -9,7 +9,7 @@ citation, metric, and claim traceable to a real source.
 
 It is a single Agent Skill, `scholarly-agent`, with five built-in modules:
 execution planning, research evidence, scholarly writing, publication
-strategy, and simulated peer review. A dispatcher reads each request and loads only the modules that
+strategy, and pre-submission peer review. A dispatcher reads each request and loads only the modules that
 request needs, so a quick paragraph edit stays quick and a full
 idea-to-submission project gets the whole pipeline.
 
@@ -42,7 +42,7 @@ Voice = Voice Engine).
 | Adapt a manuscript to a chosen journal | [target-journal-adaptation](skills/scholarly-agent/references/workflows/target-journal-adaptation.md) | Journal Fit, Voice, (Corpus) |
 | Learn your own writing voice from past papers | [author-voice-calibration](skills/scholarly-agent/references/workflows/author-voice-calibration.md) | Corpus, Voice |
 | Build a discipline, journal, or historical style profile | [corpus-profile-build](skills/scholarly-agent/references/workflows/corpus-profile-build.md) | Corpus |
-| Get a mock peer review and editorial decision, then revise and answer the reviewers | [peer-review-simulation](skills/scholarly-agent/references/workflows/peer-review-simulation.md) | Peer Review, (Voice), (Journal Fit), (Corpus) |
+| Get peer review and an editorial decision before submitting, then revise and answer the reviewers | [pre-submission-review](skills/scholarly-agent/references/workflows/pre-submission-review.md) | Peer Review, (Voice), (Journal Fit), (Corpus) |
 
 Modules in parentheses join only when the request calls for them, and the
 Model Router can sit under any recipe as an optional execution layer. The
@@ -72,7 +72,7 @@ Example prompts:
 | [Corpus Builder](skills/scholarly-agent/modules/scholarly-corpus-builder/MODULE.md) | Research evidence | Retrieves open scholarly literature (OpenAlex, Crossref, PubMed/PMC, arXiv, DOAJ, your own files) with provenance, imports and exports reference-manager libraries (Zotero, Mendeley, EndNote via BibTeX, RIS, or CSL-JSON), and builds discipline, journal, historical, and author-voice style profiles. |
 | [Voice Engine](skills/scholarly-agent/modules/scholarly-voice-engine/MODULE.md) | Writing and argument | Writes and edits discipline-aware, genre-aware academic prose, calibrates claims, checks citation integrity, and keeps long projects such as books consistent. |
 | [Journal Fit](skills/scholarly-agent/modules/journal-fit-engine/MODULE.md) | Publication strategy | Profiles the manuscript, generates candidate journals, applies hard filters (scope, APC, open access, indexing), assesses fit with evidence, and produces a submission strategy. Can read open [POSI](https://github.com/WENSHAO521/posi-data) journal data (citation ranking for about 158,000 journals) as an extra, clearly labelled evidence source. |
-| [Peer Review](skills/scholarly-agent/modules/peer-review-engine/MODULE.md) | Simulated peer review | An editor desk-screens the manuscript, picks 2–3 reviewers with different lenses (methods, theory, literature, and so on), runs each as an isolated subagent when the host can dispatch, and issues a decision letter from the upheld concerns (not a vote count) with numbered required changes. It can then check your revision and response letter in one second round. Always labelled as a simulation; it never predicts a real journal's decision. |
+| [Peer Review](skills/scholarly-agent/modules/peer-review-engine/MODULE.md) | Pre-submission peer review | An editor desk-screens the manuscript, picks 2–3 reviewers with different lenses (methods, theory, literature, and so on), runs each as an isolated subagent when the host can dispatch, and issues a decision letter from the upheld concerns (not a vote count) with numbered required changes. It can then check your revision and response letter in one second round. Reports and letters read like a real journal's, end with a plain submission-readiness verdict, and carry one closing line saying they were prepared before submission, so they are never mistaken for a journal's decision. |
 
 The dispatcher itself lives in
 [`SKILL.md`](skills/scholarly-agent/SKILL.md). Modules keep separate
