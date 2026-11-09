@@ -4,9 +4,9 @@
 
 一套以證據為先、適用於各學科的學術研究 AI 助理。它協助你從一個研究構想、一堆筆記或一份初稿出發，完成論證扎實的論文與站得住腳的投稿策略，同時讓每一筆引用、指標與主張都能追溯到真實來源。
 
-它是單一個 Agent Skill：`scholarly-agent`，內建五個模組：執行規劃、研究證據、學術寫作、投稿策略與投稿前審稿。調度器會讀懂每個需求，只載入該需求用得到的模組，所以潤飾一段文字依然很快，而從構想到投稿的完整專案則會走完整條流程。
+它是單一個 Agent Skill：`scholarly-agent`，內建六個模組：執行規劃、研究證據、學術寫作、投稿策略、投稿前審稿，以及適用所有語言的文字潤色。調度器會讀懂每個需求，只載入該需求用得到的模組，所以潤飾一段文字依然很快，而從構想到投稿的完整專案則會走完整條流程。
 
-![Scholarly Agent 架構圖：需求進入同一個 Skill，由調度器決定直接回答、載入單一模組，或依工作流程串接模型路由、語料建構、寫作引擎、期刊匹配與同儕審稿五個模組；模組共用有版本的協定與誠信政策，最後經過品質關卡。](assets/scholarly-agent-architecture.zh-TW.svg)
+![Scholarly Agent 架構圖：需求進入同一個 Skill，由調度器決定直接回答、載入單一模組，或依工作流程串接模型路由、語料建構、寫作引擎、期刊匹配、同儕審稿與文字潤色六個模組；模組共用有版本的協定與誠信政策，最後經過品質關卡。](assets/scholarly-agent-architecture.zh-TW.svg)
 
 > **它不是什麼。** 它不是一鍵生成論文的工具，不預測錄用機率，也絕不捏造引用、DOI、引文、期刊指標或語料統計數字。詳見〈[學術誠信保證](#學術誠信保證)〉。
 
@@ -31,6 +31,7 @@
 | 從自己過去的論文學習個人寫作風格 | [author-voice-calibration](skills/scholarly-agent/references/workflows/author-voice-calibration.md) | 語料、寫作 |
 | 建立學科、期刊或歷史學者的風格檔案 | [corpus-profile-build](skills/scholarly-agent/references/workflows/corpus-profile-build.md) | 語料 |
 | 投稿前審稿與編輯決定，再修改稿件並回覆審稿人 | [pre-submission-review](skills/scholarly-agent/references/workflows/pre-submission-review.md) | 審稿、（寫作）、（期刊匹配）、（語料） |
+| 潤色完稿（任何語言），去掉套話與 AI 味 | 不需要工作流程（單一模組） | 潤色 |
 
 括號中的模組只在需求確實需要時才加入；模型路由模組可作為任何流程底下的選用執行層。完整的路由規則見 [`routing-matrix.md`](skills/scholarly-agent/references/routing-matrix.md)。單一步驟的小任務（例如潤飾一段文字）不需要工作流程，只會載入負責的那一個模組。
 
@@ -42,8 +43,9 @@
 - 「教育政策領域有哪些開放取用期刊適合這篇論文？APC 不超過 2,000 美元。」
 - 「請用《某期刊》三位審稿人的角度審這篇論文，並告訴我編輯會怎麼決定。」
 - 「這是我的 Zotero 匯出檔，請用它當文獻回顧的起始語料。」
+- 「幫我潤色這段討論，去掉 AI 味和語言水印，引用不要動。」（日文、英文、西班牙文等任何語言都一樣可用。）
 
-## 五個模組
+## 六個模組
 
 | 模組 | 負責範圍 | 功能 |
 |---|---|---|
@@ -52,8 +54,9 @@
 | [寫作引擎 Voice Engine](skills/scholarly-agent/modules/scholarly-voice-engine/MODULE.md) | 寫作與論證 | 依學科與文類撰寫、編修學術文字，校準主張強度，檢查引用誠信，並維持專書等長篇專案的一致性。 |
 | [期刊匹配 Journal Fit](skills/scholarly-agent/modules/journal-fit-engine/MODULE.md) | 投稿策略 | 分析稿件特徵、產生候選期刊、套用硬性篩選（範圍、APC、開放取用、收錄資料庫）、以證據評估匹配度，並提出投稿策略。可讀取開放的 [POSI](https://github.com/WENSHAO521/posi-data) 期刊資料（約 15.8 萬種期刊的引用排名），作為另一個明確標示來源的證據。 |
 | [同儕審稿 Peer Review](skills/scholarly-agent/modules/peer-review-engine/MODULE.md) | 投稿前審稿 | 由編輯先做初審（desk screen），再挑 2 到 3 位不同角度的審稿人（方法、理論、文獻等）；平台能派發時，每位審稿人都是獨立的子代理，互相看不到彼此的意見。編輯依據「成立的問題」而不是投票數做出決定，列出編號的必改事項，之後還能檢查一次你的修改稿與回覆信。審稿意見與決定信的寫法和真實期刊一樣，最後附上明確的投稿準備度判斷，並在信末用一行說明這是投稿前審稿、不是期刊的決定，不會被誤認為期刊的正式結果。 |
+| [潤色 Polish](skills/scholarly-agent/modules/prose-polish-engine/MODULE.md) | 文字潤色 | 去除套路化寫作留下的「語言水印」，適用所有語言：套用的連接詞（「此外」「值得注意的是」）、空洞強調（「具有重要意義」「起著至關重要的作用」）、浮誇用詞（「賦能」「深度融合」）、公式化開頭與結尾（「隨著……的快速發展」「綜上所述」）、疊加的限定語、重複的句首、千篇一律的句長。內建九種語言的句式清單（中、英、日、韓、西、法、德、葡、俄），其他語言同樣執行結構檢查與相同流程。分輕度、標準、深度三級。潤色後自動核對每一筆引用、數字、引文與公式都原封不動，限定語或否定詞有變動時會標出來。它改善的是文字本身，不判定文章是否由 AI 撰寫，也不對任何 AI 偵測工具的結果做保證。 |
 
-調度器本身寫在 [`SKILL.md`](skills/scholarly-agent/SKILL.md)。即使合併成一個 Skill，各模組的職責仍然分開：語料模組不推薦期刊、寫作模組不挑選模型，依此類推（見 [`capability-boundaries.md`](skills/scholarly-agent/shared/capability-boundaries.md)）。語料建構、寫作引擎、期刊匹配與同儕審稿還附有經過測試的 Python 引擎（`scb/`、`scripts/voice/`、`jfe/`、`prv/`），負責流程中機械性的部分。
+調度器本身寫在 [`SKILL.md`](skills/scholarly-agent/SKILL.md)。即使合併成一個 Skill，各模組的職責仍然分開：語料模組不推薦期刊、寫作模組不挑選模型，依此類推（見 [`capability-boundaries.md`](skills/scholarly-agent/shared/capability-boundaries.md)）。語料建構、寫作引擎、期刊匹配、同儕審稿與潤色還附有經過測試的 Python 引擎（`scb/`、`scripts/voice/`、`jfe/`、`prv/`、`ppe/`），負責流程中機械性的部分。
 
 ## 運作方式
 
@@ -61,7 +64,7 @@
 
 ![需求處理流程圖：調度器先判斷交付成果與需要的模組，再分三條路：直接回答、載入單一模組，或執行跨模組工作流程（選擇流程、重用新鮮產物、帶入硬性限制、透過有版本的協定依序執行各階段），最後經六項品質關卡，最多修正一次，結果為 COMPLETE、COMPLETE_WITH_LIMITATIONS 或 BLOCKED。](assets/orchestration-flowchart.zh-TW.svg)
 
-模組之間透過 [`protocols/`](skills/scholarly-agent/protocols/) 中十二份有版本的 JSON Schema 交接工作，其中 `REVIEW_REPORT_V1` 與 `EDITORIAL_DECISION_V1` 負責審稿報告與編輯決定。例如期刊匹配模組產出 `JOURNAL_STYLE_CONTEXT_V1` 給寫作引擎使用，確保期刊的「官方要求」與「僅觀察到的慣用風格」不會混為一談。
+模組之間透過 [`protocols/`](skills/scholarly-agent/protocols/) 中十三份有版本的 JSON Schema 交接工作，其中 `REVIEW_REPORT_V1` 與 `EDITORIAL_DECISION_V1` 負責審稿報告與編輯決定，`POLISH_REPORT_V1` 記錄潤色改了什麼、保留了什麼。例如期刊匹配模組產出 `JOURNAL_STYLE_CONTEXT_V1` 給寫作引擎使用，確保期刊的「官方要求」與「僅觀察到的慣用風格」不會混為一談。
 
 ## 安裝
 
@@ -89,7 +92,7 @@ pytest tests/                      # 測試
 
 ## 開發與發行
 
-包括五個模組在內，所有內容都在本倉庫中開發。v1.2.1 以前這些模組是各自獨立、從自己倉庫同步進來的 Skill；v2.0.0 將它們合併（見 [`CHANGELOG.md`](CHANGELOG.md)）。目錄規則、版本、測試、打包與已知限制請見 [`docs/development.md`](docs/development.md)（英文），發行為全自動：把新的 `VERSION` 合併進 `master`，就會自動打包並發佈成 GitHub release（見 [`RELEASE_CHECKLIST.md`](RELEASE_CHECKLIST.md)）。
+包括六個模組在內，所有內容都在本倉庫中開發。v1.2.1 以前這些模組是各自獨立、從自己倉庫同步進來的 Skill；v2.0.0 將它們合併（見 [`CHANGELOG.md`](CHANGELOG.md)）。目錄規則、版本、測試、打包與已知限制請見 [`docs/development.md`](docs/development.md)（英文），發行為全自動：把新的 `VERSION` 合併進 `master`，就會自動打包並發佈成 GitHub release（見 [`RELEASE_CHECKLIST.md`](RELEASE_CHECKLIST.md)）。
 
 ## 授權
 

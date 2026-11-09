@@ -6,10 +6,11 @@ ROOT = Path(__file__).resolve().parent.parent
 SCRIPTS_DIR = ROOT / "scripts"
 sys.path.insert(0, str(SCRIPTS_DIR))
 
-# Module engines, importable as `scb`, `jfe`, `prv`, and `scripts.voice` for the
+# Module engines, importable as `scb`, `jfe`, `prv`, `ppe`, and `scripts.voice` for the
 # merged module tests under tests/modules/ (and the cross-module e2e tests).
 MODULES_DIR = ROOT / "skills" / "scholarly-agent" / "modules"
-for _module in ("scholarly-corpus-builder", "journal-fit-engine", "scholarly-voice-engine", "peer-review-engine"):
+for _module in ("scholarly-corpus-builder", "journal-fit-engine", "scholarly-voice-engine", "peer-review-engine",
+                "prose-polish-engine"):
     _path = str(MODULES_DIR / _module)
     if _path not in sys.path:
         sys.path.insert(0, _path)

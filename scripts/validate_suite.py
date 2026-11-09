@@ -31,6 +31,7 @@ MODULE_NAMES = [
     "scholarly-voice-engine",
     "journal-fit-engine",
     "peer-review-engine",
+    "prose-polish-engine",
 ]
 
 PROTOCOL_FILES = {
@@ -46,6 +47,7 @@ PROTOCOL_FILES = {
     "provenance.schema.json": "PROVENANCE_RECORD_V1",
     "review-report.schema.json": "REVIEW_REPORT_V1",
     "editorial-decision.schema.json": "EDITORIAL_DECISION_V1",
+    "polish-report.schema.json": "POLISH_REPORT_V1",
 }
 
 # The single source of truth for required workflow recipes lives in

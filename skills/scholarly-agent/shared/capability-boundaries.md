@@ -29,10 +29,17 @@ action, check here before extending its scope.
   journal-fit-engine, and verifying a literature gap a reviewer names to
   scholarly-corpus-builder. It never presents its decision as a real
   journal's decision or as a prediction of one.
+- **prose-polish-engine changes wording, never content.** It rewrites
+  templated phrasing at the word, sentence, and (at `deep`) within-paragraph
+  level; it never changes claims, claim strength, evidence, citations,
+  numbers, quotations, defined terms, or paragraph and section order.
+  Problems with the argument or structure that it notices go to
+  scholarly-voice-engine as `escalations`. It never scores text for AI
+  authorship or optimizes against a detector (integrity rule 14).
 - **The scholarly-agent dispatcher (`SKILL.md`) does not duplicate module
   logic.** It decomposes tasks, selects the minimal module set, and
   assembles results -- it does not itself perform routing, corpus
-  acquisition, prose writing, journal ranking, or peer review (rule 3, rule 156).
+  acquisition, prose writing, journal ranking, peer review, or polishing (rule 3, rule 156).
 
 ## Why this matters
 

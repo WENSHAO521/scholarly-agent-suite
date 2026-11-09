@@ -1,21 +1,21 @@
 ---
 name: scholarly-agent
-description: Evidence-first academic research and writing agent for any discipline. Use for scholarly work such as drafting or revising research articles, reviews, commentaries, theses, book chapters and monographs; building literature corpora and discipline, journal, historical or author-voice style profiles; finding and adapting to target journals; reviewing a manuscript before submission with independent reviewer reports and an editorial decision before submission; and planning how a multi-stage research task should be executed. Loads only the internal module(s) a request needs. Do not invoke for casual, marketing or administrative writing, or for a one-line factual question that needs no scholarly workflow.
+description: Evidence-first academic research and writing agent for any discipline. Use for scholarly work such as drafting or revising research articles, reviews, commentaries, theses, book chapters and monographs; building literature corpora and discipline, journal, historical or author-voice style profiles; finding and adapting to target journals; reviewing a manuscript before submission with independent reviewer reports and an editorial decision before submission; polishing finished prose in any language to remove templated, machine-sounding phrasing while keeping meaning and citations intact; and planning how a multi-stage research task should be executed. Loads only the internal module(s) a request needs. Do not invoke for casual, marketing or administrative writing, or for a one-line factual question that needs no scholarly workflow.
 ---
 
 # Scholarly Agent
 
-One Skill for the whole scholarly workflow. It contains five internal
+One Skill for the whole scholarly workflow. It contains six internal
 modules -- execution planning, research evidence, scholarly writing,
-publication strategy, and pre-submission peer review -- plus a dispatcher (this file) that decides which of
+publication strategy, pre-submission peer review, and prose polishing -- plus a dispatcher (this file) that decides which of
 them a request actually needs, loads only those, hands data between them
 through versioned protocols, and runs a final integrity gate.
 
 Until v2.0.0 the first four modules were separate Skills (`adaptive-model-router`,
 `scholarly-corpus-builder`, `scholarly-voice-engine`, `journal-fit-engine`).
 They keep those names as module names, so existing workflow recipes,
-protocols, and evals still read correctly. `peer-review-engine` (v2.1.0) was
-built here as a module from the start.
+protocols, and evals still read correctly. `peer-review-engine` (v2.1.0) and
+`prose-polish-engine` (v2.2.0) were built here as modules from the start.
 
 ## Module map
 
@@ -25,6 +25,7 @@ built here as a module from the start.
 | `modules/scholarly-corpus-builder/MODULE.md` | Research evidence | retrieving or verifying literature, building a corpus, or compiling a discipline / journal / historical / author-voice style profile |
 | `modules/journal-fit-engine/MODULE.md` | Publication strategy | a manuscript profile, journal candidates, hard filters (scope, APC, open access, indexing), fit scoring, submission strategy, or a target journal's style context |
 | `modules/peer-review-engine/MODULE.md` | Pre-submission peer review | a pre-submission review: editor desk screen, independent reviewer reports (as isolated subagents when the host can dispatch), an editorial decision with required changes, or a check of a revision and response-to-reviewers letter |
+| `modules/prose-polish-engine/MODULE.md` | Prose polishing | polishing (潤色) finished text in any language: removing templated phrasing (stock connectives, empty emphasis, formulaic openings and closings, repeated sentence shapes) so it no longer reads machine-made, with citations, numbers, quotations, and claims unchanged |
 | `modules/adaptive-model-router/MODULE.md` | Execution planning | deciding model tier, reasoning effort, subagent delegation, validation depth, or escalation for a large or high-stakes task (only meaningful when the host can actually dispatch) |
 
 Load a `MODULE.md` only when it is selected; never load all of them "just in
@@ -52,7 +53,8 @@ Then follow one of three paths:
   (a single obvious grammar fix), "What does APC mean?", "Format this DOI",
   or "Translate this title".
 - **Single module.** The request sits inside one module's scope, e.g.
-  "polish this paragraph" (voice), "build a journal style profile"
+  "revise this section" (voice), "polish this so it doesn't read
+  machine-written" / 「潤色、去 AI 味」 (polish), "build a journal style profile"
   (corpus), "find journals for this finished manuscript" (journal fit),
   "review my paper as a reviewer would" (peer review).
   Load that one `MODULE.md` and follow it. No workflow recipe, no
@@ -138,6 +140,7 @@ Modules exchange data only through the versioned JSON Schemas in
 | `PROVENANCE_RECORD_V1` | `protocols/provenance.schema.json` | embedded in profiles, journal contexts, continuity state |
 | `REVIEW_REPORT_V1` | `protocols/review-report.schema.json` | peer review (reviewer role) -> peer review (editor role) |
 | `EDITORIAL_DECISION_V1` | `protocols/editorial-decision.schema.json` | peer review -> dispatcher, voice (revision and response letter) |
+| `POLISH_REPORT_V1` | `protocols/polish-report.schema.json` | polish -> dispatcher (final quality gate) |
 
 A producer emitting a protocol version the consumer does not recognize is a
 `PROTOCOL_MISMATCH`; report it, never guess around it
@@ -152,7 +155,8 @@ responsibilities. `shared/capability-boundaries.md` is the single source of
 truth for who may decide what. In short: the router never sets corpus
 policy, the corpus module never recommends journals, the voice module never
 routes models, the journal-fit module never fabricates current metrics, the
-peer-review module critiques and decides but never rewrites the manuscript, and
+peer-review module critiques and decides but never rewrites the manuscript, the
+polish module changes wording but never content, and
 this dispatcher never re-implements a module's domain rules -- it delegates
 the decision to the module that owns it.
 
@@ -219,6 +223,10 @@ putting its module directory on `sys.path`:
 - `modules/peer-review-engine/prv/` -- reviewer panel and subagent
   briefings, review-report validation, editorial decision, response matrix,
   second-round check (`import prv`).
+- `modules/prose-polish-engine/ppe/` -- templated-phrasing catalogs (nine
+  languages) and diagnosis for any language, the check that polishing kept
+  every citation, number, quotation, and formula, and `POLISH_REPORT_V1`
+  (`import ppe`).
 
 ## Reference index
 

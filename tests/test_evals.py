@@ -67,7 +67,7 @@ def test_every_referenced_workflow_recipe_exists():
 
 
 def test_expected_components_use_known_vocabulary():
-    known = {"router", "corpus", "voice", "journal_fit", "peer_review"}
+    known = {"router", "corpus", "voice", "journal_fit", "peer_review", "polish"}
     for row in all_fixtures():
         unknown = set(row["expected_components"]) - known
         assert not unknown, f"{row['id']}: unknown component labels {unknown}"
@@ -119,7 +119,7 @@ def test_theory_paper_target_journal_fixture_has_expected_specialist_set():
 MODULE_EVALS_DIR = ROOT / "evals" / "modules"
 MODULE_NAMES = [
     "adaptive-model-router", "scholarly-corpus-builder",
-    "scholarly-voice-engine", "journal-fit-engine", "peer-review-engine",
+    "scholarly-voice-engine", "journal-fit-engine", "peer-review-engine", "prose-polish-engine",
 ]
 
 
