@@ -105,6 +105,103 @@ def _overall_schema_confidence(confidence: Any) -> str:
     return min(mapped, key=_CONFIDENCE_ORDER.index)
 
 
+PROTOCOL_PROVENANCE_RECORD_V1 = "PROVENANCE_RECORD_V1"
+_USER_ADAPTERS = {"user_files", "user_bibliography"}
+
+
+def _source_identity(record: Any) -> tuple:
+    """(identity, is_identified). Never a title/author guess
+    (shared/provenance-policy.md: 'Source identity')."""
+    ids = record.identifiers
+    if ids.doi:
+        return ids.doi, True
+    for scheme, value in (("pmid", ids.pmid), ("pmcid", ids.pmcid), ("arxiv", ids.arxiv_id)):
+        if value:
+            return "%s:%s" % (scheme, value), True
+    if record.access.best_url:
+        return record.access.best_url, True
+    adapters = {p.adapter for p in record.provenance}
+    if adapters & _USER_ADAPTERS:
+        return "user-supplied:%s" % record.record_id, True
+    return "record:%s" % record.record_id, False
+
+
+def _access_status(record: Any, verified: bool) -> str:
+    adapters = {p.adapter for p in record.provenance}
+    if "user_files" in adapters or (adapters & _USER_ADAPTERS and not verified):
+        return "user-supplied"
+    if record.access.is_oa:
+        return "open-access"
+    if record.access.readable is False:
+        return "access-restricted"
+    if record.access.is_oa is False:
+        return "metadata-only"
+    return "unknown"
+
+
+def build_provenance_record_v1(records: List[Any], retrieval_date: Optional[str] = None) -> Dict[str, Any]:
+    """Build a PROVENANCE_RECORD_V1 from the CanonicalRecords a profile was
+    built from -- the real producer for the record that
+    compile_scholarly_profile_protocol_v1() requires.
+
+    - A source counts as verified only if one of its provenance entries is
+      VERIFIED (an adapter lookup confirmed it); user-imported metadata
+      (scb.bibliography) stays unverified until then.
+    - Overall status: all verified -> verified; none -> unverified; mixed ->
+      partially-verified; any recorded field conflict or unidentified source
+      -> conflicting, with one conflict note per issue (never silently
+      resolved).
+    - retrieval_date is the caller's date, else the latest retrieved_at on
+      the records. With neither, it raises instead of inventing a date.
+    """
+    if not records:
+        raise ValueError("PROVENANCE_RECORD_V1 needs at least one source record")
+    sources: List[Dict[str, Any]] = []
+    notes: List[str] = []
+    verified_flags: List[bool] = []
+    dates: List[str] = []
+    for record in records:
+        verified = any(p.verification == "VERIFIED" for p in record.provenance)
+        verified_flags.append(verified)
+        identity, identified = _source_identity(record)
+        if not identified:
+            notes.append("%s: no DOI, PMID, arXiv ID, or URL; source identity unconfirmed" % record.record_id)
+        for conflict in record.conflicts or []:
+            field = conflict.get("field", "?")
+            issue = conflict.get("issue") or "values disagree"
+            notes.append("%s: %s: %s" % (identity, field, issue))
+        sources.append({
+            "identity": identity,
+            "access_status": _access_status(record, verified),
+            "verification": "VERIFIED" if verified else "NEEDS_CHECK",
+            "via": sorted({p.adapter for p in record.provenance}),
+        })
+        for stamp in [record.retrieved_at] + [p.retrieved_at for p in record.provenance]:
+            if stamp:
+                dates.append(str(stamp)[:10])
+    if retrieval_date is None:
+        if not dates:
+            raise ValueError("no retrieval date given and none recorded on the source records")
+        retrieval_date = max(dates)
+    if notes:
+        status = "conflicting"
+    elif all(verified_flags):
+        status = "verified"
+    elif any(verified_flags):
+        status = "partially-verified"
+    else:
+        status = "unverified"
+    record_v1: Dict[str, Any] = {
+        "protocol": PROTOCOL_PROVENANCE_RECORD_V1,
+        "sources": sources,
+        "retrieval_date": retrieval_date,
+        "verification_status": status,
+    }
+    if notes:
+        record_v1["conflict_notes"] = notes
+    return record_v1
+
+
 def compile_scholarly_profile_protocol_v1(
     style_profile: Dict[str, Any],
     provenance: Dict[str, Any],

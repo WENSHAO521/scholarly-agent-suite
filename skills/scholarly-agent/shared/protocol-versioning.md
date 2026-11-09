@@ -1,7 +1,7 @@
 # Shared protocol versioning
 
 Rules for evolving the protocols in `protocols/`, which are the main glue
-between specialist Skills.
+between modules.
 
 ## Rule
 

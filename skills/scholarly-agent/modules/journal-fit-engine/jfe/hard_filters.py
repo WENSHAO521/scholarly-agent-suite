@@ -1,6 +1,6 @@
 """Hard filters eliminate a candidate outright; they never silently
 function as soft-fit weakness and are never waved off as "just a concern"
-(SKILL.md §Hard filters vs. soft fit). Every filter that cannot be verified
+(MODULE.md §Hard filters vs. soft fit). Every filter that cannot be verified
 from available evidence returns CANNOT_VERIFY, never a fabricated pass.
 """
 from __future__ import annotations

@@ -35,7 +35,7 @@ def test_agents_yaml_declares_boundary_constraints_and_modules():
         assert marker in text
     for name in [
         "adaptive-model-router", "scholarly-corpus-builder",
-        "scholarly-voice-engine", "journal-fit-engine",
+        "scholarly-voice-engine", "journal-fit-engine", "peer-review-engine",
     ]:
         assert f"modules/{name}/MODULE.md" in text
         assert (SKILL_DIR / "modules" / name / "MODULE.md").is_file()
@@ -45,6 +45,6 @@ def test_capability_boundaries_doc_names_dispatcher_and_all_modules():
     text = (SKILL_DIR / "shared" / "capability-boundaries.md").read_text(encoding="utf-8")
     for name in [
         "adaptive-model-router", "scholarly-corpus-builder",
-        "scholarly-voice-engine", "journal-fit-engine", "scholarly-agent",
+        "scholarly-voice-engine", "journal-fit-engine", "peer-review-engine", "scholarly-agent",
     ]:
         assert name in text

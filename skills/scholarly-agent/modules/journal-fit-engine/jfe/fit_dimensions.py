@@ -1,13 +1,13 @@
-"""Expanded evidence-backed fit dimensions (SKILL.md core workflow step 4,
+"""Expanded evidence-backed fit dimensions (MODULE.md core workflow step 4,
 references/fit-model.md, references/adaptation-policy.md). Each dimension
 returns one of six categorical labels -- never a numeric score or
-probability (SKILL.md's no-fake-precision rule applies here exactly as it
+probability (MODULE.md's no-fake-precision rule applies here exactly as it
 does to fit_model.py's overall verdict).
 
 This module supplements, not replaces, fit_model.compute_fit(): that
 function remains the single overall recommended/eliminated verdict. The
 dimensions here are the itemized, per-axis evidence a caller can show for
-"why this journal?" (SKILL.md's Output contract) or "why not" -- several of
+"why this journal?" (MODULE.md's Output contract) or "why not" -- several of
 them are honestly CANNOT_VERIFY or NOT_APPLICABLE because this Skill's two
 free, keyless adapters (OpenAlex Sources, Crossref Journals) do not expose
 that evidence; that is reported plainly rather than guessed.

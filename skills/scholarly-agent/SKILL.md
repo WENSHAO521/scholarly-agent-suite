@@ -1,20 +1,21 @@
 ---
 name: scholarly-agent
-description: Evidence-first academic research and writing agent for any discipline. Use for scholarly work such as drafting or revising research articles, reviews, commentaries, theses, book chapters and monographs; building literature corpora and discipline, journal, historical or author-voice style profiles; finding and adapting to target journals; and planning how a multi-stage research task should be executed. Loads only the internal module(s) a request needs. Do not invoke for casual, marketing or administrative writing, or for a one-line factual question that needs no scholarly workflow.
+description: Evidence-first academic research and writing agent for any discipline. Use for scholarly work such as drafting or revising research articles, reviews, commentaries, theses, book chapters and monographs; building literature corpora and discipline, journal, historical or author-voice style profiles; finding and adapting to target journals; reviewing a manuscript before submission with independent reviewer reports and an editorial decision before submission; and planning how a multi-stage research task should be executed. Loads only the internal module(s) a request needs. Do not invoke for casual, marketing or administrative writing, or for a one-line factual question that needs no scholarly workflow.
 ---
 
 # Scholarly Agent
 
-One Skill for the whole scholarly workflow. It contains four internal
-modules -- execution planning, research evidence, scholarly writing, and
-publication strategy -- plus a dispatcher (this file) that decides which of
+One Skill for the whole scholarly workflow. It contains five internal
+modules -- execution planning, research evidence, scholarly writing,
+publication strategy, and pre-submission peer review -- plus a dispatcher (this file) that decides which of
 them a request actually needs, loads only those, hands data between them
 through versioned protocols, and runs a final integrity gate.
 
-Until v2.0.0 the four modules were separate Skills (`adaptive-model-router`,
+Until v2.0.0 the first four modules were separate Skills (`adaptive-model-router`,
 `scholarly-corpus-builder`, `scholarly-voice-engine`, `journal-fit-engine`).
 They keep those names as module names, so existing workflow recipes,
-protocols, and evals still read correctly.
+protocols, and evals still read correctly. `peer-review-engine` (v2.1.0) was
+built here as a module from the start.
 
 ## Module map
 
@@ -23,9 +24,10 @@ protocols, and evals still read correctly.
 | `modules/scholarly-voice-engine/MODULE.md` | Writing and argument | drafting, revising, restructuring, claim calibration, citation-integrity checks, author-voice calibration, long-form continuity |
 | `modules/scholarly-corpus-builder/MODULE.md` | Research evidence | retrieving or verifying literature, building a corpus, or compiling a discipline / journal / historical / author-voice style profile |
 | `modules/journal-fit-engine/MODULE.md` | Publication strategy | a manuscript profile, journal candidates, hard filters (scope, APC, open access, indexing), fit scoring, submission strategy, or a target journal's style context |
+| `modules/peer-review-engine/MODULE.md` | Pre-submission peer review | a pre-submission review: editor desk screen, independent reviewer reports (as isolated subagents when the host can dispatch), an editorial decision with required changes, or a check of a revision and response-to-reviewers letter |
 | `modules/adaptive-model-router/MODULE.md` | Execution planning | deciding model tier, reasoning effort, subagent delegation, validation depth, or escalation for a large or high-stakes task (only meaningful when the host can actually dispatch) |
 
-Load a `MODULE.md` only when it is selected; never load all four "just in
+Load a `MODULE.md` only when it is selected; never load all of them "just in
 case." Each module's `references/` files are loaded on demand from inside
 that module, exactly as its `MODULE.md` directs. Paths in a `MODULE.md` are
 relative to that module's own directory, and where a module's text says
@@ -51,7 +53,8 @@ Then follow one of three paths:
   or "Translate this title".
 - **Single module.** The request sits inside one module's scope, e.g.
   "polish this paragraph" (voice), "build a journal style profile"
-  (corpus), "find journals for this finished manuscript" (journal fit).
+  (corpus), "find journals for this finished manuscript" (journal fit),
+  "review my paper as a reviewer would" (peer review).
   Load that one `MODULE.md` and follow it. No workflow recipe, no
   orchestration state.
 - **Multi-module workflow.** The deliverable genuinely needs two or more
@@ -84,7 +87,8 @@ Pick the closest matching recipe:
 `references/workflows/book-project.md`,
 `references/workflows/monograph-chapter.md`,
 `references/workflows/author-voice-calibration.md`,
-`references/workflows/corpus-profile-build.md`.
+`references/workflows/corpus-profile-build.md`,
+`references/workflows/pre-submission-review.md`.
 A recipe describes a stage order and default module set, not new logic.
 Adapt it to what already exists (skip a stage whose artifact is available
 and fresh) rather than following it mechanically.
@@ -132,6 +136,8 @@ Modules exchange data only through the versioned JSON Schemas in
 | `JOURNAL_STYLE_CONTEXT_V1` | `protocols/journal-style-context.schema.json` | journal fit (or corpus observed patterns) -> voice |
 | `CONTINUITY_STATE_V1` | `protocols/continuity-state.schema.json` | voice <-> voice (long-form) |
 | `PROVENANCE_RECORD_V1` | `protocols/provenance.schema.json` | embedded in profiles, journal contexts, continuity state |
+| `REVIEW_REPORT_V1` | `protocols/review-report.schema.json` | peer review (reviewer role) -> peer review (editor role) |
+| `EDITORIAL_DECISION_V1` | `protocols/editorial-decision.schema.json` | peer review -> dispatcher, voice (revision and response letter) |
 
 A producer emitting a protocol version the consumer does not recognize is a
 `PROTOCOL_MISMATCH`; report it, never guess around it
@@ -145,7 +151,8 @@ The merge put the modules in one Skill; it did not merge their
 responsibilities. `shared/capability-boundaries.md` is the single source of
 truth for who may decide what. In short: the router never sets corpus
 policy, the corpus module never recommends journals, the voice module never
-routes models, the journal-fit module never fabricates current metrics, and
+routes models, the journal-fit module never fabricates current metrics, the
+peer-review module critiques and decides but never rewrites the manuscript, and
 this dispatcher never re-implements a module's domain rules -- it delegates
 the decision to the module that owns it.
 
@@ -200,7 +207,8 @@ putting its module directory on `sys.path`:
 
 - `modules/scholarly-corpus-builder/scb/` -- source adapters, OA
   resolution, deduplication, style analytics, profile compilation
-  (`import scb`).
+  (`import scb`); also BibTeX / RIS / CSL-JSON (Zotero) import and export
+  (`scb/bibliography.py`).
 - `modules/journal-fit-engine/jfe/` -- manuscript profiling, hard filters,
   fit model, POSI snapshot lookup (`jfe/posi.py`), `TARGET_JOURNAL_PROFILE_V1`
   and `JOURNAL_STYLE_CONTEXT_V1` producers (`import jfe`).
@@ -208,6 +216,9 @@ putting its module directory on `sys.path`:
   continuity ledger, prose audit, journal-context consumer
   (`import scripts.voice`; load it separately from this Skill's own
   `scripts/` to avoid a package-name clash).
+- `modules/peer-review-engine/prv/` -- reviewer panel and subagent
+  briefings, review-report validation, editorial decision, response matrix,
+  second-round check (`import prv`).
 
 ## Reference index
 
@@ -215,7 +226,7 @@ putting its module directory on `sys.path`:
   the shared error taxonomy (including the workflow-resolution codes).
 - `references/orchestration-state.md` -- state shape, freshness handling,
   and the final quality gate.
-- `references/workflows/` -- the fourteen workflow recipes.
+- `references/workflows/` -- the fifteen workflow recipes.
 - `scripts/workflow_resolver.py` -- resolves a workflow recipe and
   classifies a failed lookup.
 - `scripts/target_journal_adapter.py` -- hard compatibility gate for

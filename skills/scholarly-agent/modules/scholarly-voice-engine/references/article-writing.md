@@ -1,6 +1,6 @@
 # Article Writing
 
-Loaded when the task is article-scale (see `SKILL.md` §Book vs. article routing).
+Loaded when the task is article-scale (see `MODULE.md` §Book vs. article routing).
 Distinguishes major article architectures rather than forcing one universal
 template. See `argument-architectures.md` for the underlying family shapes and
 `genre-matrix.md` for genre-specific length/feature expectations — this file adds
@@ -67,7 +67,7 @@ Use the answers to tighten specific sentences — do not perform a theatrical fa
 ## When rewriting an existing article draft
 
 Do not silently alter data, results, causal claims, sample description, or
-method — voice edits are subordinate to epistemic accuracy (see `SKILL.md`
+method — voice edits are subordinate to epistemic accuracy (see `MODULE.md`
 §Terminology and integrity). Flag, rather than silently fix, anything that looks
 like a substantive (not stylistic) problem — e.g., a claim the results section
 doesn't actually support.

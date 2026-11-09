@@ -1,8 +1,9 @@
 # Shared terminology
 
-A common vocabulary across all five Skills, to prevent cross-Skill drift. If a
-Skill needs a term not defined here, define it locally rather than inventing a
-near-synonym for a term that already exists here.
+A common vocabulary across the dispatcher and all modules, to prevent
+cross-module drift. If a module needs a term not defined here, define it
+locally rather than inventing a near-synonym for a term that already exists
+here. Discipline-family names are defined in [disciplines.md](disciplines.md).
 
 | Term | Meaning |
 |---|---|

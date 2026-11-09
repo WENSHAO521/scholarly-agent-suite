@@ -5,7 +5,7 @@
 Learn the observable writing architecture of a target journal from a sampled
 corpus of its articles. This is an **empirical profile of sampled articles**,
 never a claim about the journal's mandatory style — see the Journal
-Instructions vs Observed Corpus distinction in `SKILL.md`.
+Instructions vs Observed Corpus distinction in `MODULE.md`.
 
 ## Sampling rules
 

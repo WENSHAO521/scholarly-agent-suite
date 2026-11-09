@@ -1,6 +1,6 @@
 """Retrieval depth levels (PART VIII). The acquisition planner should
 retrieve the minimum level necessary for the feature actually needed —
-see SKILL.md's retrieval-minimization decision sequence.
+see MODULE.md's retrieval-minimization decision sequence.
 """
 
 from __future__ import annotations

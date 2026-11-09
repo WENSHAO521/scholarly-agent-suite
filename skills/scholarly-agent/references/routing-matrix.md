@@ -6,16 +6,19 @@ means invoke only if current/verifiable evidence is genuinely required;
 "no" means do not invoke even if installed (rule 156: use the smallest
 sufficient specialist set for the requested outcome).
 
-| User intent | Router | Corpus Builder | Voice Engine | Journal Fit |
-|---|---|---|---|---|
-| Polish a paragraph | optional | no | yes | no |
-| Draft an article | optional | maybe | yes | no |
-| Literature review | optional | yes | yes | no |
-| Find a journal | optional | maybe | no | yes |
-| Adapt manuscript for a target journal | optional | maybe | yes | yes |
-| Build an author voice profile | no | yes | yes | no |
-| Book project | optional | yes | yes | no |
-| End-to-end paper (idea to submission-ready) | yes, if available | yes | yes | optional |
+| User intent | Router | Corpus Builder | Voice Engine | Journal Fit | Peer Review |
+|---|---|---|---|---|---|
+| Polish a paragraph | optional | no | yes | no | no |
+| Draft an article | optional | maybe | yes | no | no |
+| Literature review | optional | yes | yes | no | no |
+| Find a journal | optional | maybe | no | yes | no |
+| Adapt manuscript for a target journal | optional | maybe | yes | yes | no |
+| Build an author voice profile | no | yes | yes | no | no |
+| Book project | optional | yes | yes | no | no |
+| End-to-end paper (idea to submission-ready) | yes, if available | yes | yes | optional | optional |
+| Pre-submission peer review / editorial decision | optional (subagent dispatch) | no | no | maybe | yes |
+| Peer review, then revise and write the response letter | optional (subagent dispatch) | maybe | yes | maybe | yes |
+| Import or export a Zotero / BibTeX / RIS library | no | yes | no | no | no |
 
 ## Negative examples (do not orchestrate)
 

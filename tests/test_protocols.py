@@ -17,6 +17,7 @@ PROTOCOL_FILES = [
     "voice-output.schema.json", "manuscript-profile.schema.json",
     "journal-profile.schema.json", "journal-style-context.schema.json",
     "continuity-state.schema.json", "provenance.schema.json",
+    "review-report.schema.json", "editorial-decision.schema.json",
 ]
 
 

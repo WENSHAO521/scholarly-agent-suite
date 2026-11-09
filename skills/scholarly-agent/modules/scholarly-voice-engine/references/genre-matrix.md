@@ -44,7 +44,7 @@ Use explicit cues first ("write a review article," "draft Chapter 3," "this is
 for [journal]"). Otherwise infer from purpose: presenting new data/derivation →
 research article; synthesizing others' work → review; evaluating a book →
 book review; advancing a sustained multi-chapter argument → book/monograph (route
-to `book-writing.md` per the "Book vs. article routing" rule in `SKILL.md`).
+to `book-writing.md` per the "Book vs. article routing" rule in `MODULE.md`).
 
 If the genre is genuinely unclear and materially changes structure (e.g., research
 article vs. perspective), ask.

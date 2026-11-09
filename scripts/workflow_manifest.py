@@ -50,6 +50,7 @@ REQUIRED_WORKFLOWS = [
     "monograph-chapter.md",
     "author-voice-calibration.md",
     "corpus-profile-build.md",
+    "pre-submission-review.md",
 ]
 
 CANONICAL_WORKFLOWS_DIR = ROOT / "skills" / "scholarly-agent" / "references" / "workflows"

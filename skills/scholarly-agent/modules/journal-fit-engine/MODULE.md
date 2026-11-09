@@ -150,7 +150,7 @@ module or the user enters through
 `jfe.manuscript_profile.from_manuscript_profile_v1()`, which maps the
 envelope's field names and article types onto this module's own profile (see
 [references/integration.md](references/integration.md)). It supplements
-this SKILL.md's reasoning workflow; it does not replace the LLM's own
+this MODULE.md's reasoning workflow; it does not replace the LLM's own
 judgment on candidate generation or submission strategy, and it never
 derives `official_requirements` (author guidelines) or `observed_patterns`
 (corpus-measured style) from its own index evidence -- those come from the
@@ -175,4 +175,4 @@ CANNOT_VERIFY should be handled.
 - [references/apc-open-access.md](references/apc-open-access.md) — APC, OA models, no-APC mode
 - [references/adaptation-policy.md](references/adaptation-policy.md) — adaptation types, cost, submission readiness, ethics
 - [references/integration.md](references/integration.md) — Corpus Builder / Voice Engine / Router integration contracts
-- [disciplines/](disciplines/) — per-discipline-family fit emphasis (natural sciences, mathematics, engineering/computing, medicine/health, social sciences, management, law, humanities, education, interdisciplinary)
+- [disciplines/](disciplines/) — per-discipline-family fit emphasis, one file per family in the shared taxonomy ([../../shared/disciplines.md](../../shared/disciplines.md)): natural sciences, mathematics and formal sciences, engineering/computing, medicine/health, social sciences, business and management, law, humanities, arts and design, education, interdisciplinary

@@ -1,6 +1,6 @@
 """APC/OA classification (references/apc-open-access.md). Distinguishes
 mandatory APC, optional hybrid OA charge, diamond OA, and unknown -- never
-confuses an optional hybrid fee with a mandatory publication fee (SKILL.md
+confuses an optional hybrid fee with a mandatory publication fee (MODULE.md
 Evidence discipline).
 """
 from __future__ import annotations

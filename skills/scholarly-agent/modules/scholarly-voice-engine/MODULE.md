@@ -245,5 +245,6 @@ full ecosystem contract, including this Skill's own conceptual
 | `references/interdisciplinary-writing.md` | Combining disciplines without collision |
 | `references/integration.md` | Ecosystem contract with the Router, Corpus Builder, Journal Fit Engine |
 
-See `evals/` for worked test cases and `scripts/validate_skill.py` for
-structural validation of this Skill's own files.
+Worked test cases live in the Suite repository's `evals/modules/scholarly-voice-engine/`,
+and `tests/modules/voice/` plus `scripts/validate_suite.py` validate this module
+(repository only, not shipped in the runtime ZIP).

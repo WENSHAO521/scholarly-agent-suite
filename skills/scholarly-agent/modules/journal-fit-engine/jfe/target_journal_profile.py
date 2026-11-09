@@ -14,7 +14,7 @@ the evidence actually is.
 
 Deliberately narrower than references/journal-profile.md's full journal-
 profile concept (audience, word limits, submission rules, editorial
-process, discontinuation detail -- SKILL.md-scoped LLM-reasoning tasks):
+process, discontinuation detail -- MODULE.md-scoped LLM-reasoning tasks):
 this module only covers what the existing evidence-backed modules can
 mechanically verify, and TARGET_JOURNAL_PROFILE_V1's schema has no field
 for the rest.

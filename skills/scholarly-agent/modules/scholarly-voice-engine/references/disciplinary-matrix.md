@@ -41,7 +41,7 @@ the family file as usual, then to the matching subsection.
 
 ## Adding a discipline without rewriting the core Skill
 
-`SKILL.md` never enumerates discipline files by name in its control flow — it
+`MODULE.md` never enumerates discipline files by name in its control flow — it
 loads "the matching file in `disciplines/`." To add a new discipline family:
 
 1. Add a row to the table above.

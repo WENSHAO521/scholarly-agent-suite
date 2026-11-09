@@ -1,12 +1,12 @@
 # Routing policy
 
-Load for nontrivial selection, context management, repair, or escalation. The [kernel](../SKILL.md) owns execution boundaries; [records](records.md) defines optional records. Optimize expected total cost to validated success, including initial execution and expected repair, validation, delegation, and escalation. Use qualitative judgments when measurements are unavailable.
+Load for nontrivial selection, context management, repair, or escalation. The [kernel](../MODULE.md) owns execution boundaries; [records](records.md) defines optional records. Optimize expected total cost to validated success, including initial execution and expected repair, validation, delegation, and escalation. Use qualitative judgments when measurements are unavailable.
 
 ## Capability discovery and filtering
 
 Inspect selectable IDs and per-model effort, tool, file/image, context, and dispatch support from the active tool contract or current provider documentation. Reuse inventory until a relevant change/failure. Exclude unavailable models, host/provider-deprecated models, and candidates lacking required capabilities before ranking. Unknown deprecation status is not verified current status. Explicit deprecated-model requests require disclosure and compliance with host restrictions; never select such models automatically.
 
-Explicit available model choice overrides mode defaults. If unavailable, report it; continue only independent work on the active model and clarify when the choice is necessary. Never claim a substitute fulfilled the request. Do not send unsupported effort values. Choose a suitable supported level and disclose a material difference. No dispatch means active-model execution. On other providers, map capabilities to roles only with evidence; these rules do not imply Claude or Gemini can call OpenAI models.
+Explicit available model choice overrides mode defaults. If unavailable, report it; continue only independent work on the active model and clarify when the choice is necessary. Never claim a substitute fulfilled the request. Do not send unsupported effort values. Choose a suitable supported level and disclose a material difference. No dispatch means active-model execution. Map capabilities to roles only with evidence (see Platform mapping).
 
 | Policy role | Illustrative label | Intended work |
 |---|---|---|
@@ -15,7 +15,26 @@ Explicit available model choice overrides mode defaults. If unavailable, report 
 | Strong professional reasoner | Sol | Methods, difficult coding, architecture, demanding synthesis |
 | Expert adjudicator | Astra | Material residual expert reasoning or explicit expert selection |
 
-These are approximate preferences for GPT-5.6 Luna/Terra/Sol and GPT-6 Astra, not guaranteed rankings, prices, availability, or dispatch IDs. Resolve real IDs from inventory. Current capabilities, observed performance, and measured current prices override the illustrative ordering. Do not maintain a legacy fallback inventory. If GPT-5.6 is absent, use an available capable non-deprecated GPT-5-family candidate and record that fact. If no GPT-5-family dispatch is possible, the default GPT-6 gate cannot be fabricated: continue feasible active-model work or report the limitation.
+The four roles are platform-neutral. Luna/Terra/Sol make up the **standard tier**; Astra is the **expert tier**. They are not guaranteed rankings, prices, availability, or dispatch IDs. Resolve real IDs from inventory. Current capabilities, observed performance, and measured current prices override the illustrative ordering. Do not maintain a legacy fallback inventory. If no capable standard-tier model can be dispatched, the default expert gate cannot be fabricated: continue feasible active-model work or report the limitation.
+
+### Platform mapping
+
+Map roles to the models the host actually exposes. The families below are illustrative starting points for common hosts, not an inventory, and a newer or renamed model in the same family takes the same role only after its capabilities are confirmed.
+
+| Host family | Luna | Terra | Sol | Astra |
+|---|---|---|---|---|
+| OpenAI / Codex | Smallest current "mini"/"nano" model | Standard current GPT model, low/medium effort | Standard current GPT model, high effort, or the strongest reasoning model | The provider's top expert/"pro" reasoning model |
+| Anthropic Claude | Haiku | Sonnet | Opus, or Sonnet at high effort | Opus at maximum effort, or the strongest Claude model the host offers |
+| Google Gemini | Flash-Lite | Flash | Pro | Pro with the deepest thinking mode the host offers |
+| Open-weight / local | Small instruction model | Mid-size model | Largest local model | Usually none; treat as unavailable |
+| Single-model host (no dispatch) | active | active | active | active |
+
+Rules for the mapping:
+
+- One model can fill more than one role at different effort levels; effort is chosen separately (see Model and effort selection).
+- If the host has no model that clearly fits a role, leave the role unmapped rather than stretch a weaker model into it. An unmapped Astra means the expert gate can only end in `report_limitations`.
+- Do not mix providers in one task unless the host really dispatches to both. These rules never imply that one provider's model can call another provider's.
+- Record the mapping used (role → real ID) in the decision record when routing is reported.
 
 ## Cheap task vector
 
@@ -32,13 +51,13 @@ All dimensions use `low`, `medium`, or `high`; include all eight in formal recor
 | parallelism | Whether independent bounded outputs exist |
 | latency_sensitivity | Whether setup, effort, or parallelism pays off |
 
-Do not add these into a complexity score or call a classifier for obvious work. High impact increases validation; high volume triggers context management. Neither alone licenses GPT-6.
+Do not add these into a complexity score or call a classifier for obvious work. High impact increases validation; high volume triggers context management. Neither alone licenses an expert-tier call.
 
 ## Policy modes
 
 | Mode | Initial selection and reasoning | Expert policy |
 |---|---|---|
-| Economy | Prefer Luna/Terra; Sol if materially necessary for correctness. Avoid overhead. | GPT-6 disabled absent overriding explicit model instruction |
+| Economy | Prefer Luna/Terra; Sol if materially necessary for correctness. Avoid overhead. | Expert tier disabled absent overriding explicit model instruction |
 | Balanced (default) | Adapt model and effort to expected validated success. | Full gate required |
 | Deep | Usually Sol for demanding work; high/xhigh/max where useful and supported. Stronger validation. | Full gate still required |
 | Expert (explicit) | Direct Astra allowed when appropriate and dispatch exists. | No automatic repeated calls |
@@ -86,7 +105,7 @@ Failure types: `none`, `reasoning`, `retrieval`, `tool`, `permission`, `context_
 
 | Cause | Next action |
 |---|---|
-| reasoning | Repair exact logic gap; consider same-model higher effort, then stronger GPT-5-family tier |
+| reasoning | Repair exact logic gap; consider same-model higher effort, then stronger standard tier |
 | retrieval / evidence_gap | Retrieve/verify missing source; if absent, BLOCKED_BY_MISSING_EVIDENCE |
 | tool / permission | Repair workflow or obtain required authorization; if blocked, BLOCKED_BY_TOOL_FAILURE with precise cause |
 | context_overflow | Selectively retrieve, compact, or partition; recheck fit |
@@ -98,23 +117,23 @@ Failure types: `none`, `reasoning`, `retrieval`, `tool`, `permission`, `context_
 
 An invalid assumption is instruction_mismatch if it contradicts user constraints, evidence_gap if unsupported, or reasoning if inference contradicts evidence. Reclassify implementation/validation failure as reasoning only with evidence.
 
-Normally at most two targeted GPT-5-family repair cycles across agents, models, and effort changes; switching tiers does not reset the counter. Each targets a residual defect and reruns relevant checks. Do not redo the whole task. This limits repeated model repair, not the initial multi-step workflow or independent necessary tool operations. At exhaustion use the expert gate only for qualifying reasoning failure; otherwise report the unmet requirement and cause. Two failed retrieval attempts do not turn missing evidence into reasoning failure.
+Normally at most two targeted standard-tier repair cycles across agents, models, and effort changes; switching tiers does not reset the counter. Each targets a residual defect and reruns relevant checks. Do not redo the whole task. This limits repeated model repair, not the initial multi-step workflow or independent necessary tool operations. At exhaustion use the expert gate only for qualifying reasoning failure; otherwise report the unmet requirement and cause. Two failed retrieval attempts do not turn missing evidence into reasoning failure.
 
-## GPT-6 gate and call budget
+## Expert gate and call budget
 
-Except explicit available GPT-6 selection or explicit Expert mode, require all:
+Except explicit available expert-tier selection or explicit Expert mode, require all:
 
-1. Confirmed GPT-5-family execution, preferably GPT-5.6 when available.
+1. Confirmed standard-tier execution (Luna/Terra/Sol), preferably the strongest available standard-tier model.
 2. Meaningful validation against a material requirement.
 3. Concrete unresolved reasoning failure.
 4. Targeted repair and revalidation.
-5. Evidence or a capability-based reason further GPT-5.6 effort/tier changes are inefficient, plus a specific expected expert benefit.
+5. Evidence or a capability-based reason further standard-tier effort/tier changes are inefficient, plus a specific expected expert benefit.
 
 Examples: unresolved critical contradiction, repeated logical failure, competing plausible expert solutions, reasoning-caused executable failure, or severe architectural uncertainty tested against concrete constraints. Mark ESCALATION_CANDIDATE, then check authorization, mode, inventory, context fit, and remaining budget. Length, file/citation count, requested detail, missing evidence, tool errors, and self-assigned scores are insufficient.
 
-Default maximum: one successful Astra dispatch across root/leaves per user task; returned but invalid output still consumed a successful dispatch. One additional attempt is eligible only for invalid expert output, tool execution failure, materially new evidence, or explicit instruction. Absent an explicit larger budget, cap total expert attempts at two including failed dispatches; the exception is not renewable. Failed transport counts as an attempt, not successful output. Tool failure alone never authorizes a first GPT-6 call. Stop repeated unavailable infrastructure; no GPT-6 self-review loop. Explicit choice bypasses the reasoning gate, not permissions/capability checks.
+Default maximum: one successful Astra dispatch across root/leaves per user task; returned but invalid output still consumed a successful dispatch. One additional attempt is eligible only for invalid expert output, tool execution failure, materially new evidence, or explicit instruction. Absent an explicit larger budget, cap total expert attempts at two including failed dispatches; the exception is not renewable. Failed transport counts as an attempt, not successful output. Tool failure alone never authorizes a first expert-tier call. Stop repeated unavailable infrastructure; no expert-tier self-review loop. Explicit choice bypasses the reasoning gate, not permissions/capability checks.
 
-Send only a residual-question packet: objective, latest state, exact constraints/IDs/source pointers, previous GPT-5 result, validation evidence, failed repairs, unresolved issue, required output. Preserve uncertainty and conclusion-changing evidence. Root checks the result against the same acceptance criteria.
+Send only a residual-question packet: objective, latest state, exact constraints/IDs/source pointers, previous standard-tier result, validation evidence, failed repairs, unresolved issue, required output. Preserve uncertainty and conclusion-changing evidence. Root checks the result against the same acceptance criteria.
 
 ### Escalation reason codes
 
@@ -122,14 +141,14 @@ Record why escalation was sought, using exactly one:
 
 | Code | Meaning |
 |---|---|
-| `REASONING_FAILURE` | A concrete residual reasoning failure survived targeted repair on a capable GPT-5-family model. |
+| `REASONING_FAILURE` | A concrete residual reasoning failure survived targeted repair on a capable standard-tier model. |
 | `EVIDENCE_GAP` | Required evidence stayed missing after retrieval attempts. |
 | `TOOL_FAILURE` | A tool or permission failure blocked a required check/action after repair attempts. |
 | `CONTEXT_LIMIT` | Material could not fit or be reduced enough for a required check even after the context gates above. |
 | `VALIDATION_FAILURE` | A defined check itself could not run, or produced an inconclusive result, after investigation. |
 | `USER_EXPERT_REQUEST` | Explicit user selection of Expert mode or a named expert model. |
 
-These are the only permitted `gpt6_reason` values (see [records](records.md)); this is a coarser, escalation-specific label, not a replacement for the failure types above. Only `REASONING_FAILURE` and `USER_EXPERT_REQUEST` by themselves authorize the expert gate: an unresolved `EVIDENCE_GAP`, `TOOL_FAILURE`, `CONTEXT_LIMIT`, or `VALIDATION_FAILURE` is reported as its matching `BLOCKED_BY_*` or `REPAIR_REQUIRED` state instead, not escalated as if more reasoning would fix a missing input, broken tool, oversized context, or broken check. Never assign a reason after the fact merely to justify a call already made.
+These are the only permitted `expert_reason` values (see [records](records.md)); this is a coarser, escalation-specific label, not a replacement for the failure types above. Only `REASONING_FAILURE` and `USER_EXPERT_REQUEST` by themselves authorize the expert gate: an unresolved `EVIDENCE_GAP`, `TOOL_FAILURE`, `CONTEXT_LIMIT`, or `VALIDATION_FAILURE` is reported as its matching `BLOCKED_BY_*` or `REPAIR_REQUIRED` state instead, not escalated as if more reasoning would fix a missing input, broken tool, oversized context, or broken check. Never assign a reason after the fact merely to justify a call already made.
 
 ## Budget controller
 
@@ -139,7 +158,7 @@ A compact, named view of the caps already enforced above; it groups existing lim
 |---|---|---|---|
 | `max_delegates` | 2 (exceptionally 3) | soft | Routing kernel step 5; [delegation policy](delegation-policy.md#caps-and-isolation) |
 | `max_repair_cycles` | 2 | soft | Objective validation and bounded repair |
-| `max_expert_calls` | 2 (1 by default, 1 exception) | hard | GPT-6 gate and call budget |
+| `max_expert_calls` | 2 (1 by default, 1 exception) | hard | Expert gate and call budget |
 | `max_expensive_calls` | unset | soft | Policy modes (narrower under Economy) |
 
 `soft` means exceeding it requires a stated reason and still passes through that field's own gate above; `hard` means it is never exceeded regardless of stated reason. `priority` selects a policy mode (Economy/Balanced/Deep/Expert) and narrows soft defaults; it cannot loosen `max_expert_calls`. An explicit user instruction overrides these defaults for that task only: a lower explicit limit always applies, a higher one is honored only for a soft field. This table is bookkeeping, not a numeric optimizer; do not report a fabricated precision it does not have (for example, a claimed percentage of budget remaining).

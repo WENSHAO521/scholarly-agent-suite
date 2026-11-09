@@ -3,15 +3,15 @@
 name: scholarly-agent
 description: >
   Evidence-first academic research and writing agent for any discipline.
-  One Skill with four on-demand internal modules -- execution planning
+  One Skill with five on-demand internal modules -- execution planning
   (adaptive-model-router), research evidence (scholarly-corpus-builder),
-  scholarly writing (scholarly-voice-engine), and publication strategy
-  (journal-fit-engine) -- plus a dispatcher that loads only the module(s) a
+  scholarly writing (scholarly-voice-engine), publication strategy
+  (journal-fit-engine), and pre-submission peer review (peer-review-engine) -- plus a dispatcher that loads only the module(s) a
   request needs and hands data between them via versioned protocols.
 instructions_file: ../SKILL.md
 interface:
   display_name: "Scholarly Agent"
-  short_description: "Evidence-first academic research, writing, and publication strategy"
+  short_description: "Evidence-first academic research, writing, peer review, and publication strategy"
   default_prompt: >
     Use $scholarly-agent to help with this scholarly task, loading only the
     modules it actually needs.
@@ -30,6 +30,9 @@ modules:
   - name: journal-fit-engine
     path: modules/journal-fit-engine/MODULE.md
     role: publication-intelligence
+  - name: peer-review-engine
+    path: modules/peer-review-engine/MODULE.md
+    role: review-intelligence
 capabilities:
   - decompose_scholarly_task
   - select_workflow_recipe
@@ -37,6 +40,7 @@ capabilities:
   - build_provenance_aware_corpora_and_style_profiles
   - draft_and_revise_scholarly_prose
   - evaluate_manuscript_journal_fit
+  - pre_submission_peer_review_and_editorial_decision
   - propagate_shared_state_and_constraints
   - apply_final_quality_gate
 constraints:

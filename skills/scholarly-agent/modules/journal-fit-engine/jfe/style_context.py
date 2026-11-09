@@ -2,7 +2,7 @@
 handoff to scholarly-voice-engine
 (scholarly-agent-suite/protocols/journal-style-context.schema.json).
 
-Non-negotiable separation (SKILL.md §Evidence discipline, shared/
+Non-negotiable separation (MODULE.md §Evidence discipline, shared/
 terminology.md's "Official requirement" / "Observed style" entries):
 `official_requirements` may only ever contain facts stated in a journal's
 own author guidelines (word limits, citation style, structure mandates,
@@ -125,7 +125,7 @@ def build_journal_style_context(
     """Assemble and validate a JOURNAL_STYLE_CONTEXT_V1 envelope.
 
     Every field the caller does not actually have evidence for should be
-    left as an empty dict/list -- never invented (SKILL.md's no-fabrication
+    left as an empty dict/list -- never invented (MODULE.md's no-fabrication
     rule). `limitations` is appended to, not replaced, when this function
     detects an evidence gap itself (missing official_requirements/
     observed_patterns), so caller-supplied limitations are preserved.

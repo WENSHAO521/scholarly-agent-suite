@@ -65,7 +65,7 @@ scope high, article type high.
 high, technical depth high, article length/style medium.
 
 See [disciplines/](../disciplines/) for the full per-family breakdown,
-including engineering/computing, humanities, law, management, education, and
+including engineering/computing, humanities, law, business and management, arts and design, education, and
 interdisciplinary work.
 
 ## Theory fit — a specific trap
