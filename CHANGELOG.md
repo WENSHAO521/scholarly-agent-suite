@@ -80,7 +80,9 @@ Changed).
   `mathematics-formal.md` to match the voice module, and its arts section
   moved out of `humanities.md` into its own `arts-design.md`. Both modules
   now have the same 11 files.
-- Architecture diagram and flowchart redrawn with five modules; README
+- Architecture diagram and flowchart redrawn with five modules, plus
+  Traditional Chinese versions (`assets/*.zh-TW.svg`) used by
+  `README.zh-TW.md`; README
   (English and Traditional Chinese), `docs/development.md`, routing matrix,
   capability boundaries, plugin manifest, and `agents/openai.yaml` updated.
 - `COMPONENTS.json` allows a native module (`"origin": {"native": true,
