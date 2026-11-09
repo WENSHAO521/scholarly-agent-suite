@@ -7,8 +7,8 @@ venue.
 ## When to select this recipe
 
 Trigger example: "Improve this paper and tell me where to submit."
-Not for: a single-sentence/paragraph polish that scholarly-voice-engine can
-do alone (rule 17) -- only select this recipe when revision is genuinely
+Not for: a single-sentence/paragraph edit that scholarly-voice-engine can
+do alone, or a wording-only polish that prose-polish-engine can do alone (rule 17) -- only select this recipe when revision is genuinely
 structural or multi-stage.
 
 ## Stages

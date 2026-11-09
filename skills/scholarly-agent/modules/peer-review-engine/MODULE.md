@@ -41,7 +41,7 @@ the corpus module, not the reviewer, finds and verifies the sources.
 - A workflow stage: the dispatcher's `pre-submission-review` workflow
   recipe (review, then revision and response letter).
 
-Not for: a one-paragraph polish (voice), "is my paper good?" with no
+Not for: a wording polish (prose-polish-engine), "is my paper good?" with no
 manuscript to read, or reviewing someone else's confidential submission (see
 Integrity).
 

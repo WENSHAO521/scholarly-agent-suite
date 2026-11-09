@@ -1,7 +1,7 @@
 {
   "name": "scholarly-agent-suite",
-  "version": "2.1.0",
-  "description": "Evidence-first academic research and writing agent: one Skill with modules for execution planning, research evidence, scholarly writing, publication strategy, and pre-submission peer review.",
+  "version": "2.2.0",
+  "description": "Evidence-first academic research and writing agent: one Skill with modules for execution planning, research evidence, scholarly writing, publication strategy, pre-submission peer review, and prose polishing in any language.",
   "author": {
     "name": "WENSHAO521",
     "email": "wainixueer3334@gmail.com",
@@ -17,6 +17,7 @@
     "corpus",
     "publication-strategy",
     "peer-review",
+    "polishing",
     "orchestration"
   ],
   "skills": "./skills/",

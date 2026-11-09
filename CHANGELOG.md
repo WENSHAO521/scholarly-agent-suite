@@ -6,6 +6,55 @@ Suite versioning follows `docs/development.md#suite-versioning` /
 have no versions of their own; `COMPONENTS.json` records where each module
 was merged from.
 
+## v2.2.0 -- 2026-11-09
+
+v2.2.0 PREPARED -- NOT PUBLISHED
+
+**A sixth module for polishing prose in any language.** Installing and
+invoking the Skill is unchanged; nothing existing was renamed.
+
+### Added
+
+- **`prose-polish-engine` module** (`modules/prose-polish-engine/`), with
+  its own page (`MODULE.md`). It removes the "language watermark" of
+  templated writing (潤色、去 AI 味): stock connectives, empty emphasis
+  ("plays a crucial role", 「具有重要意義」), inflated vocabulary, formulaic
+  openings and closings, stacked hedges, contrast templates,
+  nominalizations, repeated sentence and paragraph openers, uniform
+  sentence rhythm, reflexive three-item lists, and dash habits. Three
+  levels (`light`, `standard`, `deep`); none changes claims, claim
+  strength, evidence, citations, quotations, or defined terms, and
+  argument-level problems are handed to the voice module as escalations.
+- **Every language.** Phrase catalogs for English, Chinese (Traditional
+  and Simplified), Japanese, Korean, Spanish, French, German, Portuguese,
+  and Russian (173 patterns); language detection for any language by
+  script and function words; structural checks and protected-item checks
+  for every language, with a written procedure for languages without a
+  catalog (`references/other-languages.md`). The author's language, script,
+  and regional variety are kept; polishing never translates.
+- **Runtime `ppe/`** (standard library): `ppe.diagnose` (findings, density,
+  `pattern_load`), `ppe.invariants` (every citation, DOI, URL, number,
+  quotation, and formula must survive unchanged; protected terms keep their
+  exact form; hedge, negation, and length changes are flagged for review),
+  `ppe.report`, and `python -m ppe diagnose|check`.
+- **`POLISH_REPORT_V1`** protocol (`protocols/polish-report.schema.json`):
+  load before and after, change log, findings kept on purpose, invariant
+  result, and a fixed notice that pattern counts are not an authorship
+  estimate. The dispatcher's quality gate treats `FAIL` as blocked.
+- Integrity: the module improves the writing; it never scores text for AI
+  authorship, never runs or loops against an AI-text detector, never adds
+  noise, typos, invisible characters, or homoglyphs, and reminds authors
+  that AI-use disclosure rules still apply (integrity rule 14).
+- Evals (`evals/modules/prose-polish-engine/`), three orchestration
+  fixtures, 47 tests (`tests/modules/ppe/`), and a sixth card in both
+  architecture diagrams.
+
+### Changed
+
+- Routing: wording-only polishing goes to the polish module; the voice
+  module keeps drafting, revising, and structural edits. The polish module
+  can run once as the final language pass of a writing workflow.
+
 ## v2.1.0 -- 2026-11-09
 
 v2.1.0 PREPARED -- NOT PUBLISHED

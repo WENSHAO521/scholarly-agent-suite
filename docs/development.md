@@ -29,7 +29,8 @@ skills/scholarly-agent/
     scholarly-voice-engine/    MODULE.md, references/, disciplines/, assets/, scripts/voice/
     journal-fit-engine/        MODULE.md, references/, disciplines/, jfe/
     peer-review-engine/        MODULE.md, references/, prv/  (native, v2.1.0)
-  protocols/                12 JSON Schemas (*_V1)
+    prose-polish-engine/       MODULE.md, references/, ppe/  (native, v2.2.0)
+  protocols/                13 JSON Schemas (*_V1)
   shared/                   integrity, provenance, terminology, versioning, boundaries,
                             disciplines (the one discipline taxonomy)
 ```
@@ -72,7 +73,7 @@ All modules are developed in this repository. `COMPONENTS.json` records,
 per module, either the upstream repository, release, and commit it was
 merged from (`merged_from`, the four v2.0.0 modules), or
 `"origin": {"native": true, "added_in": "<version>"}` for a module created
-here (`peer-review-engine`).
+here (`peer-review-engine`, `prose-polish-engine`).
 
 Adding a module: create `modules/<name>/MODULE.md` with the standard header
 (no frontmatter) and a `> Scope:` line, add it to the module map and the
@@ -86,7 +87,7 @@ no drift check any more; the former `scripts/sync_components.py`,
 weekly drift workflow were removed in v2.0.0.
 
 Python engines are imported by putting the module directory on `sys.path`
-(`import scb`, `import jfe`, `import prv`). The voice module's engine lives under a
+(`import scb`, `import jfe`, `import prv`, `import ppe`). The voice module's engine lives under a
 directory named `scripts/`, which collides with the dispatcher's own
 `scripts/`; tests load those files by path with
 `tests/conftest.py:load_module_at()`.
@@ -100,7 +101,7 @@ pytest tests/
 ```
 
 - `tests/test_components.py`, `test_standalone_independence.py`,
-  `test_plugin_manifest.py` -- one Skill, five modules, no stray
+  `test_plugin_manifest.py` -- one Skill, six modules, no stray
   frontmatter, everything resolvable inside the Skill.
 - `tests/test_orchestration_triggers.py`, `test_capability_boundaries.py`,
   `evals/` -- trigger boundary, the three dispatch paths, negative examples,
@@ -125,7 +126,9 @@ pytest tests/
 - `tests/test_markdown_links.py` -- every relative Markdown link resolves.
 - `tests/modules/prv/` -- peer-review panel, report validation, decision
   rules, response matrix, second round; `tests/modules/scb/test_scb_bibliography.py`
-  -- BibTeX/RIS/CSL-JSON import and export.
+  -- BibTeX/RIS/CSL-JSON import and export; `tests/modules/ppe/` -- polish
+  pattern catalogs, language detection for any language, diagnosis,
+  invariant checks, `POLISH_REPORT_V1`, and the no-detector-scoring rule.
 - `tests/modules/scb/`, `tests/modules/jfe/`, `tests/modules/voice/` -- each
   module's own unit tests, merged from its former repository in v2.0.0
   (fixtures included). Tests of the former repositories' own packaging and
@@ -169,6 +172,12 @@ pinned `create_system`.
 - Peer-review evals (`evals/modules/peer-review-engine/`) describe expected
   behavior; like the other module evals they are not run against a live
   model here. `prv/` tests cover the deterministic rules only.
+- Polish phrase catalogs cover nine languages (en, zh, ja, ko, es, fr, de,
+  pt, ru). Other languages get structural checks and protected-item checks
+  only; `detect_language()` is a script and function-word heuristic, so pass
+  the language explicitly for close relatives (Serbian Cyrillic vs Russian,
+  Persian vs Arabic, Malay vs Indonesian). Hedge and negation counts are
+  keyword-based and only flag changes for review.
 - `scb.__version__` (recorded as the builder version in corpus build
   manifests) is the Suite `VERSION`; in a plain-Skill install without that
   file it falls back to `0.0.0`.

@@ -7,13 +7,13 @@ It helps you go from an idea, a pile of notes, or a draft manuscript to a
 well-argued paper and a defensible submission plan, while keeping every
 citation, metric, and claim traceable to a real source.
 
-It is a single Agent Skill, `scholarly-agent`, with five built-in modules:
+It is a single Agent Skill, `scholarly-agent`, with six built-in modules:
 execution planning, research evidence, scholarly writing, publication
-strategy, and pre-submission peer review. A dispatcher reads each request and loads only the modules that
+strategy, pre-submission peer review, and prose polishing in any language. A dispatcher reads each request and loads only the modules that
 request needs, so a quick paragraph edit stays quick and a full
 idea-to-submission project gets the whole pipeline.
 
-![Architecture of the Scholarly Agent: requests enter one Skill whose dispatcher answers directly, loads one module, or runs a multi-module workflow recipe across the Model Router, Corpus Builder, Voice Engine, Journal Fit, and Peer Review modules, which share versioned protocols and one integrity policy and end at a final quality gate.](assets/scholarly-agent-architecture.svg)
+![Architecture of the Scholarly Agent: requests enter one Skill whose dispatcher answers directly, loads one module, or runs a multi-module workflow recipe across the Model Router, Corpus Builder, Voice Engine, Journal Fit, Peer Review, and Prose Polish modules, which share versioned protocols and one integrity policy and end at a final quality gate.](assets/scholarly-agent-architecture.svg)
 
 > **What it is not.** It is not a one-click paper generator, it does not
 > predict acceptance, and it never invents citations, DOIs, quotations,
@@ -43,12 +43,13 @@ Voice = Voice Engine).
 | Learn your own writing voice from past papers | [author-voice-calibration](skills/scholarly-agent/references/workflows/author-voice-calibration.md) | Corpus, Voice |
 | Build a discipline, journal, or historical style profile | [corpus-profile-build](skills/scholarly-agent/references/workflows/corpus-profile-build.md) | Corpus |
 | Get peer review and an editorial decision before submitting, then revise and answer the reviewers | [pre-submission-review](skills/scholarly-agent/references/workflows/pre-submission-review.md) | Peer Review, (Voice), (Journal Fit), (Corpus) |
+| Polish finished text in any language so it no longer reads templated or machine-made | none needed (single module) | Polish |
 
 Modules in parentheses join only when the request calls for them, and the
 Model Router can sit under any recipe as an optional execution layer. The
 exact routing rules live in
 [`routing-matrix.md`](skills/scholarly-agent/references/routing-matrix.md).
-A single-step task, such as polishing one paragraph, needs no recipe: the
+A single-step task, such as polishing one section, needs no recipe: the
 agent loads just the one module that owns it.
 
 Example prompts:
@@ -63,8 +64,11 @@ Example prompts:
   what the editor would decide."
 - "Here is my Zotero export; use it as the starting corpus for a literature
   review."
+- "Polish this discussion section so it stops reading like AI wrote it; don't
+  touch the citations." (Works the same in Chinese, Japanese, Spanish, or any
+  other language.)
 
-## The five modules
+## The six modules
 
 | Module | Owns | What it does |
 |---|---|---|
@@ -73,15 +77,16 @@ Example prompts:
 | [Voice Engine](skills/scholarly-agent/modules/scholarly-voice-engine/MODULE.md) | Writing and argument | Writes and edits discipline-aware, genre-aware academic prose, calibrates claims, checks citation integrity, and keeps long projects such as books consistent. |
 | [Journal Fit](skills/scholarly-agent/modules/journal-fit-engine/MODULE.md) | Publication strategy | Profiles the manuscript, generates candidate journals, applies hard filters (scope, APC, open access, indexing), assesses fit with evidence, and produces a submission strategy. Can read open [POSI](https://github.com/WENSHAO521/posi-data) journal data (citation ranking for about 158,000 journals) as an extra, clearly labelled evidence source. |
 | [Peer Review](skills/scholarly-agent/modules/peer-review-engine/MODULE.md) | Pre-submission peer review | An editor desk-screens the manuscript, picks 2–3 reviewers with different lenses (methods, theory, literature, and so on), runs each as an isolated subagent when the host can dispatch, and issues a decision letter from the upheld concerns (not a vote count) with numbered required changes. It can then check your revision and response letter in one second round. Reports and letters read like a real journal's, end with a plain submission-readiness verdict, and carry one closing line saying they were prepared before submission, so they are never mistaken for a journal's decision. |
+| [Polish](skills/scholarly-agent/modules/prose-polish-engine/MODULE.md) | Prose polishing (潤色) | Removes the "language watermark" of templated writing in any language: stock connectives, empty emphasis ("plays a crucial role", 「具有重要意義」), inflated vocabulary, formulaic openings and closings, stacked hedges, repeated sentence openers, uniform rhythm. Nine languages have built-in phrase catalogs (English, Chinese, Japanese, Korean, Spanish, French, German, Portuguese, Russian); every other language gets the structural checks and the same procedure. Light, standard, or deep. A check confirms every citation, number, quotation, and formula survived unchanged and flags any hedge or negation that moved. It improves the writing; it does not score text for AI authorship or promise anything about AI detectors. |
 
 The dispatcher itself lives in
 [`SKILL.md`](skills/scholarly-agent/SKILL.md). Modules keep separate
 responsibilities even inside one Skill: the corpus module never recommends
 journals, the voice module never picks models, and so on
 ([`capability-boundaries.md`](skills/scholarly-agent/shared/capability-boundaries.md)).
-Corpus Builder, Voice Engine, Journal Fit, and Peer Review also ship tested
-Python engines (`scb/`, `scripts/voice/`, `jfe/`, `prv/`) for the mechanical
-parts.
+Corpus Builder, Voice Engine, Journal Fit, Peer Review, and Polish also ship
+tested Python engines (`scb/`, `scripts/voice/`, `jfe/`, `prv/`, `ppe/`) for
+the mechanical parts.
 
 ## How it works
 
@@ -94,12 +99,12 @@ three honest states: `COMPLETE`, `COMPLETE_WITH_LIMITATIONS`, or `BLOCKED`.
 
 ![How a request is handled: the dispatcher asks what the deliverable is and which modules it needs, then answers directly, loads one module, or runs a multi-module workflow that selects a recipe, reuses fresh artifacts, carries hard constraints, runs the stages through versioned protocols, and ends at a six-check quality gate with at most one repair pass and an outcome of COMPLETE, COMPLETE_WITH_LIMITATIONS, or BLOCKED.](assets/orchestration-flowchart.svg)
 
-Modules hand work to each other through twelve versioned JSON Schemas in
+Modules hand work to each other through thirteen versioned JSON Schemas in
 [`protocols/`](skills/scholarly-agent/protocols/): `EXECUTION_POLICY_V1`,
 `SCHOLARLY_PROFILE_V1`, `VOICE_REQUEST_V1`, `VOICE_CONTEXT_V1`,
 `VOICE_OUTPUT_V1`, `MANUSCRIPT_PROFILE_V1`, `TARGET_JOURNAL_PROFILE_V1`,
 `JOURNAL_STYLE_CONTEXT_V1`, `CONTINUITY_STATE_V1`, `PROVENANCE_RECORD_V1`,
-`REVIEW_REPORT_V1`, and `EDITORIAL_DECISION_V1`. For example, Journal Fit produces a
+`REVIEW_REPORT_V1`, `EDITORIAL_DECISION_V1`, and `POLISH_REPORT_V1`. For example, Journal Fit produces a
 `JOURNAL_STYLE_CONTEXT_V1` that the Voice Engine consumes, so a journal's
 official requirements and its merely observed house style never get mixed
 up.
@@ -144,7 +149,7 @@ gate
 ```
 skills/scholarly-agent/   the one Skill
   SKILL.md                dispatcher
-  modules/                the five modules (MODULE.md + references + engines)
+  modules/                the six modules (MODULE.md + references + engines)
   references/             routing matrix, orchestration state, workflow recipes
   protocols/              JSON Schemas for module handoffs
   shared/                 integrity, provenance, terminology, boundaries
@@ -157,7 +162,7 @@ docs/                     maintainer documentation
 
 ## Development and releases
 
-Everything, including all five modules, is developed in this repository.
+Everything, including all six modules, is developed in this repository.
 Until v1.2.1 the modules were separate Skills synced from their own
 repositories; v2.0.0 merged them (see [`CHANGELOG.md`](CHANGELOG.md)).
 Layout rules, versioning, testing, packaging, and known limitations are in

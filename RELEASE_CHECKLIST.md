@@ -14,9 +14,9 @@ concrete procedure behind rule 97 / rule 145.
 ## Layout
 
 - [ ] `skills/` contains exactly one Skill, `skills/scholarly-agent/`, and the
-      five modules live at `skills/scholarly-agent/modules/<name>/MODULE.md`
+      six modules live at `skills/scholarly-agent/modules/<name>/MODULE.md`
       with no `SKILL.md` or frontmatter of their own.
-- [ ] `COMPONENTS.json` lists the five modules with their origin
+- [ ] `COMPONENTS.json` lists the six modules with their origin
       (`merged_from` or native `origin`), and its `suite_version` matches `VERSION`.
 
 ## Validate

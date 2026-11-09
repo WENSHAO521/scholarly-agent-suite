@@ -82,9 +82,11 @@ jobs:
               for module in [
                   "adaptive-model-router", "scholarly-corpus-builder",
                   "scholarly-voice-engine", "journal-fit-engine", "peer-review-engine",
+                  "prose-polish-engine",
               ]:
                   assert f"scholarly-agent-suite/skills/scholarly-agent/modules/{module}/MODULE.md" in names
               assert "scholarly-agent-suite/skills/scholarly-agent/modules/peer-review-engine/prv/decision.py" in names
+              assert "scholarly-agent-suite/skills/scholarly-agent/modules/prose-polish-engine/ppe/invariants.py" in names
               assert "scholarly-agent-suite/skills/scholarly-agent/modules/scholarly-corpus-builder/scb/bibliography.py" in names
               assert not any(n.split("/")[1] in ("tests", "evals", ".github", "scripts") for n in names if len(n.split("/")) > 1)
           print("Runtime package sanity check passed.")

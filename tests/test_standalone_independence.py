@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parent.parent
 SKILL_DIR = ROOT / "skills" / "scholarly-agent"
 MODULES = [
     "adaptive-model-router", "scholarly-corpus-builder",
-    "scholarly-voice-engine", "journal-fit-engine", "peer-review-engine",
+    "scholarly-voice-engine", "journal-fit-engine", "peer-review-engine", "prose-polish-engine",
 ]
 
 # A relative path escaping the Skill directory toward repository-root folders.

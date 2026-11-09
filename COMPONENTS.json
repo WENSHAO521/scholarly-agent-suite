@@ -1,6 +1,6 @@
 {
   "suite": "scholarly-agent-suite",
-  "suite_version": "2.1.0",
+  "suite_version": "2.2.0",
   "skill": "scholarly-agent",
   "skill_path": "skills/scholarly-agent",
   "modules": {
@@ -47,9 +47,17 @@
         "native": true,
         "added_in": "2.1.0"
       }
+    },
+    "prose-polish-engine": {
+      "path": "skills/scholarly-agent/modules/prose-polish-engine",
+      "role": "polish-intelligence",
+      "origin": {
+        "native": true,
+        "added_in": "2.2.0"
+      }
     }
   },
-  "merge_notes": "Since v2.0.0 the four former specialist Skills are internal modules of the single scholarly-agent Skill and are developed in this repository. 'merged_from' records the exact upstream release each module was merged from; the upstream repositories are no longer synced into this Suite. Modules with an 'origin' entry instead of 'merged_from' were created in this repository (peer-review-engine, v2.1.0).",
+  "merge_notes": "Since v2.0.0 the four former specialist Skills are internal modules of the single scholarly-agent Skill and are developed in this repository. 'merged_from' records the exact upstream release each module was merged from; the upstream repositories are no longer synced into this Suite. Modules with an 'origin' entry instead of 'merged_from' were created in this repository (peer-review-engine, v2.1.0; prose-polish-engine, v2.2.0).",
   "protocol_versions": [
     "EXECUTION_POLICY_V1",
     "SCHOLARLY_PROFILE_V1",
@@ -62,6 +70,7 @@
     "CONTINUITY_STATE_V1",
     "PROVENANCE_RECORD_V1",
     "REVIEW_REPORT_V1",
-    "EDITORIAL_DECISION_V1"
+    "EDITORIAL_DECISION_V1",
+    "POLISH_REPORT_V1"
   ]
 }
