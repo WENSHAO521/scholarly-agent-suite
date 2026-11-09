@@ -1,0 +1,73 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://scholarly-agent-suite/protocols/editorial-decision.schema.json",
+  "title": "EDITORIAL_DECISION_V1",
+  "description": "A simulated editor's decision on a manuscript (desk screen, after review, or after one revision round), produced by peer-review-engine's editor role and consumed by the dispatcher and the voice module (revision and response letter). Never a prediction of a real journal's decision. See modules/peer-review-engine/references/editorial-decision.md.",
+  "type": "object",
+  "required": ["protocol", "stage", "decision", "basis", "required_changes", "disagreements", "limitations", "simulation_disclaimer"],
+  "properties": {
+    "protocol": { "const": "EDITORIAL_DECISION_V1" },
+    "stage": { "type": "string", "enum": ["desk", "after-review", "revision"] },
+    "decision": { "type": "string", "enum": ["desk-reject", "reject", "reject-resubmit", "major-revision", "minor-revision", "accept"] },
+    "basis": { "type": "string" },
+    "rule_decision": { "type": "string", "enum": ["desk-reject", "reject", "reject-resubmit", "major-revision", "minor-revision", "accept"] },
+    "reviewer_recommendations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["reviewer_id", "recommendation"],
+        "properties": {
+          "reviewer_id": { "type": "string" },
+          "lens": { "type": "string" },
+          "recommendation": { "type": "string" },
+          "confidence": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "consensus": { "type": "string", "enum": ["unanimous", "majority", "split", "none"] },
+    "upheld_concern_ids": { "type": "array", "items": { "type": "string" } },
+    "dismissed": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["concern_id", "reason"],
+        "properties": { "concern_id": { "type": "string" }, "reason": { "type": "string", "minLength": 1 } },
+        "additionalProperties": false
+      }
+    },
+    "required_changes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["item", "concern_ids", "severity", "change"],
+        "properties": {
+          "item": { "type": "string" },
+          "concern_ids": { "type": "array", "items": { "type": "string" } },
+          "severity": { "type": "string", "enum": ["fatal", "major", "minor"] },
+          "change": { "type": "string" },
+          "status": { "type": "string", "enum": ["addressed", "partially-addressed", "rebutted", "not-addressed"] }
+        },
+        "additionalProperties": false
+      }
+    },
+    "optional_suggestions": { "type": "array", "items": { "type": "string" } },
+    "disagreements": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["topic", "positions", "editor_resolution"],
+        "properties": {
+          "topic": { "type": "string" },
+          "positions": { "type": "array", "items": { "type": "string" } },
+          "editor_resolution": { "type": "string" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "desk_reasons": { "type": "array", "items": { "type": "string" } },
+    "limitations": { "type": "array", "items": { "type": "string" } },
+    "simulation_disclaimer": { "type": "string", "minLength": 1 }
+  },
+  "additionalProperties": false
+}

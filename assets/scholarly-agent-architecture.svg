@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 700" role="img" aria-label="Architecture of the Scholarly Agent: requests enter one Skill, whose dispatcher answers directly, loads one module, or runs a multi-module workflow recipe. The four modules are Model Router (execution planning), Corpus Builder (research evidence), Voice Engine (writing and argument), and Journal Fit (publication strategy). They exchange data through ten versioned JSON protocols and share one integrity policy, and every workflow ends at a final quality gate with one of three outcomes: COMPLETE, COMPLETE_WITH_LIMITATIONS, or BLOCKED.">
-  <title>Scholarly Agent -- one Skill, four modules</title>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 700" role="img" aria-label="Architecture of the Scholarly Agent: requests enter one Skill, whose dispatcher answers directly, loads one module, or runs a multi-module workflow recipe. The five modules are Model Router (execution planning), Corpus Builder (research evidence), Voice Engine (writing and argument), Journal Fit (publication strategy), and Peer Review (simulated reviewers and editorial decision). They exchange data through twelve versioned JSON protocols and share one integrity policy, and every workflow ends at a final quality gate with one of three outcomes: COMPLETE, COMPLETE_WITH_LIMITATIONS, or BLOCKED.">
+  <title>Scholarly Agent -- one Skill, five modules</title>
   <defs>
     <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
       <path d="M0,0 L10,5 L0,10 Z" fill="#241f18" fill-opacity="0.7"/>
@@ -42,66 +42,78 @@
     <rect x="370" y="190" width="220" height="26" rx="13" fill="#ffffff" stroke="#3f7a9e" stroke-opacity="0.45"/>
     <text x="480" y="207" text-anchor="middle" class="ink">one module → load its MODULE.md</text>
     <rect x="620" y="190" width="220" height="26" rx="13" fill="#ffffff" stroke="#3f7a9e" stroke-opacity="0.45"/>
-    <text x="730" y="207" text-anchor="middle" class="ink">2+ modules → 1 of 14 recipes</text>
+    <text x="730" y="207" text-anchor="middle" class="ink">2+ modules → 1 of 15 recipes</text>
   </g>
 
   <!-- dispatcher to modules -->
-  <line x1="162" y1="228" x2="162" y2="250" class="line" marker-end="url(#arr)"/>
-  <line x1="374" y1="228" x2="374" y2="250" class="line" marker-end="url(#arr)"/>
-  <line x1="586" y1="228" x2="586" y2="250" class="line" marker-end="url(#arr)"/>
-  <line x1="798" y1="228" x2="798" y2="250" class="line" marker-end="url(#arr)"/>
+  <line x1="142" y1="228" x2="142" y2="250" class="line" marker-end="url(#arr)"/>
+  <line x1="311" y1="228" x2="311" y2="250" class="line" marker-end="url(#arr)"/>
+  <line x1="480" y1="228" x2="480" y2="250" class="line" marker-end="url(#arr)"/>
+  <line x1="649" y1="228" x2="649" y2="250" class="line" marker-end="url(#arr)"/>
+  <line x1="818" y1="228" x2="818" y2="250" class="line" marker-end="url(#arr)"/>
 
   <!-- Module cards -->
   <g>
-    <rect x="60" y="252" width="204" height="138" rx="10" fill="#ffffff" stroke="#6b6f80" stroke-opacity="0.6"/>
-    <rect x="60" y="252" width="204" height="6" rx="3" fill="#6b6f80"/>
-    <text x="162" y="280" text-anchor="middle" class="mono" font-size="13" font-weight="700" fill="#6b6f80">MODEL ROUTER</text>
-    <text x="162" y="297" text-anchor="middle" class="sans muted" font-size="11" font-style="italic">execution planning</text>
-    <text x="162" y="320" text-anchor="middle" class="sans ink" font-size="11">model tier and effort</text>
-    <text x="162" y="336" text-anchor="middle" class="sans ink" font-size="11">subagent delegation</text>
-    <text x="162" y="352" text-anchor="middle" class="sans ink" font-size="11">validation and escalation</text>
-    <text x="162" y="377" text-anchor="middle" class="mono muted" font-size="10.5">policy only</text>
+    <rect x="61" y="252" width="162" height="138" rx="10" fill="#ffffff" stroke="#6b6f80" stroke-opacity="0.6"/>
+    <rect x="61" y="252" width="162" height="6" rx="3" fill="#6b6f80"/>
+    <text x="142" y="280" text-anchor="middle" class="mono" font-size="12.5" font-weight="700" fill="#6b6f80">MODEL ROUTER</text>
+    <text x="142" y="297" text-anchor="middle" class="sans muted" font-size="11" font-style="italic">execution planning</text>
+    <text x="142" y="320" text-anchor="middle" class="sans ink" font-size="10.5">model tier and effort</text>
+    <text x="142" y="336" text-anchor="middle" class="sans ink" font-size="10.5">any platform</text>
+    <text x="142" y="352" text-anchor="middle" class="sans ink" font-size="10.5">subagent delegation</text>
+    <text x="142" y="377" text-anchor="middle" class="mono muted" font-size="10">policy only</text>
   </g>
   <g>
-    <rect x="272" y="252" width="204" height="138" rx="10" fill="#ffffff" stroke="#4f7d5a" stroke-opacity="0.6"/>
-    <rect x="272" y="252" width="204" height="6" rx="3" fill="#4f7d5a"/>
-    <text x="374" y="280" text-anchor="middle" class="mono" font-size="13" font-weight="700" fill="#4f7d5a">CORPUS BUILDER</text>
-    <text x="374" y="297" text-anchor="middle" class="sans muted" font-size="11" font-style="italic">research evidence</text>
-    <text x="374" y="320" text-anchor="middle" class="sans ink" font-size="11">OpenAlex · Crossref · PubMed</text>
-    <text x="374" y="336" text-anchor="middle" class="sans ink" font-size="11">arXiv · DOAJ · your files</text>
-    <text x="374" y="352" text-anchor="middle" class="sans ink" font-size="11">style profiles + provenance</text>
-    <text x="374" y="377" text-anchor="middle" class="mono muted" font-size="10.5">engine: scb/</text>
+    <rect x="230" y="252" width="162" height="138" rx="10" fill="#ffffff" stroke="#4f7d5a" stroke-opacity="0.6"/>
+    <rect x="230" y="252" width="162" height="6" rx="3" fill="#4f7d5a"/>
+    <text x="311" y="280" text-anchor="middle" class="mono" font-size="12.5" font-weight="700" fill="#4f7d5a">CORPUS BUILDER</text>
+    <text x="311" y="297" text-anchor="middle" class="sans muted" font-size="11" font-style="italic">research evidence</text>
+    <text x="311" y="320" text-anchor="middle" class="sans ink" font-size="10.5">OpenAlex · Crossref · PubMed</text>
+    <text x="311" y="336" text-anchor="middle" class="sans ink" font-size="10.5">Zotero · BibTeX · RIS</text>
+    <text x="311" y="352" text-anchor="middle" class="sans ink" font-size="10.5">profiles + provenance</text>
+    <text x="311" y="377" text-anchor="middle" class="mono muted" font-size="10">engine: scb/</text>
   </g>
   <g>
-    <rect x="484" y="252" width="204" height="138" rx="10" fill="#ffffff" stroke="#3f7a9e" stroke-opacity="0.6"/>
-    <rect x="484" y="252" width="204" height="6" rx="3" fill="#3f7a9e"/>
-    <text x="586" y="280" text-anchor="middle" class="mono" font-size="13" font-weight="700" fill="#3f7a9e">VOICE ENGINE</text>
-    <text x="586" y="297" text-anchor="middle" class="sans muted" font-size="11" font-style="italic">writing and argument</text>
-    <text x="586" y="320" text-anchor="middle" class="sans ink" font-size="11">discipline- and genre-aware</text>
-    <text x="586" y="336" text-anchor="middle" class="sans ink" font-size="11">claim calibration</text>
-    <text x="586" y="352" text-anchor="middle" class="sans ink" font-size="11">citation integrity · continuity</text>
-    <text x="586" y="377" text-anchor="middle" class="mono muted" font-size="10.5">engine: scripts/voice/</text>
+    <rect x="399" y="252" width="162" height="138" rx="10" fill="#ffffff" stroke="#3f7a9e" stroke-opacity="0.6"/>
+    <rect x="399" y="252" width="162" height="6" rx="3" fill="#3f7a9e"/>
+    <text x="480" y="280" text-anchor="middle" class="mono" font-size="12.5" font-weight="700" fill="#3f7a9e">VOICE ENGINE</text>
+    <text x="480" y="297" text-anchor="middle" class="sans muted" font-size="11" font-style="italic">writing and argument</text>
+    <text x="480" y="320" text-anchor="middle" class="sans ink" font-size="10.5">discipline- and genre-aware</text>
+    <text x="480" y="336" text-anchor="middle" class="sans ink" font-size="10.5">claim calibration</text>
+    <text x="480" y="352" text-anchor="middle" class="sans ink" font-size="10.5">citations · continuity</text>
+    <text x="480" y="377" text-anchor="middle" class="mono muted" font-size="10">engine: scripts/voice/</text>
   </g>
   <g>
-    <rect x="696" y="252" width="204" height="138" rx="10" fill="#ffffff" stroke="#b07a2a" stroke-opacity="0.6"/>
-    <rect x="696" y="252" width="204" height="6" rx="3" fill="#b07a2a"/>
-    <text x="798" y="280" text-anchor="middle" class="mono" font-size="13" font-weight="700" fill="#b07a2a">JOURNAL FIT</text>
-    <text x="798" y="297" text-anchor="middle" class="sans muted" font-size="11" font-style="italic">publication strategy</text>
-    <text x="798" y="320" text-anchor="middle" class="sans ink" font-size="11">candidates and hard filters</text>
-    <text x="798" y="336" text-anchor="middle" class="sans ink" font-size="11">scope · APC · OA · indexing</text>
-    <text x="798" y="352" text-anchor="middle" class="sans ink" font-size="11">evidence-backed fit</text>
-    <text x="798" y="377" text-anchor="middle" class="mono muted" font-size="10.5">engine: jfe/</text>
+    <rect x="568" y="252" width="162" height="138" rx="10" fill="#ffffff" stroke="#b07a2a" stroke-opacity="0.6"/>
+    <rect x="568" y="252" width="162" height="6" rx="3" fill="#b07a2a"/>
+    <text x="649" y="280" text-anchor="middle" class="mono" font-size="12.5" font-weight="700" fill="#b07a2a">JOURNAL FIT</text>
+    <text x="649" y="297" text-anchor="middle" class="sans muted" font-size="11" font-style="italic">publication strategy</text>
+    <text x="649" y="320" text-anchor="middle" class="sans ink" font-size="10.5">candidates, hard filters</text>
+    <text x="649" y="336" text-anchor="middle" class="sans ink" font-size="10.5">scope · APC · OA · index</text>
+    <text x="649" y="352" text-anchor="middle" class="sans ink" font-size="10.5">evidence-backed fit</text>
+    <text x="649" y="377" text-anchor="middle" class="mono muted" font-size="10">engine: jfe/</text>
+  </g>
+  <g>
+    <rect x="737" y="252" width="162" height="138" rx="10" fill="#ffffff" stroke="#7a5a8c" stroke-opacity="0.6"/>
+    <rect x="737" y="252" width="162" height="6" rx="3" fill="#7a5a8c"/>
+    <text x="818" y="280" text-anchor="middle" class="mono" font-size="12.5" font-weight="700" fill="#7a5a8c">PEER REVIEW</text>
+    <text x="818" y="297" text-anchor="middle" class="sans muted" font-size="11" font-style="italic">simulated review</text>
+    <text x="818" y="320" text-anchor="middle" class="sans ink" font-size="10.5">editor desk screen</text>
+    <text x="818" y="336" text-anchor="middle" class="sans ink" font-size="10.5">reviewer subagents</text>
+    <text x="818" y="352" text-anchor="middle" class="sans ink" font-size="10.5">editorial decision</text>
+    <text x="818" y="377" text-anchor="middle" class="mono muted" font-size="10">engine: prv/</text>
   </g>
 
   <!-- modules to protocol bus -->
-  <line x1="162" y1="390" x2="162" y2="408" class="line"/>
-  <line x1="374" y1="390" x2="374" y2="408" class="line"/>
-  <line x1="586" y1="390" x2="586" y2="408" class="line"/>
-  <line x1="798" y1="390" x2="798" y2="408" class="line"/>
+  <line x1="142" y1="390" x2="142" y2="408" class="line"/>
+  <line x1="311" y1="390" x2="311" y2="408" class="line"/>
+  <line x1="480" y1="390" x2="480" y2="408" class="line"/>
+  <line x1="649" y1="390" x2="649" y2="408" class="line"/>
+  <line x1="818" y1="390" x2="818" y2="408" class="line"/>
 
   <!-- Protocols -->
   <rect x="60" y="408" width="840" height="58" rx="10" fill="#f1ede3" stroke="#241f18" stroke-opacity="0.25"/>
-  <text x="480" y="429" text-anchor="middle" class="sans ink" font-size="12.5"><tspan class="mono" font-weight="700">protocols/</tspan>  10 versioned JSON schemas carry every handoff between modules</text>
+  <text x="480" y="429" text-anchor="middle" class="sans ink" font-size="12.5"><tspan class="mono" font-weight="700">protocols/</tspan>  12 versioned JSON schemas carry every handoff between modules</text>
   <text x="480" y="451" text-anchor="middle" class="mono muted" font-size="10">SCHOLARLY_PROFILE_V1 · MANUSCRIPT_PROFILE_V1 · JOURNAL_STYLE_CONTEXT_V1 · TARGET_JOURNAL_PROFILE_V1 · …</text>
 
   <!-- Shared policy -->

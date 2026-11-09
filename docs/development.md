@@ -21,15 +21,17 @@ Since v2.0.0 the repository ships exactly one Skill:
 skills/scholarly-agent/
   SKILL.md                  dispatcher: the only file with Skill frontmatter
   agents/openai.yaml        optional cross-runtime descriptor
-  references/               routing matrix, orchestration state, 14 workflow recipes
+  references/               routing matrix, orchestration state, 15 workflow recipes
   scripts/                  workflow_resolver.py, target_journal_adapter.py
   modules/
     adaptive-model-router/     MODULE.md, references/
-    scholarly-corpus-builder/  MODULE.md, references/, scb/
+    scholarly-corpus-builder/  MODULE.md, references/, scb/  (scb/bibliography.py: BibTeX/RIS/CSL-JSON)
     scholarly-voice-engine/    MODULE.md, references/, disciplines/, assets/, scripts/voice/
     journal-fit-engine/        MODULE.md, references/, disciplines/, jfe/
-  protocols/                10 JSON Schemas (*_V1)
-  shared/                   integrity, provenance, terminology, versioning, boundaries
+    peer-review-engine/        MODULE.md, references/, prv/  (native, v2.1.0)
+  protocols/                12 JSON Schemas (*_V1)
+  shared/                   integrity, provenance, terminology, versioning, boundaries,
+                            disciplines (the one discipline taxonomy)
 ```
 
 Rules that keep this layout honest (all checked by `validate_suite.py` and
@@ -66,15 +68,25 @@ notes. Pushes that do not change `VERSION` publish nothing; a hand-pushed
 
 ## Development model
 
-All four modules are developed in this repository. `COMPONENTS.json`
-records, per module, the upstream repository, release, and commit it was
-merged from (`merged_from`), for provenance only. There is no sync step and
+All modules are developed in this repository. `COMPONENTS.json` records,
+per module, either the upstream repository, release, and commit it was
+merged from (`merged_from`, the four v2.0.0 modules), or
+`"origin": {"native": true, "added_in": "<version>"}` for a module created
+here (`peer-review-engine`).
+
+Adding a module: create `modules/<name>/MODULE.md` with the standard header
+(no frontmatter) and a `> Scope:` line, add it to the module map and the
+handoff table in `SKILL.md`, to `agents/openai.yaml`, `COMPONENTS.json`,
+`shared/capability-boundaries.md`, `references/routing-matrix.md`, the module
+lists in `scripts/validate_suite.py`, the tests that enumerate modules, and
+the CI package sanity step. Per-discipline guidance files follow
+`shared/disciplines.md`. There is no sync step and
 no drift check any more; the former `scripts/sync_components.py`,
 `scripts/component-sources.json`, `scripts/check_component_drift.py`, and the
 weekly drift workflow were removed in v2.0.0.
 
 Python engines are imported by putting the module directory on `sys.path`
-(`import scb`, `import jfe`). The voice module's engine lives under a
+(`import scb`, `import jfe`, `import prv`). The voice module's engine lives under a
 directory named `scripts/`, which collides with the dispatcher's own
 `scripts/`; tests load those files by path with
 `tests/conftest.py:load_module_at()`.
@@ -88,7 +100,7 @@ pytest tests/
 ```
 
 - `tests/test_components.py`, `test_standalone_independence.py`,
-  `test_plugin_manifest.py` -- one Skill, four modules, no stray
+  `test_plugin_manifest.py` -- one Skill, five modules, no stray
   frontmatter, everything resolvable inside the Skill.
 - `tests/test_orchestration_triggers.py`, `test_capability_boundaries.py`,
   `evals/` -- trigger boundary, the three dispatch paths, negative examples,
@@ -103,6 +115,17 @@ pytest tests/
   (envelope -> journal fit), both added in v2.0.0 after the merge exposed
   that neither producer/consumer pair actually conformed to the shared
   schema.
+- `tests/test_e2e_provenance_handoff.py` -- `PROVENANCE_RECORD_V1` built by
+  `scb.compiler.build_provenance_record_v1()` from real records (including a
+  BibTeX import), through `SCHOLARLY_PROFILE_V1` into a voice request.
+- `tests/test_disciplines.py` -- both discipline directories match
+  `shared/disciplines.md`.
+- `tests/test_router_platform_neutral.py` -- no provider model generations
+  in the router policy; router eval fixtures follow the records contract.
+- `tests/test_markdown_links.py` -- every relative Markdown link resolves.
+- `tests/modules/prv/` -- peer-review panel, report validation, decision
+  rules, response matrix, second round; `tests/modules/scb/test_scb_bibliography.py`
+  -- BibTeX/RIS/CSL-JSON import and export.
 - `tests/modules/scb/`, `tests/modules/jfe/`, `tests/modules/voice/` -- each
   module's own unit tests, merged from its former repository in v2.0.0
   (fixtures included). Tests of the former repositories' own packaging and
@@ -141,10 +164,14 @@ pinned `create_system`.
 - `scb.compiler.compile_scholarly_profile_v1()` (the pre-schema shape) is
   kept for existing callers; new code should use
   `compile_scholarly_profile_protocol_v1()`.
-- `PROVENANCE_RECORD_V1` is validated as part of the profiles that embed it
-  but has no handoff test of its own; `VOICE_CONTEXT_V1`,
-  `VOICE_REQUEST_V1`, and `VOICE_OUTPUT_V1` have schema round-trip coverage
-  only.
+- `VOICE_CONTEXT_V1`, `VOICE_REQUEST_V1`, and `VOICE_OUTPUT_V1` have schema
+  round-trip coverage only.
+- Peer-review evals (`evals/modules/peer-review-engine/`) describe expected
+  behavior; like the other module evals they are not run against a live
+  model here. `prv/` tests cover the deterministic rules only.
+- `scb.__version__` (recorded as the builder version in corpus build
+  manifests) is the Suite `VERSION`; in a plain-Skill install without that
+  file it falls back to `0.0.0`.
 - Live evidence retrieval (current journal metrics, APC policy) depends on
   the host's network and tool access at runtime; the Skill adds no
   connectors.

@@ -1,6 +1,6 @@
 # Shared capability boundaries
 
-Since v2.0.0 the four specialists are modules of the single `scholarly-agent`
+Since v2.0.0 the specialists are modules of the single `scholarly-agent`
 Skill (`modules/<name>/MODULE.md`), but each module still owns a distinct
 responsibility. This page is the single source of truth for "who is not
 allowed to do this" -- when in doubt about whether a module should perform an
@@ -22,10 +22,17 @@ action, check here before extending its scope.
   evidence (APC, indexing, acceptance policy) cannot be verified, it reports
   `unknown`/`NOT_ASSESSED` rather than reusing a stale or estimated value as if
   current (rule 74, rule 105).
+- **peer-review-engine critiques and decides; it does not rewrite, rank
+  journals, or retrieve.** Its reviewers name problems and its editor issues
+  a decision; the revision and response letter belong to
+  scholarly-voice-engine, venue suggestions after a desk rejection to
+  journal-fit-engine, and verifying a literature gap a reviewer names to
+  scholarly-corpus-builder. It never presents a simulated decision as a
+  prediction of a real journal's outcome.
 - **The scholarly-agent dispatcher (`SKILL.md`) does not duplicate module
   logic.** It decomposes tasks, selects the minimal module set, and
   assembles results -- it does not itself perform routing, corpus
-  acquisition, prose writing, or journal ranking (rule 3, rule 156).
+  acquisition, prose writing, journal ranking, or peer review (rule 3, rule 156).
 
 ## Why this matters
 

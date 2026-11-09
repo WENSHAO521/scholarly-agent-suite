@@ -6,9 +6,104 @@ Suite versioning follows `docs/development.md#suite-versioning` /
 have no versions of their own; `COMPONENTS.json` records where each module
 was merged from.
 
+## v2.1.0 -- 2026-11-09
+
+v2.1.0 PREPARED -- NOT PUBLISHED
+
+**A fifth module for simulated peer review, reference-manager import and
+export, a platform-neutral model router, and fixes for problems the v2.0.0
+merge left behind.** Installing and invoking the Skill is unchanged. Two
+renames can affect scripts that read module files directly: two
+journal-fit discipline files and the router's eval/record keys (see
+Changed).
+
+### Added
+
+- **`peer-review-engine` module** (`modules/peer-review-engine/`), the first
+  module built here rather than merged in. An editor desk-screens the
+  manuscript, picks a panel of 2-3 reviewers with distinct lenses (methods,
+  statistics, theory, literature, field, ethics-integrity, devil's advocate,
+  generalist; defaults per article type and discipline), runs each reviewer
+  as an isolated, read-only subagent when the host can dispatch (within the
+  router's delegation caps) or sequentially in one model otherwise (and says
+  so), then decides from the **upheld concerns**, not a vote count:
+  unfixable fatal -> reject, fixable fatal -> reject-and-resubmit, major ->
+  major revision, minor -> minor revision. The editor may be stricter with a
+  reason, never more lenient without dismissing concerns explicitly.
+  Reviewer disagreements are recorded, not hidden. Outputs a decision
+  letter, a response matrix of numbered required changes, and one
+  second-round check of the revision and response letter. Every decision is
+  labelled a simulation; no acceptance probabilities, no impersonated
+  reviewers, and a stop-and-warn rule for confidential manuscripts the user
+  was sent as a reviewer. Runtime: `prv/` (panel, report validation,
+  decision, response matrix, second round), standard library only.
+- Protocols `REVIEW_REPORT_V1` (`protocols/review-report.schema.json`) and
+  `EDITORIAL_DECISION_V1` (`protocols/editorial-decision.schema.json`).
+- Workflow recipe `peer-review-simulation` (review, optional revision and
+  response letter by the voice module, one second round).
+- **Reference-manager import and export** in the corpus module
+  (`scb/bibliography.py`, `references/reference-managers.md`): BibTeX (with
+  `@string` macros, `#` concatenation, LaTeX accents), RIS, and CSL-JSON, so
+  Zotero, Mendeley, EndNote, and JabRef libraries can seed a corpus or serve
+  as citation sources, and results can be exported back. Imported records are
+  `NEEDS_CHECK` until an adapter lookup verifies them; malformed DOIs or
+  years are left empty and listed as conflicts, never guessed. CLI:
+  `scb.cli import-bib` / `export-bib`.
+- **`scb.compiler.build_provenance_record_v1()`**, the first real producer of
+  `PROVENANCE_RECORD_V1`, built from the records a profile came from:
+  identity from DOI/PMID/arXiv/URL or an explicit user-supplied marker,
+  verified only when an adapter verified it, and `conflicting` with notes
+  when fields disagree or a source has no identifier. Previously the record
+  was only ever hand-written in tests.
+- **Platform mapping for the model router**
+  (`references/routing-policy.md#platform-mapping`): how its Luna/Terra/Sol
+  (standard tier) and Astra (expert tier) roles map onto OpenAI/Codex,
+  Claude, Gemini, local, and single-model hosts.
+- `shared/disciplines.md`: one discipline taxonomy (11 families) for every
+  module.
+- Tests: `test_e2e_provenance_handoff.py`, `test_disciplines.py`,
+  `test_router_platform_neutral.py`, `test_markdown_links.py`,
+  `tests/modules/prv/`, `tests/modules/scb/test_scb_bibliography.py`.
+  Evals: `evals/modules/peer-review-engine/` and new dispatch cases for
+  peer review and library import.
+
+### Changed
+
+- **adaptive-model-router is platform-neutral.** Its gates and budgets no
+  longer say "GPT-5-family" and "GPT-6"; they use the standard tier and
+  expert tier. Eval and record keys renamed accordingly: `gpt6` ->
+  `expert_dispatch`, `gpt5_attempt` -> `standard_tier_attempt`,
+  `gpt6_reason` -> `expert_reason`, and `gpt6_*` task-state counters ->
+  `expert_*`.
+- **Discipline files unified.** journal-fit-engine's `management.md` and
+  `mathematics.md` renamed to `business-management.md` and
+  `mathematics-formal.md` to match the voice module, and its arts section
+  moved out of `humanities.md` into its own `arts-design.md`. Both modules
+  now have the same 11 files.
+- Architecture diagram and flowchart redrawn with five modules; README
+  (English and Traditional Chinese), `docs/development.md`, routing matrix,
+  capability boundaries, plugin manifest, and `agents/openai.yaml` updated.
+- `COMPONENTS.json` allows a native module (`"origin": {"native": true,
+  "added_in": ...}`) alongside merged ones.
+
+### Fixed
+
+- Dead links left by the v2.0.0 move: the router's references pointed at
+  `../SKILL.md` (now `../MODULE.md`) and a `THIRD_PARTY_NOTICES.md` that was
+  never merged; module files throughout still said "see `SKILL.md`" for
+  their own instructions.
+- `scb.cli validate` called a `scripts/validate_skill.py` that no longer
+  exists; the subcommand is removed. Module docs that pointed at that script
+  or at a module README now point at the Suite's validator and tests.
+- `scb.__version__` read a per-module `VERSION` file removed by the merge, so
+  every corpus build manifest recorded builder version `0.0.0`; it now reads
+  the Suite `VERSION`.
+- CHANGELOG: v2.0.0 marked PUBLISHED; v1.2.1 noted as never released on its
+  own.
+
 ## v2.0.0 -- 2026-11-08
 
-v2.0.0 PREPARED -- NOT PUBLISHED
+v2.0.0 PUBLISHED
 
 **The four specialist Skills are merged into one Skill.** The Suite now
 ships a single Skill, `scholarly-agent`, with the former specialists as
@@ -124,6 +219,8 @@ etc.): those names no longer register as Skills.
 ## v1.2.1 -- 2026-09-13
 
 v1.2.1 PREPARED -- NOT PUBLISHED
+
+(Never published as its own release: its fix shipped inside v2.0.0.)
 
 **Workflow packaging/runtime-visibility fix.** During an end-to-end
 theoretical-paper orchestration run, scholarly-agent reported that the

@@ -2,7 +2,7 @@
 """Suite-level validator for scholarly-agent-suite.
 
 Checks the acceptance criteria for the v2 single-Skill layout (plugin
-manifest, exactly one Skill with its four modules, protocol schema validity,
+manifest, exactly one Skill with its modules, protocol schema validity,
 COMPONENTS.json consistency, and workflow recipe references). Offline and
 deterministic -- no network calls (rule 95).
 
@@ -30,6 +30,7 @@ MODULE_NAMES = [
     "scholarly-corpus-builder",
     "scholarly-voice-engine",
     "journal-fit-engine",
+    "peer-review-engine",
 ]
 
 PROTOCOL_FILES = {
@@ -43,6 +44,8 @@ PROTOCOL_FILES = {
     "journal-style-context.schema.json": "JOURNAL_STYLE_CONTEXT_V1",
     "continuity-state.schema.json": "CONTINUITY_STATE_V1",
     "provenance.schema.json": "PROVENANCE_RECORD_V1",
+    "review-report.schema.json": "REVIEW_REPORT_V1",
+    "editorial-decision.schema.json": "EDITORIAL_DECISION_V1",
 }
 
 # The single source of truth for required workflow recipes lives in
@@ -114,7 +117,7 @@ def validate_plugin_manifest(report: Report) -> None:
 
 
 def validate_skill_and_modules(report: Report) -> dict[str, dict]:
-    """v2 layout: exactly one Skill under skills/, four modules inside it."""
+    """v2 layout: exactly one Skill under skills/, its modules inside it."""
     skills_dir = ROOT / "skills"
     skill_dirs = sorted(p.name for p in skills_dir.iterdir() if p.is_dir()) if skills_dir.is_dir() else []
     report.check("skills/ contains exactly one Skill (scholarly-agent)", skill_dirs == [SKILL_NAME], f"found {skill_dirs}")
@@ -166,7 +169,7 @@ def validate_components_json(report: Report) -> None:
             f"COMPONENTS.json={data.get('suite_version')!r} VERSION={suite_version!r}",
         )
     modules = data.get("modules", {})
-    report.check("COMPONENTS.json lists exactly the four modules", sorted(modules) == sorted(MODULE_NAMES), f"found {sorted(modules)}")
+    report.check("COMPONENTS.json lists exactly the expected modules", sorted(modules) == sorted(MODULE_NAMES), f"found {sorted(modules)}")
     sha_re = re.compile(r"^[0-9a-f]{40}$")
     for name in MODULE_NAMES:
         entry = modules.get(name)
@@ -174,9 +177,13 @@ def validate_components_json(report: Report) -> None:
             continue
         report.check(f"COMPONENTS.json {name} path exists", (ROOT / entry.get("path", "")).is_dir())
         report.check(f"COMPONENTS.json {name} has role", bool(entry.get("role")))
-        origin = entry.get("merged_from", {})
-        report.check(f"COMPONENTS.json {name} merged_from has repository and version", bool(origin.get("repository")) and bool(origin.get("version")))
-        report.check(f"COMPONENTS.json {name} merged_from commit is a full sha", bool(sha_re.match(origin.get("commit", ""))))
+        if "merged_from" in entry:
+            origin = entry["merged_from"]
+            report.check(f"COMPONENTS.json {name} merged_from has repository and version", bool(origin.get("repository")) and bool(origin.get("version")))
+            report.check(f"COMPONENTS.json {name} merged_from commit is a full sha", bool(sha_re.match(origin.get("commit", ""))))
+        else:
+            native = entry.get("origin", {})
+            report.check(f"COMPONENTS.json {name} is native with added_in version", native.get("native") is True and bool(native.get("added_in")))
 
 
 def validate_protocols(report: Report) -> None:

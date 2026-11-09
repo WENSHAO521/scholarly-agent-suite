@@ -62,7 +62,7 @@ def test_runtime_allowlist_includes_skill_and_all_modules():
     assert "skills/scholarly-agent/SKILL.md" in rel
     for name in [
         "adaptive-model-router", "scholarly-corpus-builder",
-        "scholarly-voice-engine", "journal-fit-engine",
+        "scholarly-voice-engine", "journal-fit-engine", "peer-review-engine",
     ]:
         assert f"skills/scholarly-agent/modules/{name}/MODULE.md" in rel
 
@@ -171,6 +171,6 @@ def test_release_manifest_has_no_private_machine_paths(tmp_path, monkeypatch):
     assert manifest["skill"] == "scholarly-agent"
     for name in [
         "adaptive-model-router", "scholarly-corpus-builder",
-        "scholarly-voice-engine", "journal-fit-engine",
+        "scholarly-voice-engine", "journal-fit-engine", "peer-review-engine",
     ]:
         assert name in manifest["modules"]

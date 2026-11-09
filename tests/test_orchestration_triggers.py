@@ -64,6 +64,7 @@ def test_each_module_keeps_its_scope_line():
         "scholarly-corpus-builder": ["corpora", "profiles"],
         "scholarly-voice-engine": ["writing", "voice"],
         "journal-fit-engine": ["journal", "fit"],
+        "peer-review-engine": ["peer review", "reviewer", "editorial decision"],
     }
     for name, terms in boundary_terms.items():
         text = (SKILL_DIR / "modules" / name / "MODULE.md").read_text(encoding="utf-8")
