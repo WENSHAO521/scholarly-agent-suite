@@ -7,7 +7,7 @@ official page; both are labeled as index-sourced accordingly.
 Deliberately keeps OFFICIAL_REQUIREMENTS-adjacent fields (issn, publisher,
 homepage_url, apc) separate from OBSERVED_CORPUS_PROFILE-adjacent fields
 (works_count, topics, cited_by_count) per references/evidence-policy.md and
-SKILL.md's Evidence discipline -- this class never blurs the two.
+MODULE.md's Evidence discipline -- this class never blurs the two.
 """
 from __future__ import annotations
 

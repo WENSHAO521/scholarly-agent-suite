@@ -1,6 +1,6 @@
 # Book Writing
 
-Loaded when the task is book/chapter-scale (see `SKILL.md` §Book vs. article
+Loaded when the task is book/chapter-scale (see `MODULE.md` §Book vs. article
 routing). Book writing is not simply enlarged article prose — it requires
 maintaining a coherent argument across chapters that each do different work.
 

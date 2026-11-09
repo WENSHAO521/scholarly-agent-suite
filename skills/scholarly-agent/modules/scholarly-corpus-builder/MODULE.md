@@ -182,6 +182,7 @@ bias, author-concentration bias) when material — see `references/corpus-policy
 - `references/integration.md` — how downstream skills (Voice Engine, Journal Fit Engine, Router) should call this skill
 - `references/source-adapters.md` — capability matrix and known limitations for the six scholarly-API adapters + user files
 - `references/oa-resolution.md` — the access-state resolution sequence and retrieval-depth model
+- `references/reference-managers.md` — importing a user's Zotero/Mendeley/EndNote library (BibTeX, RIS, CSL-JSON) as seeds or citation sources, and exporting records back
 - `references/stability-analysis.md` — the split-corpus stability test and bootstrap resampler
 
 ## Tool policy
@@ -211,7 +212,7 @@ another module, use `scb.compiler.compile_scholarly_profile_protocol_v1()`:
 its output validates against `protocols/scholarly-profile.schema.json` and
 requires a real `PROVENANCE_RECORD_V1` (the older
 `compile_scholarly_profile_v1()` shape does not). See `scb/__init__.py` for
-the module map, and `scripts/validate_skill.py`'s `check_scb_package` for how
-it's kept in sync with the runtime package. Where Python isn't available,
-this file's instructions remain fully usable on their own — see README.md
-"Runtime requirements".
+the module map; the Suite's `scripts/validate_suite.py` and `tests/modules/scb/`
+(repository only, not shipped in the runtime ZIP) keep it checked. Where Python isn't available,
+this file's instructions remain fully usable on their own; the `scb/` package
+needs only the Python 3.10+ standard library.

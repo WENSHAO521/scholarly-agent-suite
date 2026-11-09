@@ -1,5 +1,5 @@
 """Developer CLI. Not required for normal Agent Skill usage -- a host
-invokes SKILL.md's instructions directly; this is for development, live
+invokes MODULE.md's instructions directly; this is for development, live
 verification, and debugging. JSON output throughout.
 
 Commands:

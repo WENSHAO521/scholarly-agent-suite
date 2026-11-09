@@ -1,4 +1,4 @@
-"""Categorical fit model (SKILL.md §No fake precision, references/fit-
+"""Categorical fit model (MODULE.md §No fake precision, references/fit-
 model.md). An internal numeric score exists for ranking candidates against
 each other, but the only thing ever surfaced as a result is one of the six
 category labels -- never a percentage or decimal presented as an
@@ -57,7 +57,7 @@ def _label_for_score(score: float) -> str:
 def compute_fit(manuscript: ManuscriptProfile, evidence: JournalEvidence,
                  hard_eliminated: bool) -> FitResult:
     """Never returns a numeric score to the caller -- only the label and the
-    matched terms that justify it (SKILL.md §Output contract: every
+    matched terms that justify it (MODULE.md §Output contract: every
     recommendation must answer 'why this journal?' with concrete evidence).
     """
     if hard_eliminated:

@@ -4,7 +4,7 @@
 
 Learn the current writing conventions of a field. The core skill logic is
 discipline-neutral; discipline-specific conventions live here and in
-supplementary notes rather than in `SKILL.md`.
+supplementary notes rather than in `MODULE.md`.
 
 ## Supported disciplinary coverage (non-exhaustive)
 

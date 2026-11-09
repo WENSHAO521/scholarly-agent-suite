@@ -164,6 +164,6 @@ extract only high-level, discipline-general traits (e.g., "mechanism-centered
 prose," "economical causal argument," "comparative institutional analysis,"
 "narrative theoretical exposition," "highly formal methodological writing") and
 synthesize a composite, original voice from those traits — never a stylistic copy.
-See `SKILL.md` §Voice profiles for the operational rule and
+See `MODULE.md` §Voice profiles for the operational rule and
 `disciplines/interdisciplinary.md` / eval file `anti-generic-ai-cases.jsonl` for
 the corresponding safeguard tests.

@@ -2,7 +2,7 @@
 
 Non-negotiable rules for how citations, quotations, and evidence attribution
 are handled during drafting and rewriting. This outranks every voice
-consideration (see `SKILL.md` §Operating hierarchy).
+consideration (see `MODULE.md` §Operating hierarchy).
 
 ## Never fabricate
 

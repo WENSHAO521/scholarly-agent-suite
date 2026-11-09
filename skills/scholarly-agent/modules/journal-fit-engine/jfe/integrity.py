@@ -1,7 +1,7 @@
 """Journal integrity screening (references/journal-integrity.md). Reports
 VERIFIED / WARNING / CANNOT_VERIFY per signal -- never a "predatory
 probability" or a blanket verdict. A journal is never labeled "predatory"
-here; that is a strong, reputational claim SKILL.md reserves for the LLM's
+here; that is a strong, reputational claim MODULE.md reserves for the LLM's
 own reasoning over evidence this module cannot gather (editorial-board
 transparency, peer-review description, archiving participation, COPE
 membership -- none of which OpenAlex/Crossref expose). This module checks

@@ -6,7 +6,7 @@ These deliberately mirror field names already used by the sibling skills
 journal-fit-engine's integration.md) and this Skill's own
 references/integration.md conceptual contract, rather than defining a
 competing schema. Validation is permissive by design: every field is
-optional, since "unknown" is a valid state (see SKILL.md §Task
+optional, since "unknown" is a valid state (see MODULE.md §Task
 interpretation) — these functions catch shape *errors* (wrong type, unknown
 enum value), not missing data.
 """
@@ -46,7 +46,7 @@ OUTPUT_MODES = (
     # A read-only quality-audit pass over input_text (references/quality-
     # audit.md) that reports findings without drafting/revising prose --
     # distinct from the audit step every other mode already runs before
-    # returning text (SKILL.md step 13). Added for VOICE_REQUEST_V1
+    # returning text (MODULE.md step 13). Added for VOICE_REQUEST_V1
     # interop: the Suite's task enum includes "audit" and no existing mode
     # covers "check but don't rewrite."
     "audit",
