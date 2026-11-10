@@ -6,9 +6,33 @@ Suite versioning follows `docs/development.md#suite-versioning` /
 have no versions of their own; `COMPONENTS.json` records where each module
 was merged from.
 
+## v2.3.0 -- 2026-11-10
+
+v2.3.0 PREPARED -- NOT PUBLISHED
+
+**Pre-submission review no longer stops after two rounds.** Installing and
+invoking the Skill is unchanged.
+
+### Changed
+
+- **Unlimited revision rounds** in `peer-review-engine`. Until now a review
+  was the first round plus one check of the revision, and
+  `prv.decision.check_revision` refused a third round. It now accepts the
+  result of an earlier revision round as its input, so an author can go
+  round after round; each round asks only about the required changes the
+  previous one left open, and the sequence ends when a round reaches
+  `accept` or `reject`. Decision letters no longer say "this is the last
+  revision round".
+- `EDITORIAL_DECISION_V1` gains an optional `round` number (absent means
+  round 1; revision rounds count from 2). Existing decisions stay valid.
+- `MODULE.md`, `references/responding-to-reviewers.md`, the
+  `pre-submission-review` workflow recipe, and both READMEs describe the
+  unlimited rounds. Panel size, the decision rules, and every integrity
+  rule are unchanged.
+
 ## v2.2.0 -- 2026-11-09
 
-v2.2.0 PREPARED -- NOT PUBLISHED
+v2.2.0 PUBLISHED
 
 **A sixth module for polishing prose in any language.** Installing and
 invoking the Skill is unchanged; nothing existing was renamed.
@@ -57,7 +81,7 @@ invoking the Skill is unchanged; nothing existing was renamed.
 
 ## v2.1.0 -- 2026-11-09
 
-v2.1.0 PREPARED -- NOT PUBLISHED
+v2.1.0 PUBLISHED
 
 **A fifth module for pre-submission peer review, reference-manager import and
 export, a platform-neutral model router, and fixes for problems the v2.0.0

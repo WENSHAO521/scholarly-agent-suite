@@ -238,11 +238,23 @@ def test_minor_leftovers_give_minor_revision():
     assert check_revision(d, {"RC1": "addressed", "RC2": "not-addressed"})["decision"] == "minor-revision"
 
 
-def test_only_one_second_round_and_no_round_after_final_decisions():
+def test_revision_rounds_are_unlimited_and_stop_only_at_a_final_decision():
     d = _major_decision()
-    second = check_revision(d, {"RC1": "addressed", "RC2": "addressed", "RC3": "partially-addressed"})
+    assert "round" not in d  # first decision: round 1 by default
+    current = check_revision(d, {"RC1": "addressed", "RC2": "addressed", "RC3": "partially-addressed"})
+    assert current["round"] == 2 and current["decision"] == "major-revision"
+    assert [rc["item"] for rc in current["required_changes"]] == ["RC3"]
+    for expected_round in range(3, 12):  # no cap on rounds
+        current = check_revision(current, {"RC3": "partially-addressed"})
+        validate_file(current, PROTOCOLS / "editorial-decision.schema.json")
+        assert current["round"] == expected_round and current["stage"] == "revision"
+        assert "last revision round" not in current["basis"]
     with pytest.raises(DecisionError):
-        check_revision(second, {})
+        check_revision(current, {})  # a later round still needs a status for each open item
+    final = check_revision(current, {"RC3": "addressed"})
+    assert final["decision"] == "accept" and final["round"] == 12 and final["required_changes"] == []
+    with pytest.raises(DecisionError):
+        check_revision(final, {})  # nothing follows an accept
     with pytest.raises(DecisionError):
         check_revision(d, {"RC1": "addressed"})  # missing items
     rejected = copy.deepcopy(d)

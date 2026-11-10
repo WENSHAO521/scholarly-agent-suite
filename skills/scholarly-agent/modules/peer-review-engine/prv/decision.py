@@ -1,5 +1,5 @@
 """The editor's bookkeeping: desk screen, decision from upheld concerns,
-response matrix, and second-round check. See references/editorial-decision.md
+response matrix, and revision-round checks (any number of rounds). See references/editorial-decision.md
 and references/responding-to-reviewers.md.
 
 The decision follows from upheld concerns, never from counting reviewer
@@ -221,10 +221,13 @@ _REVISION_STATUSES = {"addressed", "partially-addressed", "rebutted", "not-addre
 
 
 def check_revision(decision: Dict[str, Any], statuses: Dict[str, str]) -> Dict[str, Any]:
-    """Second-round check. `statuses` maps each required-change item (RC1,
-    ...) to the status the editor assigned after reading the revision."""
-    if decision.get("stage") == "revision":
-        raise DecisionError("only one second round; report remaining problems instead of a third")
+    """Revision-round check. `statuses` maps each required-change item (RC1,
+    ...) to the status the editor assigned after reading the revision.
+
+    `decision` is the first-round decision or the result of an earlier
+    revision round; there is no limit on the number of rounds. Each round
+    asks only about the items the previous one left open, and the sequence
+    ends when a round reaches accept or reject."""
     if decision["decision"] in ("desk-reject", "reject", "accept"):
         raise DecisionError("no revision round follows a %s" % decision["decision"])
     items = {rc["item"]: rc for rc in decision["required_changes"]}
@@ -240,7 +243,7 @@ def check_revision(decision: Dict[str, Any], statuses: Dict[str, str]) -> Dict[s
     if any(rc["severity"] == "fatal" for rc in not_addr):
         outcome, note = "reject", "a fatal concern was not addressed"
     elif any(rc["severity"] == "major" for rc in not_addr):
-        outcome, note = "major-revision", "major concerns remain unaddressed; this is the last revision round"
+        outcome, note = "major-revision", "major concerns remain unaddressed"
     elif any(rc["severity"] != "minor" for rc in partial):
         outcome, note = "major-revision", "fatal or major concerns only partially addressed"
     elif not_addr or partial:
@@ -250,6 +253,7 @@ def check_revision(decision: Dict[str, Any], statuses: Dict[str, str]) -> Dict[s
     return {
         "protocol": "EDITORIAL_DECISION_V1",
         "stage": "revision",
+        "round": int(decision.get("round", 1)) + 1,
         "decision": outcome,
         "readiness": READINESS[outcome],
         "basis": note,
