@@ -3,7 +3,8 @@
 **Not a Skill.** For a pre-submission review of a complete manuscript: what
 an editor and two or three independent reviewers would likely say, the
 decision that follows, and what must change. Optionally followed by the
-revision, the response letter, and one second-round check.
+revision, the response letter, and as many revision-round checks as the
+author wants.
 
 ## When to select this recipe
 
@@ -42,7 +43,7 @@ scholarly-voice-engine      (only if the user asks: revise the flagged sections,
                              draft the response letter from the matrix)
   |
   v
-peer-review-engine: second-round check of revision + letter (once)
+peer-review-engine: revision-round check of revision + letter (repeat as needed)
 ```
 
 ## Explicit non-goal
@@ -56,6 +57,6 @@ editor never rewrites the paper.
 
 If fewer reviewers report than planned, or reviews were written
 sequentially by one model, the decision's `limitations` say so and the
-assembled output carries them. If a second round still leaves fatal or
-major items unaddressed, report that; do not start a third round (the
-dispatcher's bounded repair loop).
+assembled output carries them. If a revision round still leaves fatal or
+major items unaddressed, report that and offer another round; the author
+decides how many rounds to run.

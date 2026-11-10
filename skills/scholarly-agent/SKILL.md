@@ -222,7 +222,7 @@ putting its module directory on `sys.path`:
   `scripts/` to avoid a package-name clash).
 - `modules/peer-review-engine/prv/` -- reviewer panel and subagent
   briefings, review-report validation, editorial decision, response matrix,
-  second-round check (`import prv`).
+  revision-round checks (`import prv`).
 - `modules/prose-polish-engine/ppe/` -- templated-phrasing catalogs (nine
   languages) and diagnosis for any language, the check that polishing kept
   every citation, number, quotation, and formula, and `POLISH_REPORT_V1`

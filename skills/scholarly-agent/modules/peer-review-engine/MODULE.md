@@ -15,7 +15,7 @@ act on it. Three roles, kept apart on purpose:
 ```
 Handling editor   desk screen -> picks the panel -> weighs reports -> decision letter
 Reviewers (2-3)   each reads the manuscript alone, through one lens, and writes a report
-Author side       response matrix -> revision -> second-round check (optional)
+Author side       response matrix -> revision -> revision-round check (repeat as needed)
 ```
 
 ## Ecosystem position
@@ -37,7 +37,7 @@ the corpus module, not the reviewer, finds and verifies the sources.
 
 - "Review my paper like a reviewer at *Journal X* would." / "幫我審稿" / "投稿前審稿"
 - "What would the editor decide?" / "Give me reviewer comments before I submit."
-- "Check whether my revision answers the reviewers." (second round)
+- "Check whether my revision answers the reviewers." / "再審一輪" (second and any later round)
 - A workflow stage: the dispatcher's `pre-submission-review` workflow
   recipe (review, then revision and response letter).
 
@@ -86,11 +86,14 @@ Integrity).
    matrix (`prv.decision.response_matrix`) listing every required change.
    The voice module drafts the revision and response letter if asked
    ([references/responding-to-reviewers.md](references/responding-to-reviewers.md)).
-7. **Second round (optional).** Check the revision and response letter
-   against the first-round decision: each required change is `addressed`,
-   `partially-addressed`, `rebutted` (with a reasoned argument), or
-   `not-addressed` (`prv.decision.check_revision`). One second round only,
-   matching the dispatcher's bounded repair loop.
+7. **Revision rounds (optional, unlimited).** Check the revision and
+   response letter against the previous decision: each required change is
+   `addressed`, `partially-addressed`, `rebutted` (with a reasoned
+   argument), or `not-addressed` (`prv.decision.check_revision`). Repeat
+   for as many rounds as the author wants: each round checks only what the
+   last one left open, and the sequence ends at `accept` or `reject`. The
+   router's bounded repair loop limits the Skill's own retries, not the
+   author's review rounds.
 
 ## Decision vocabulary
 
@@ -143,7 +146,7 @@ putting this module's directory on `sys.path`:
 - `prv.reports` -- `validate_report(report)` checks a `REVIEW_REPORT_V1`.
 - `prv.decision` -- `desk_screen(...)`, `decide(reports, ...)` producing an
   `EDITORIAL_DECISION_V1`, `response_matrix(decision)`, and
-  `check_revision(decision, responses)` for the second round.
+  `check_revision(decision, responses)` for each revision round.
 
 The rules in `prv/` are deterministic bookkeeping over the reports. The
 judgment (what is a fatal flaw, whether a rebuttal holds) stays with the
@@ -155,4 +158,4 @@ reviewer and editor roles.
 - `references/review-report.md` -- `REVIEW_REPORT_V1` fields, severity scale, and a worked example
 - `references/editorial-decision.md` -- desk screen, how concerns turn into a decision, letter template
 - `references/subagent-review.md` -- running reviewers as isolated subagents, and the single-model fallback
-- `references/responding-to-reviewers.md` -- response matrix, response letter, and the second-round check
+- `references/responding-to-reviewers.md` -- response matrix, response letter, and the revision-round checks

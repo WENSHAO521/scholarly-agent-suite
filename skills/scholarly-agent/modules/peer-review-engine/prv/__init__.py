@@ -3,7 +3,7 @@
 Deterministic bookkeeping for pre-submission peer review: reviewer panel
 selection and subagent briefings (prv.panel), REVIEW_REPORT_V1 validation
 (prv.reports), and the editor's desk screen, decision, response matrix, and
-second-round check (prv.decision). The judgment itself -- what counts as a
+revision-round checks (prv.decision). The judgment itself -- what counts as a
 fatal flaw, whether a rebuttal holds -- belongs to the reviewer and editor
 roles described in MODULE.md; this package only applies the rules to their
 output. Python 3.10+ standard library only.

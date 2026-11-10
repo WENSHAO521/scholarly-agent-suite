@@ -125,7 +125,7 @@ pytest tests/
   in the router policy; router eval fixtures follow the records contract.
 - `tests/test_markdown_links.py` -- every relative Markdown link resolves.
 - `tests/modules/prv/` -- peer-review panel, report validation, decision
-  rules, response matrix, second round; `tests/modules/scb/test_scb_bibliography.py`
+  rules, response matrix, unlimited revision rounds; `tests/modules/scb/test_scb_bibliography.py`
   -- BibTeX/RIS/CSL-JSON import and export; `tests/modules/ppe/` -- polish
   pattern catalogs, language detection for any language, diagnosis,
   invariant checks, `POLISH_REPORT_V1`, and the no-detector-scoring rule.

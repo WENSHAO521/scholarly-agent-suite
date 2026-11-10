@@ -24,10 +24,10 @@ The voice module drafts it from the completed matrix. Conventions:
 - Say what changed and where (section, page, line), or why not.
 - A **rebuttal** is legitimate: disagree with evidence and argument, never
   with tone. Concede what is right in the concern before disagreeing.
-- Do not claim a change that was not made. The second-round check compares
+- Do not claim a change that was not made. The revision-round check compares
   the letter with the manuscript.
 
-## Second-round check
+## Revision-round check
 
 `prv.decision.check_revision(decision, responses)` takes, for each required
 change, a status the editor role assigned after reading the revision and the
@@ -44,10 +44,13 @@ Outcome:
 
 - Every item `addressed` or `rebutted` → `accept`.
 - A fatal item `not-addressed` → `reject`.
-- A major item `not-addressed` → `major-revision`, and the letter says this
-  is the last revision round.
+- A major item `not-addressed` → `major-revision`.
 - A fatal or major item `partially-addressed` → `major-revision`.
 - Only minor items `partially-addressed` or `not-addressed` → `minor-revision`.
 
-Only one second round. If problems remain, say so plainly instead of
-starting a third.
+There is no limit on rounds. The result of one check (`stage: "revision"`,
+with its `round` number) is the input to the next, which asks only about
+the items still open. The sequence ends when a round reaches `accept` or
+`reject`. When the same item comes back unresolved round after round, say
+so plainly in the letter: another round will not settle a disagreement the
+author has to settle by changing the paper or making the rebuttal stick.

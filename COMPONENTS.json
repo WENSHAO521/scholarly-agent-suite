@@ -1,6 +1,6 @@
 {
   "suite": "scholarly-agent-suite",
-  "suite_version": "2.2.0",
+  "suite_version": "2.3.0",
   "skill": "scholarly-agent",
   "skill_path": "skills/scholarly-agent",
   "modules": {
