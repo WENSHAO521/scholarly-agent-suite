@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 700" role="img" aria-label="Scholarly Agent 架構圖：需求進入同一個 Skill，由調度器決定直接回答、載入單一模組，或依工作流程串接多個模組。六個模組是模型路由（執行規劃）、語料建構（研究證據）、寫作引擎（寫作與論證）、期刊匹配（投稿策略）、同儕審稿（投稿前審稿人與編輯決定）與文字潤色（任何語言，去除套話）。模組透過十三份有版本的 JSON 協定交換資料、共用一套誠信政策，每個工作流程最後都經過品質關卡，結果為 COMPLETE、COMPLETE_WITH_LIMITATIONS 或 BLOCKED。">
-  <title>Scholarly Agent：一個 Skill、六個模組</title>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 700" role="img" aria-label="Scholarly Agent 架構圖：需求進入同一個 Skill，由調度器決定直接回答、載入單一模組，或依工作流程串接多個模組。七個模組是模型路由（執行規劃）、語料建構（研究證據）、寫作引擎（寫作與論證）、期刊匹配（投稿策略）、同儕審稿（投稿前審稿人與編輯決定）、文字潤色（任何語言，去除套話）與學術翻譯（任兩種語言互譯）。模組透過十四份有版本的 JSON 協定交換資料、共用一套誠信政策，每個工作流程最後都經過品質關卡，結果為 COMPLETE、COMPLETE_WITH_LIMITATIONS 或 BLOCKED。">
+  <title>Scholarly Agent：一個 Skill、七個模組</title>
   <defs>
     <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
       <path d="M0,0 L10,5 L0,10 Z" fill="#241f18" fill-opacity="0.7"/>
@@ -46,86 +46,98 @@
   </g>
 
   <!-- dispatcher to modules -->
-  <line x1="127" y1="228" x2="127" y2="250" class="line" marker-end="url(#arr)"/>
-  <line x1="268" y1="228" x2="268" y2="250" class="line" marker-end="url(#arr)"/>
-  <line x1="409" y1="228" x2="409" y2="250" class="line" marker-end="url(#arr)"/>
-  <line x1="550" y1="228" x2="550" y2="250" class="line" marker-end="url(#arr)"/>
-  <line x1="691" y1="228" x2="691" y2="250" class="line" marker-end="url(#arr)"/>
-  <line x1="833" y1="228" x2="833" y2="250" class="line" marker-end="url(#arr)"/>
+  <line x1="117" y1="228" x2="117" y2="250" class="line" marker-end="url(#arr)"/>
+  <line x1="238" y1="228" x2="238" y2="250" class="line" marker-end="url(#arr)"/>
+  <line x1="359" y1="228" x2="359" y2="250" class="line" marker-end="url(#arr)"/>
+  <line x1="480" y1="228" x2="480" y2="250" class="line" marker-end="url(#arr)"/>
+  <line x1="601" y1="228" x2="601" y2="250" class="line" marker-end="url(#arr)"/>
+  <line x1="722" y1="228" x2="722" y2="250" class="line" marker-end="url(#arr)"/>
+  <line x1="843" y1="228" x2="843" y2="250" class="line" marker-end="url(#arr)"/>
 
   <!-- Module cards -->
   <g>
-    <rect x="60" y="252" width="134" height="138" rx="10" fill="#ffffff" stroke="#6b6f80" stroke-opacity="0.6"/>
-    <rect x="60" y="252" width="134" height="6" rx="3" fill="#6b6f80"/>
-    <text x="127" y="280" text-anchor="middle" class="mono" font-size="11.5" font-weight="700" fill="#6b6f80">模型路由</text>
-    <text x="127" y="297" text-anchor="middle" class="sans muted" font-size="10" font-style="italic">執行規劃</text>
-    <text x="127" y="320" text-anchor="middle" class="sans ink" font-size="9.5">模型層級與推理強度</text>
-    <text x="127" y="336" text-anchor="middle" class="sans ink" font-size="9.5">不限平台</text>
-    <text x="127" y="352" text-anchor="middle" class="sans ink" font-size="9.5">子代理委派</text>
-    <text x="127" y="377" text-anchor="middle" class="mono muted" font-size="10">僅政策</text>
+    <rect x="60" y="252" width="114" height="138" rx="10" fill="#ffffff" stroke="#6b6f80" stroke-opacity="0.6"/>
+    <rect x="60" y="252" width="114" height="6" rx="3" fill="#6b6f80"/>
+    <text x="117" y="280" text-anchor="middle" class="mono" font-size="10.5" font-weight="700" fill="#6b6f80">模型路由</text>
+    <text x="117" y="297" text-anchor="middle" class="sans muted" font-size="9.5" font-style="italic">執行規劃</text>
+    <text x="117" y="320" text-anchor="middle" class="sans ink" font-size="8.8">模型層級與推理強度</text>
+    <text x="117" y="336" text-anchor="middle" class="sans ink" font-size="8.8">不限平台</text>
+    <text x="117" y="352" text-anchor="middle" class="sans ink" font-size="8.8">子代理委派</text>
+    <text x="117" y="377" text-anchor="middle" class="mono muted" font-size="9">僅政策</text>
   </g>
   <g>
-    <rect x="201" y="252" width="134" height="138" rx="10" fill="#ffffff" stroke="#4f7d5a" stroke-opacity="0.6"/>
-    <rect x="201" y="252" width="134" height="6" rx="3" fill="#4f7d5a"/>
-    <text x="268" y="280" text-anchor="middle" class="mono" font-size="11.5" font-weight="700" fill="#4f7d5a">語料建構</text>
-    <text x="268" y="297" text-anchor="middle" class="sans muted" font-size="10" font-style="italic">研究證據</text>
-    <text x="268" y="320" text-anchor="middle" class="sans ink" font-size="9.5">OpenAlex · Crossref · PMC</text>
-    <text x="268" y="336" text-anchor="middle" class="sans ink" font-size="9.5">Zotero · BibTeX · RIS</text>
-    <text x="268" y="352" text-anchor="middle" class="sans ink" font-size="9.5">風格檔案＋出處紀錄</text>
-    <text x="268" y="377" text-anchor="middle" class="mono muted" font-size="10">engine: scb/</text>
+    <rect x="181" y="252" width="114" height="138" rx="10" fill="#ffffff" stroke="#4f7d5a" stroke-opacity="0.6"/>
+    <rect x="181" y="252" width="114" height="6" rx="3" fill="#4f7d5a"/>
+    <text x="238" y="280" text-anchor="middle" class="mono" font-size="10.5" font-weight="700" fill="#4f7d5a">語料建構</text>
+    <text x="238" y="297" text-anchor="middle" class="sans muted" font-size="9.5" font-style="italic">研究證據</text>
+    <text x="238" y="320" text-anchor="middle" class="sans ink" font-size="8.8">OpenAlex · Crossref</text>
+    <text x="238" y="336" text-anchor="middle" class="sans ink" font-size="8.8">Zotero · BibTeX · RIS</text>
+    <text x="238" y="352" text-anchor="middle" class="sans ink" font-size="8.8">風格檔案＋出處</text>
+    <text x="238" y="377" text-anchor="middle" class="mono muted" font-size="9">engine: scb/</text>
   </g>
   <g>
-    <rect x="342" y="252" width="134" height="138" rx="10" fill="#ffffff" stroke="#3f7a9e" stroke-opacity="0.6"/>
-    <rect x="342" y="252" width="134" height="6" rx="3" fill="#3f7a9e"/>
-    <text x="409" y="280" text-anchor="middle" class="mono" font-size="11.5" font-weight="700" fill="#3f7a9e">寫作引擎</text>
-    <text x="409" y="297" text-anchor="middle" class="sans muted" font-size="10" font-style="italic">寫作與論證</text>
-    <text x="409" y="320" text-anchor="middle" class="sans ink" font-size="9.5">依學科與文類調整</text>
-    <text x="409" y="336" text-anchor="middle" class="sans ink" font-size="9.5">主張強度校準</text>
-    <text x="409" y="352" text-anchor="middle" class="sans ink" font-size="9.5">引用誠信 · 長篇一致性</text>
-    <text x="409" y="377" text-anchor="middle" class="mono muted" font-size="9">engine: scripts/voice/</text>
+    <rect x="302" y="252" width="114" height="138" rx="10" fill="#ffffff" stroke="#3f7a9e" stroke-opacity="0.6"/>
+    <rect x="302" y="252" width="114" height="6" rx="3" fill="#3f7a9e"/>
+    <text x="359" y="280" text-anchor="middle" class="mono" font-size="10.5" font-weight="700" fill="#3f7a9e">寫作引擎</text>
+    <text x="359" y="297" text-anchor="middle" class="sans muted" font-size="9.5" font-style="italic">寫作與論證</text>
+    <text x="359" y="320" text-anchor="middle" class="sans ink" font-size="8.8">依學科與文類調整</text>
+    <text x="359" y="336" text-anchor="middle" class="sans ink" font-size="8.8">主張強度校準</text>
+    <text x="359" y="352" text-anchor="middle" class="sans ink" font-size="8.8">引用誠信 · 一致性</text>
+    <text x="359" y="377" text-anchor="middle" class="mono muted" font-size="9">scripts/voice/</text>
   </g>
   <g>
-    <rect x="483" y="252" width="134" height="138" rx="10" fill="#ffffff" stroke="#b07a2a" stroke-opacity="0.6"/>
-    <rect x="483" y="252" width="134" height="6" rx="3" fill="#b07a2a"/>
-    <text x="550" y="280" text-anchor="middle" class="mono" font-size="11.5" font-weight="700" fill="#b07a2a">期刊匹配</text>
-    <text x="550" y="297" text-anchor="middle" class="sans muted" font-size="10" font-style="italic">投稿策略</text>
-    <text x="550" y="320" text-anchor="middle" class="sans ink" font-size="9.5">候選期刊與硬性篩選</text>
-    <text x="550" y="336" text-anchor="middle" class="sans ink" font-size="9.5">範圍 · APC · 開放取用 · 收錄</text>
-    <text x="550" y="352" text-anchor="middle" class="sans ink" font-size="9.5">有證據的匹配評估</text>
-    <text x="550" y="377" text-anchor="middle" class="mono muted" font-size="10">engine: jfe/</text>
+    <rect x="423" y="252" width="114" height="138" rx="10" fill="#ffffff" stroke="#b07a2a" stroke-opacity="0.6"/>
+    <rect x="423" y="252" width="114" height="6" rx="3" fill="#b07a2a"/>
+    <text x="480" y="280" text-anchor="middle" class="mono" font-size="10.5" font-weight="700" fill="#b07a2a">期刊匹配</text>
+    <text x="480" y="297" text-anchor="middle" class="sans muted" font-size="9.5" font-style="italic">投稿策略</text>
+    <text x="480" y="320" text-anchor="middle" class="sans ink" font-size="8.8">候選期刊與篩選</text>
+    <text x="480" y="336" text-anchor="middle" class="sans ink" font-size="8.8">範圍 · APC · OA</text>
+    <text x="480" y="352" text-anchor="middle" class="sans ink" font-size="8.8">有證據的匹配</text>
+    <text x="480" y="377" text-anchor="middle" class="mono muted" font-size="9">engine: jfe/</text>
   </g>
   <g>
-    <rect x="624" y="252" width="134" height="138" rx="10" fill="#ffffff" stroke="#7a5a8c" stroke-opacity="0.6"/>
-    <rect x="624" y="252" width="134" height="6" rx="3" fill="#7a5a8c"/>
-    <text x="691" y="280" text-anchor="middle" class="mono" font-size="11.5" font-weight="700" fill="#7a5a8c">同儕審稿</text>
-    <text x="691" y="297" text-anchor="middle" class="sans muted" font-size="10" font-style="italic">投稿前審稿</text>
-    <text x="691" y="320" text-anchor="middle" class="sans ink" font-size="9.5">編輯初審</text>
-    <text x="691" y="336" text-anchor="middle" class="sans ink" font-size="9.5">審稿人子代理</text>
-    <text x="691" y="352" text-anchor="middle" class="sans ink" font-size="9.5">編輯決定</text>
-    <text x="691" y="377" text-anchor="middle" class="mono muted" font-size="10">engine: prv/</text>
+    <rect x="544" y="252" width="114" height="138" rx="10" fill="#ffffff" stroke="#7a5a8c" stroke-opacity="0.6"/>
+    <rect x="544" y="252" width="114" height="6" rx="3" fill="#7a5a8c"/>
+    <text x="601" y="280" text-anchor="middle" class="mono" font-size="10.5" font-weight="700" fill="#7a5a8c">同儕審稿</text>
+    <text x="601" y="297" text-anchor="middle" class="sans muted" font-size="9.5" font-style="italic">投稿前審稿</text>
+    <text x="601" y="320" text-anchor="middle" class="sans ink" font-size="8.8">編輯初審</text>
+    <text x="601" y="336" text-anchor="middle" class="sans ink" font-size="8.8">審稿人子代理</text>
+    <text x="601" y="352" text-anchor="middle" class="sans ink" font-size="8.8">編輯決定</text>
+    <text x="601" y="377" text-anchor="middle" class="mono muted" font-size="9">engine: prv/</text>
   </g>
   <g>
-    <rect x="766" y="252" width="134" height="138" rx="10" fill="#ffffff" stroke="#2f7f7a" stroke-opacity="0.6"/>
-    <rect x="766" y="252" width="134" height="6" rx="3" fill="#2f7f7a"/>
-    <text x="833" y="280" text-anchor="middle" class="mono" font-size="11.5" font-weight="700" fill="#2f7f7a">文字潤色</text>
-    <text x="833" y="297" text-anchor="middle" class="sans muted" font-size="10" font-style="italic">潤色（任何語言）</text>
-    <text x="833" y="320" text-anchor="middle" class="sans ink" font-size="9.5">去除套話與語言水印</text>
-    <text x="833" y="336" text-anchor="middle" class="sans ink" font-size="9.5">九種語言句式清單</text>
-    <text x="833" y="352" text-anchor="middle" class="sans ink" font-size="9.5">引用與數據不變</text>
-    <text x="833" y="377" text-anchor="middle" class="mono muted" font-size="10">engine: ppe/</text>
+    <rect x="665" y="252" width="114" height="138" rx="10" fill="#ffffff" stroke="#2f7f7a" stroke-opacity="0.6"/>
+    <rect x="665" y="252" width="114" height="6" rx="3" fill="#2f7f7a"/>
+    <text x="722" y="280" text-anchor="middle" class="mono" font-size="10.5" font-weight="700" fill="#2f7f7a">文字潤色</text>
+    <text x="722" y="297" text-anchor="middle" class="sans muted" font-size="9.5" font-style="italic">潤色（任何語言）</text>
+    <text x="722" y="320" text-anchor="middle" class="sans ink" font-size="8.8">去除套話與語言水印</text>
+    <text x="722" y="336" text-anchor="middle" class="sans ink" font-size="8.8">九種語言句式清單</text>
+    <text x="722" y="352" text-anchor="middle" class="sans ink" font-size="8.8">引用與數據不變</text>
+    <text x="722" y="377" text-anchor="middle" class="mono muted" font-size="9">engine: ppe/</text>
+  </g>
+  <g>
+    <rect x="786" y="252" width="114" height="138" rx="10" fill="#ffffff" stroke="#a0503c" stroke-opacity="0.6"/>
+    <rect x="786" y="252" width="114" height="6" rx="3" fill="#a0503c"/>
+    <text x="843" y="280" text-anchor="middle" class="mono" font-size="10.5" font-weight="700" fill="#a0503c">學術翻譯</text>
+    <text x="843" y="297" text-anchor="middle" class="sans muted" font-size="9.5" font-style="italic">任兩種語言互譯</text>
+    <text x="843" y="320" text-anchor="middle" class="sans ink" font-size="8.8">術語表一致</text>
+    <text x="843" y="336" text-anchor="middle" class="sans ink" font-size="8.8">繁簡轉換與地區用語</text>
+    <text x="843" y="352" text-anchor="middle" class="sans ink" font-size="8.8">數字與引用不變</text>
+    <text x="843" y="377" text-anchor="middle" class="mono muted" font-size="9">engine: tre/</text>
   </g>
 
   <!-- modules to protocol bus -->
-  <line x1="127" y1="390" x2="127" y2="408" class="line"/>
-  <line x1="268" y1="390" x2="268" y2="408" class="line"/>
-  <line x1="409" y1="390" x2="409" y2="408" class="line"/>
-  <line x1="550" y1="390" x2="550" y2="408" class="line"/>
-  <line x1="691" y1="390" x2="691" y2="408" class="line"/>
-  <line x1="833" y1="390" x2="833" y2="408" class="line"/>
+  <line x1="117" y1="390" x2="117" y2="408" class="line"/>
+  <line x1="238" y1="390" x2="238" y2="408" class="line"/>
+  <line x1="359" y1="390" x2="359" y2="408" class="line"/>
+  <line x1="480" y1="390" x2="480" y2="408" class="line"/>
+  <line x1="601" y1="390" x2="601" y2="408" class="line"/>
+  <line x1="722" y1="390" x2="722" y2="408" class="line"/>
+  <line x1="843" y1="390" x2="843" y2="408" class="line"/>
 
   <!-- Protocols -->
   <rect x="60" y="408" width="840" height="58" rx="10" fill="#f1ede3" stroke="#241f18" stroke-opacity="0.25"/>
-  <text x="480" y="429" text-anchor="middle" class="sans ink" font-size="12.5"><tspan class="mono" font-weight="700">protocols/</tspan>  13 份有版本的 JSON Schema 負責模組間的每次交接</text>
+  <text x="480" y="429" text-anchor="middle" class="sans ink" font-size="12.5"><tspan class="mono" font-weight="700">protocols/</tspan>  14 份有版本的 JSON Schema 負責模組間的每次交接</text>
   <text x="480" y="451" text-anchor="middle" class="mono muted" font-size="10">SCHOLARLY_PROFILE_V1 · MANUSCRIPT_PROFILE_V1 · JOURNAL_STYLE_CONTEXT_V1 · TARGET_JOURNAL_PROFILE_V1 · …</text>
 
   <!-- Shared policy -->

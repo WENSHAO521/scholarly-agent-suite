@@ -1,18 +1,19 @@
 # Shared discipline taxonomy
 
 One set of discipline families for every module. A module that keeps
-per-discipline guidance keeps exactly one file per family, named by the
-**slug** below, in its own `disciplines/` directory:
+per-discipline guidance keeps it in one `disciplines.md` file at the module
+root, with exactly one section per family, anchored (`<a id="<slug>">`) by
+the **slug** below:
 
-- `modules/scholarly-voice-engine/disciplines/` -- writing conventions
+- `modules/scholarly-voice-engine/disciplines.md` -- writing conventions
   (claim style, argument structure, citation behavior, voice).
-- `modules/journal-fit-engine/disciplines/` -- venue-fit emphasis (which fit
+- `modules/journal-fit-engine/disciplines.md` -- venue-fit emphasis (which fit
   dimensions weigh most when matching a manuscript to journals).
 
-The two directories answer different questions about the same field, so
-their content differs; their file names must not. `tests/test_disciplines.py`
-enforces that both directories match this table exactly. Inside YAML and JSON
-(for example `discipline_family:` in the voice files), use the **id**
+The two files answer different questions about the same field, so their
+content differs; their section anchors must not. `tests/test_disciplines.py`
+enforces that both files' sections match this table exactly. Inside YAML and JSON
+(for example `discipline_family:` in the voice sections), use the **id**
 column, which is the slug with `_` instead of `-`.
 
 | Slug | Id | Covers |
@@ -32,11 +33,11 @@ column, which is the slug with `_` instead of `-`.
 ## Rules
 
 - A manuscript or profile names its **primary** family; secondary families
-  go in `subdisciplines` or the interdisciplinary file's guidance, never as a
+  go in `subdisciplines` or the interdisciplinary section's guidance, never as a
   second primary.
 - Subfields (for example "public administration") map to their family;
   do not add a family for a subfield. Add a family only when both modules
-  need distinct guidance for it, and add both files in the same change.
+  need distinct guidance for it, and add both sections in the same change.
 - Free-text `discipline` fields in protocols (for example
   `MANUSCRIPT_PROFILE_V1.discipline`) stay free text; the family is how a
-  module picks its guidance file, not a validation vocabulary.
+  module picks its guidance section, not a validation vocabulary.

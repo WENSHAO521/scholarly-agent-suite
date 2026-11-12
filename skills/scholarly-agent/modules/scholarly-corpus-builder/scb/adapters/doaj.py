@@ -6,7 +6,7 @@ license metadata (bibjson.journal.license — "this journal publishes under
 CC BY") describes the *journal's stated policy*, not a verified per
 article license. This adapter therefore never writes a journal license
 into an article record's access.reuse_license — see parse_article()
-below and `references/copyright-boundary.md`.
+below and `references/corpus-policy.md#copyright-boundary`.
 """
 
 from __future__ import annotations

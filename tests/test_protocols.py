@@ -18,7 +18,7 @@ PROTOCOL_FILES = [
     "journal-profile.schema.json", "journal-style-context.schema.json",
     "continuity-state.schema.json", "provenance.schema.json",
     "review-report.schema.json", "editorial-decision.schema.json",
-    "polish-report.schema.json",
+    "polish-report.schema.json", "translation-report.schema.json",
 ]
 
 

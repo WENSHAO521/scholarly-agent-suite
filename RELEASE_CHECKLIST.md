@@ -14,14 +14,18 @@ concrete procedure behind rule 97 / rule 145.
 ## Layout
 
 - [ ] `skills/` contains exactly one Skill, `skills/scholarly-agent/`, and the
-      six modules live at `skills/scholarly-agent/modules/<name>/MODULE.md`
+      seven modules live at `skills/scholarly-agent/modules/<name>/MODULE.md`
       with no `SKILL.md` or frontmatter of their own.
-- [ ] `COMPONENTS.json` lists the six modules with their origin
+- [ ] `COMPONENTS.json` lists the seven modules with their origin
       (`merged_from` or native `origin`), and its `suite_version` matches `VERSION`.
 
 ## Validate
 
 - [ ] `python scripts/validate_suite.py` passes with 0 failures.
+- [ ] `python scripts/package_suite.py` builds both ZIPs; each has at most
+      200 files (the claude.ai upload limit), and
+      `scholarly-agent-skill-v<VERSION>.zip` has `scholarly-agent/SKILL.md`
+      at its top.
 - [ ] `pytest tests/` passes.
 - [ ] The Skill is self-contained: modules, `protocols/`, `shared/`, and
       workflow recipes all resolve from inside `skills/scholarly-agent/` --

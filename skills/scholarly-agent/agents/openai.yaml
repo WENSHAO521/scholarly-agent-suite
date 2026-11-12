@@ -3,15 +3,15 @@
 name: scholarly-agent
 description: >
   Evidence-first academic research and writing agent for any discipline.
-  One Skill with six on-demand internal modules -- execution planning
+  One Skill with seven on-demand internal modules -- execution planning
   (adaptive-model-router), research evidence (scholarly-corpus-builder),
   scholarly writing (scholarly-voice-engine), publication strategy
-  (journal-fit-engine), pre-submission peer review (peer-review-engine), and prose polishing in any language (prose-polish-engine) -- plus a dispatcher that loads only the module(s) a
+  (journal-fit-engine), pre-submission peer review (peer-review-engine), prose polishing in any language (prose-polish-engine), and scholarly translation between any languages (translation-engine) -- plus a dispatcher that loads only the module(s) a
   request needs and hands data between them via versioned protocols.
 instructions_file: ../SKILL.md
 interface:
   display_name: "Scholarly Agent"
-  short_description: "Evidence-first academic research, writing, polishing, peer review, and publication strategy"
+  short_description: "Evidence-first academic research, writing, polishing, translation, peer review, and publication strategy"
   default_prompt: >
     Use $scholarly-agent to help with this scholarly task, loading only the
     modules it actually needs.
@@ -36,6 +36,9 @@ modules:
   - name: prose-polish-engine
     path: modules/prose-polish-engine/MODULE.md
     role: polish-intelligence
+  - name: translation-engine
+    path: modules/translation-engine/MODULE.md
+    role: translation-intelligence
 capabilities:
   - decompose_scholarly_task
   - select_workflow_recipe
@@ -45,6 +48,7 @@ capabilities:
   - evaluate_manuscript_journal_fit
   - pre_submission_peer_review_and_editorial_decision
   - polish_prose_in_any_language_without_changing_content
+  - translate_scholarly_text_between_languages_without_changing_content
   - propagate_shared_state_and_constraints
   - apply_final_quality_gate
 constraints:
@@ -59,5 +63,5 @@ references:
   - references/orchestration-state.md
   - shared/capability-boundaries.md
   - shared/integrity-policy.md
-license: ../../../LICENSE
+license: ../LICENSE
 maintained_by: scholarly-agent-suite contributors

@@ -67,4 +67,4 @@ Use the root agent as the sole integrator. Apply the [delegation ROI policy](del
 
 Before submission, confirm that the abstract claims are supported, citations resolve, identifiers and versions are correct, figures and tables are referenced, required declarations are present, the venue's word and format limits are met, and limitations are stated. Report unresolved evidence or formatting decisions instead of silently filling them.
 
-For license terms, see the module [LICENSE](../LICENSE).
+For license terms, see the Skill [LICENSE](../../../LICENSE).

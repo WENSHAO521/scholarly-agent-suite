@@ -1,0 +1,201 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://scholarly-agent-suite/protocols/translation-report.schema.json",
+  "title": "TRANSLATION_REPORT_V1",
+  "description": "What a translation-engine pass carried across and what needs a human look: paragraph alignment, glossary terms, the check that citations, numbers, DOIs, URLs, and formulas survived unchanged, text left in the source script, and the translator's notes. Produced by translation-engine (tre.report.build_translation_report) and consumed by the dispatcher's final quality gate. See modules/translation-engine/references/translation-report.md.",
+  "type": "object",
+  "required": [
+    "protocol",
+    "source_language",
+    "target_language",
+    "mode",
+    "paragraphs",
+    "glossary",
+    "invariants",
+    "untranslated",
+    "status",
+    "notice"
+  ],
+  "properties": {
+    "protocol": {
+      "const": "TRANSLATION_REPORT_V1"
+    },
+    "source_language": {
+      "type": "string",
+      "pattern": "^[a-z]{2,3}(-[A-Za-z0-9]{2,8})*$",
+      "description": "Language code of the source, optionally with script or region (zh-Hant, pt-BR)."
+    },
+    "target_language": {
+      "type": "string",
+      "pattern": "^[a-z]{2,3}(-[A-Za-z0-9]{2,8})*$"
+    },
+    "variety": {
+      "type": "string",
+      "description": "Written variety asked for, e.g. zh-Hant, zh-Hans, pt-BR, en-GB. zh-Hant / zh-Hans are checked character by character."
+    },
+    "mode": {
+      "type": "string",
+      "enum": [
+        "faithful",
+        "academic",
+        "bilingual"
+      ]
+    },
+    "paragraphs": {
+      "type": "object",
+      "required": [
+        "source",
+        "target",
+        "flagged"
+      ],
+      "properties": {
+        "source": {
+          "type": "integer"
+        },
+        "target": {
+          "type": "integer"
+        },
+        "flagged": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "description": "1-based paragraphs whose length moved far from the rest relative to the source"
+        }
+      },
+      "additionalProperties": false
+    },
+    "glossary": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "source",
+          "expected",
+          "source_count",
+          "target_count",
+          "status"
+        ],
+        "properties": {
+          "source": {
+            "type": "string"
+          },
+          "expected": {
+            "type": "string"
+          },
+          "source_count": {
+            "type": "integer"
+          },
+          "target_count": {
+            "type": "integer"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "kept",
+              "missing",
+              "count-differs",
+              "not-in-source"
+            ]
+          },
+          "keep": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "invariants": {
+      "type": "object",
+      "required": [
+        "status",
+        "failures",
+        "warnings"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "PASS",
+            "REVIEW",
+            "FAIL"
+          ]
+        },
+        "failures": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "warnings": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "untranslated": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "PASS",
+        "REVIEW",
+        "FAIL"
+      ]
+    },
+    "notice": {
+      "type": "string"
+    },
+    "notes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "kind",
+          "note"
+        ],
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "quotation",
+              "term",
+              "name",
+              "number",
+              "ambiguity",
+              "culture",
+              "source-error"
+            ]
+          },
+          "note": {
+            "type": "string"
+          },
+          "source": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "escalations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "additionalProperties": false
+}

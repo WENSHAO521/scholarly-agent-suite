@@ -120,7 +120,7 @@ def validate_confidence(confidence: str | None) -> list[str]:
 def validate_author_profile(profile: dict) -> list[str]:
     """Permissive check: unknown top-level keys are flagged, known keys are
     not type-checked beyond what's cheap to check here. Authoritative shape
-    lives in scholarly-corpus-builder/references/author-profile.md.
+    lives in scholarly-corpus-builder/references/profiles.md#author-profile.
     """
     errors: list[str] = []
     if profile.get("profile_type") not in (None, "author"):

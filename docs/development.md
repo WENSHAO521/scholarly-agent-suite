@@ -20,17 +20,19 @@ Since v2.0.0 the repository ships exactly one Skill:
 ```
 skills/scholarly-agent/
   SKILL.md                  dispatcher: the only file with Skill frontmatter
+  LICENSE                   the Skill's license, with every merged module's original notice
   agents/openai.yaml        optional cross-runtime descriptor
   references/               routing matrix, orchestration state, 15 workflow recipes
   scripts/                  workflow_resolver.py, target_journal_adapter.py
   modules/
     adaptive-model-router/     MODULE.md, references/
-    scholarly-corpus-builder/  MODULE.md, references/, scb/  (scb/bibliography.py: BibTeX/RIS/CSL-JSON)
-    scholarly-voice-engine/    MODULE.md, references/, disciplines/, assets/, scripts/voice/
-    journal-fit-engine/        MODULE.md, references/, disciplines/, jfe/
+    scholarly-corpus-builder/  MODULE.md, references/ (4 grouped files), scb/  (scb/bibliography.py: BibTeX/RIS/CSL-JSON)
+    scholarly-voice-engine/    MODULE.md, references/ (5 grouped files), disciplines.md, scripts/voice/
+    journal-fit-engine/        MODULE.md, references/, disciplines.md, jfe/
     peer-review-engine/        MODULE.md, references/, prv/  (native, v2.1.0)
     prose-polish-engine/       MODULE.md, references/, ppe/  (native, v2.2.0)
-  protocols/                13 JSON Schemas (*_V1)
+    translation-engine/        MODULE.md, references/, tre/  (native, v2.4.0)
+  protocols/                14 JSON Schemas (*_V1)
   shared/                   integrity, provenance, terminology, versioning, boundaries,
                             disciplines (the one discipline taxonomy)
 ```
@@ -45,6 +47,12 @@ Rules that keep this layout honest (all checked by `validate_suite.py` and
   needed at runtime; `workflows/` is a generated mirror of
   `skills/scholarly-agent/references/workflows/` (`scripts/sync_workflows.py`).
 - Paths inside a `MODULE.md` are relative to that module's directory.
+- The Skill stays at or under 200 files, the claude.ai upload limit
+  (`scripts/package_suite.py` refuses to build either ZIP above it;
+  `tests/test_packaging.py` and CI check it). Prefer adding a section to an
+  existing reference file over adding a file: grouped reference files keep
+  each original document whole as a section starting at
+  `<a id="<name>"></a>`, and links point at `<group>.md#<name>`.
 - Modules exchange data only through `protocols/`; module boundaries are
   defined in `shared/capability-boundaries.md`.
 
@@ -73,7 +81,7 @@ All modules are developed in this repository. `COMPONENTS.json` records,
 per module, either the upstream repository, release, and commit it was
 merged from (`merged_from`, the four v2.0.0 modules), or
 `"origin": {"native": true, "added_in": "<version>"}` for a module created
-here (`peer-review-engine`, `prose-polish-engine`).
+here (`peer-review-engine`, `prose-polish-engine`, `translation-engine`).
 
 Adding a module: create `modules/<name>/MODULE.md` with the standard header
 (no frontmatter) and a `> Scope:` line, add it to the module map and the
@@ -87,7 +95,7 @@ no drift check any more; the former `scripts/sync_components.py`,
 weekly drift workflow were removed in v2.0.0.
 
 Python engines are imported by putting the module directory on `sys.path`
-(`import scb`, `import jfe`, `import prv`, `import ppe`). The voice module's engine lives under a
+(`import scb`, `import jfe`, `import prv`, `import ppe`, `import tre`). The voice module's engine lives under a
 directory named `scripts/`, which collides with the dispatcher's own
 `scripts/`; tests load those files by path with
 `tests/conftest.py:load_module_at()`.
@@ -101,7 +109,7 @@ pytest tests/
 ```
 
 - `tests/test_components.py`, `test_standalone_independence.py`,
-  `test_plugin_manifest.py` -- one Skill, six modules, no stray
+  `test_plugin_manifest.py` -- one Skill, seven modules, no stray
   frontmatter, everything resolvable inside the Skill.
 - `tests/test_orchestration_triggers.py`, `test_capability_boundaries.py`,
   `evals/` -- trigger boundary, the three dispatch paths, negative examples,
@@ -126,7 +134,11 @@ pytest tests/
 - `tests/test_markdown_links.py` -- every relative Markdown link resolves.
 - `tests/modules/prv/` -- peer-review panel, report validation, decision
   rules, response matrix, unlimited revision rounds; `tests/modules/scb/test_scb_bibliography.py`
-  -- BibTeX/RIS/CSL-JSON import and export; `tests/modules/ppe/` -- polish
+  -- BibTeX/RIS/CSL-JSON import and export; `tests/modules/tre/` -- translation
+  invariants (numbers across decimal conventions, citations and cited names,
+  DOIs, formulas, untranslated text, Traditional / Simplified characters,
+  paragraphs, hedges), glossaries, `TRANSLATION_REPORT_V1`, and the CLI;
+  `tests/modules/ppe/` -- polish
   pattern catalogs, language detection for any language, diagnosis,
   invariant checks, `POLISH_REPORT_V1`, and the no-detector-scoring rule.
 - `tests/modules/scb/`, `tests/modules/jfe/`, `tests/modules/voice/` -- each
@@ -150,7 +162,7 @@ Python 3.11 job.
 
 ## Runtime package
 
-`scripts/package_suite.py` builds a self-contained runtime ZIP
+`scripts/package_suite.py` builds two ZIPs. The first is a self-contained runtime ZIP
 (`dist/scholarly-agent-suite-v<version>.zip`) containing only
 `.codex-plugin/`, `skills/` (the one Skill, including its modules,
 protocols, and shared policy), `workflows/`, `README.md`, `LICENSE`,
@@ -160,6 +172,13 @@ protocols, and shared policy), `workflows/`, `README.md`, `LICENSE`,
 versions, file list, and a SHA-256 checksum. The ZIP is byte-deterministic:
 sorted entries, a fixed timestamp, LF-normalized text, `ZIP_STORED`, and a
 pinned `create_system`.
+
+The second, `dist/scholarly-agent-skill-v<version>.zip`, is for uploading
+in claude.ai: only the `scholarly-agent/` folder, with `SKILL.md` at its
+top, minus `agents/` (a descriptor other runtimes read). claude.ai rejects
+a ZIP with more than 200 files, so the build fails if either ZIP would
+exceed `MAX_UPLOAD_FILES` (200). Its checksum is in `release-manifest.json`
+under `skill_zip`, and both ZIPs are attached to every release.
 
 ## Limitations
 
@@ -172,6 +191,11 @@ pinned `create_system`.
 - Peer-review evals (`evals/modules/peer-review-engine/`) describe expected
   behavior; like the other module evals they are not run against a live
   model here. `prv/` tests cover the deterministic rules only.
+- Translation checks cannot see a meaning error in a sentence that keeps
+  its numbers and citations; the translator's re-read against the source
+  is still required. Untranslated-text detection works only between
+  languages in different scripts, and the Traditional / Simplified check
+  covers about a hundred common characters, not regional vocabulary.
 - Polish phrase catalogs cover nine languages (en, zh, ja, ko, es, fr, de,
   pt, ru). Other languages get structural checks and protected-item checks
   only; `detect_language()` is a script and function-word heuristic, so pass

@@ -1,5 +1,5 @@
 """Implements the voice-precedence and confidence-gating logic described in
-references/corpus-profile-integration.md:
+references/integration.md#corpus-profile-integration:
 
     user author profile
       -> discipline conventions
@@ -17,7 +17,7 @@ PRECEDENCE = ("author", "discipline", "journal", "historical")
 
 # Only journal/historical layers are corpus-derived and confidence-rated in
 # practice (author and discipline conventions are treated as authoritative
-# inputs, not sampled estimates) — see corpus-profile-integration.md.
+# inputs, not sampled estimates) — see integration.md#corpus-profile-integration.
 CONFIDENCE_GATED_LAYERS = ("journal", "historical")
 
 

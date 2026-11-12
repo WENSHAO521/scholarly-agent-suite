@@ -1,5 +1,5 @@
 """A small, heuristic continuity ledger for long-form (book/monograph) work,
-operationalizing references/continuity-ledger.md's concept and claim
+operationalizing references/quality-and-editing.md#continuity-ledger's concept and claim
 ledgers. Not NLP — it catches exact-key redefinition and direct stance
 contradiction, which is most of what actually goes wrong across chapters
 drafted in separate passes.
@@ -52,7 +52,7 @@ class ContinuityLedger:
     def add_concept(self, term: str, definition: str, chapter: int, *, refinement: bool = False) -> None:
         """Record a concept's definition. Raises ContinuityConflict if the
         term was previously defined differently and this isn't marked as a
-        deliberate refinement (see continuity-ledger.md §Concept ledger).
+        deliberate refinement (see quality-and-editing.md#continuity-ledger §Concept ledger).
         """
         existing = self.concepts.get(term)
         if existing is not None and existing.definition != definition and not refinement:
@@ -67,7 +67,7 @@ class ContinuityLedger:
         """Record a claim's stance (e.g. "supported", "rejected", or any
         short label meaningful to the caller). Raises ContinuityConflict on
         a direct contradiction not marked as a refinement (see
-        continuity-ledger.md §Claim ledger).
+        quality-and-editing.md#continuity-ledger §Claim ledger).
         """
         existing = self.claims.get(claim_key)
         if existing is not None and existing.stance != stance and not refinement:
@@ -81,7 +81,7 @@ class ContinuityLedger:
     def check_term_variants(self, canonical: str, seen_terms: list[str]) -> list[str]:
         """Return any terms in seen_terms that are not the canonical term
         registered for a concept — a lightweight terminology-drift check
-        (continuity-ledger.md §Terminology audit). Case-sensitive by design:
+        (quality-and-editing.md#continuity-ledger §Terminology audit). Case-sensitive by design:
         capitalization drift is itself a flagged pattern.
         """
         return [t for t in seen_terms if t != canonical]

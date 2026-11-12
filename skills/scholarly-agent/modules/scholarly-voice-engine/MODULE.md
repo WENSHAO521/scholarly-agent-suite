@@ -34,14 +34,16 @@ discipline-appropriate prose. Never imitate a specific living author's style
 directly, and never compromise factual/evidentiary integrity for the sake of
 voice. This Skill is not a celebrity-phrase generator, an AI-detector-evasion
 tool, a citation fabricator, or a verbosity generator — see
-`references/integration.md` §Out of scope and `references/quality-audit.md`.
+`references/integration.md` §Out of scope and `references/quality-and-editing.md#quality-audit`.
 
 ## Invocation boundary
 
 Activate for substantive academic drafting/revision: writing or rewriting an
 article/review/commentary/chapter/monograph section, strengthening an
 argument, adapting prose to a discipline or journal, improving scholarly
-voice, or translating/writing multilingual scholarly prose. Do not activate
+voice, or writing multilingual scholarly prose. Translating a finished text
+into another language belongs to the sibling module `translation-engine`;
+this module drafts and revises in whatever language the user writes in. Do not activate
 for ordinary email, casual text, basic non-scholarly translation, a simple
 factual question, or social-media copy — unless academic prose is actually
 the task's main content.
@@ -70,91 +72,91 @@ journal_context_available:     # from journal-fit-engine, if present
 ```
 
 Ask only when a genuinely ambiguous field would materially change claim
-style, citation behavior, or structure (see `references/disciplinary-matrix.md`
+style, citation behavior, or structure (see `references/argument-and-claims.md#disciplinary-matrix`
 §Inference procedure); otherwise infer and proceed.
 
 ## Operating hierarchy
 
 1. Identify the task (draft vs. rewrite vs. polish) and editing mode — see
-   `references/editing-modes.md`.
-2. Identify **discipline** — `references/disciplinary-matrix.md`, then load
-   the matching file in `disciplines/` (and its Economics/Philosophy/History
+   `references/quality-and-editing.md#editing-modes`.
+2. Identify **discipline** — `references/argument-and-claims.md#disciplinary-matrix`, then load
+   the matching section of `disciplines.md` (and its Economics/Philosophy/History
    subsection where relevant).
-3. Identify **genre** — `references/genre-matrix.md`; route to
-   `references/review-writing.md` or `references/commentary-writing.md` for
+3. Identify **genre** — `references/writing-genres.md#genre-matrix`; route to
+   `references/writing-genres.md#review-writing` or `references/writing-genres.md#commentary-writing` for
    those families.
-4. Identify **research design** — `references/research-design-matrix.md` —
+4. Identify **research design** — `references/argument-and-claims.md#research-design-matrix` —
    this sets the claim ceiling independent of discipline.
 5. Identify argument architecture for discipline × genre × design —
-   `references/argument-architectures.md`, and `references/article-writing.md`
-   or `references/book-writing.md` depending on scale (see Book vs. article
+   `references/argument-and-claims.md#argument-architectures`, and `references/writing-genres.md#article-writing`
+   or `references/writing-genres.md#book-writing` depending on scale (see Book vs. article
    routing below).
-6. Identify audience/readability level and language — `references/voice-engine.md`
-   §Readability calibration; load `references/multilingual-writing.md` for
-   non-English or translation tasks.
+6. Identify audience/readability level and language — `references/voice-profiles.md#voice-engine`
+   §Readability calibration; load `references/voice-profiles.md#multilingual-writing` for
+   non-English writing (a translation of finished text goes to `translation-engine`).
 7. Choose a **voice profile** — primary + secondary + depth — from
-   `references/historical-voice-profiles.md` (abstracted, composite; never
-   named-author imitation) and calibrate era with `references/era-calibration.md`.
+   `references/voice-profiles.md#historical-voice-profiles` (abstracted, composite; never
+   named-author imitation) and calibrate era with `references/voice-profiles.md#era-calibration`.
 8. If the user supplies their own prior writing, run
-   `references/author-voice-calibration.md`; if `scholarly-corpus-builder` is
-   available, consume its profile via `references/corpus-profile-integration.md`
+   `references/voice-profiles.md#author-voice-calibration`; if `scholarly-corpus-builder` is
+   available, consume its profile via `references/integration.md#corpus-profile-integration`
    — apply the stated voice precedence in either case.
 9. If a target venue/journal is known and `journal-fit-engine` is available,
-   apply `references/journal-style-adaptation.md` within its adaptation
+   apply `references/integration.md#journal-style-adaptation` within its adaptation
    boundary (framing/structure, never substance).
-10. Apply `references/human-scholarly-prose.md` for natural rhythm and
+10. Apply `references/quality-and-editing.md#human-scholarly-prose` for natural rhythm and
     controlled asymmetry.
-11. Run the citation-integrity guard (`references/citation-integrity.md`) and
-    the claim-calibration check (`references/claim-calibration.md`) — these
+11. Run the citation-integrity guard (`references/argument-and-claims.md#citation-integrity`) and
+    the claim-calibration check (`references/argument-and-claims.md#claim-calibration`) — these
     outrank every voice consideration.
 12. Draft or rewrite, respecting the resolved editing intensity
-    (`references/editing-modes.md`).
+    (`references/quality-and-editing.md#editing-modes`).
 13. Run the argument-integrity tests and final quality audit
-    (`references/quality-audit.md`), which also governs long-form continuity
-    via `references/continuity-ledger.md` for book-scale work.
+    (`references/quality-and-editing.md#quality-audit`), which also governs long-form continuity
+    via `references/quality-and-editing.md#continuity-ledger` for book-scale work.
 14. Resolve to a quality state (`PASS` / `PASS_WITH_LIMITATIONS` /
     `REPAIR_REQUIRED` / `BLOCKED_BY_*`) and apply the repair order before
-    returning text, per the stop rule in `references/quality-audit.md`.
+    returning text, per the stop rule in `references/quality-and-editing.md#quality-audit`.
 
 Do not narrate this pipeline to the user; just apply it.
 
 ## Book vs. article routing
 
 - Cues like "chapter," "monograph," "book," "Chapter N" → load
-  `references/book-writing.md` and `references/continuity-ledger.md`. Do not
+  `references/writing-genres.md#book-writing` and `references/quality-and-editing.md#continuity-ledger`. Do not
   also load the full article module.
 - Cues like "article," "paper," "manuscript," "journal submission" → load
-  `references/article-writing.md`.
+  `references/writing-genres.md#article-writing`.
 - Cues like "review article," "systematic review," "meta-analysis" → also
-  load `references/review-writing.md`.
+  load `references/writing-genres.md#review-writing`.
 - Cues like "commentary," "perspective," "editorial," "Nature-style essay" →
-  also load `references/commentary-writing.md`.
+  also load `references/writing-genres.md#commentary-writing`.
 - If ambiguous, ask, or infer from context (e.g., stated word count, journal
   name).
 
 ## Discipline modules
 
-Load only the module(s) needed from `disciplines/`: `natural-sciences.md`,
-`mathematics-formal.md`, `engineering-computing.md`, `medicine-health.md`,
-`social-sciences.md` (includes an Economics subsection),
-`business-management.md`, `law.md`, `humanities.md` (includes Philosophy and
-History subsections), `education.md`, `arts-design.md`,
-`interdisciplinary.md`. Each specifies claim style, argument structures,
+Load only the section(s) needed from `disciplines.md` (one section per family,
+anchored by slug): `natural-sciences`, `mathematics-formal`,
+`engineering-computing`, `medicine-health`, `social-sciences` (includes an
+Economics subsection), `business-management`, `law`, `humanities` (includes
+Philosophy and History subsections), `education`, `arts-design`,
+`interdisciplinary`. Each specifies claim style, argument structures,
 evidence norms, citation behavior, first-person conventions, common failure
-modes, and recommended voice profiles. See `references/disciplinary-matrix.md`
+modes, and recommended voice profiles. See `references/argument-and-claims.md#disciplinary-matrix`
 for routing and for adding a new discipline without touching this file.
 
 For work spanning more than one discipline, load
-`references/interdisciplinary-writing.md` alongside each home/secondary
+`references/writing-genres.md#interdisciplinary-writing` alongside each home/secondary
 discipline module.
 
 ## Voice profiles
 
 Voice is a multi-dimensional profile (sentence length, claim strength,
 qualification density, mechanism focus, historical depth, etc.), never a
-single label. See `references/voice-engine.md` for the dimension list and how
+single label. See `references/voice-profiles.md#voice-engine` for the dimension list and how
 to combine primary/secondary/depth into a coherent composite. Historical
-profiles in `references/historical-voice-profiles.md` describe transferable
+profiles in `references/voice-profiles.md#historical-voice-profiles` describe transferable
 *mechanisms* abstracted from named scholars — never characteristic phrases or
 quotations to copy.
 
@@ -166,12 +168,12 @@ requested traits) but produce an original voice, not a stylistic copy.
 ## Author voice and external profiles
 
 If the user provides their own prior writing, infer their profile via
-`references/author-voice-calibration.md` — it takes priority over any
+`references/voice-profiles.md#author-voice-calibration` — it takes priority over any
 historical or corpus/journal-derived profile, with disciplinary convention
 filling gaps the sample doesn't cover. When `scholarly-corpus-builder` and/or
 `journal-fit-engine` are present, consume their outputs via
-`references/corpus-profile-integration.md` and
-`references/journal-style-adaptation.md` respectively — full precedence
+`references/integration.md#corpus-profile-integration` and
+`references/integration.md#journal-style-adaptation` respectively — full precedence
 order lives in the former. Do not copy the user's errors forward; do copy
 their genuine stylistic choices.
 
@@ -179,18 +181,18 @@ their genuine stylistic choices.
 
 - When a term (e.g., "institution," "resilience," "validity," "robustness")
   carries different meanings across disciplines, name which meaning is
-  intended — see `references/interdisciplinary-writing.md`.
+  intended — see `references/writing-genres.md#interdisciplinary-writing`.
 - Never fabricate citations, DOIs, page numbers, quotations, authors,
-  statistics, or results — see `references/citation-integrity.md`.
+  statistics, or results — see `references/argument-and-claims.md#citation-integrity`.
 - Never invent quotations attributed to historical or living scholars.
 - Never inflate claim strength, novelty, or contribution beyond what the
-  material supports — see `references/claim-calibration.md`.
+  material supports — see `references/argument-and-claims.md#claim-calibration`.
 - When rewriting existing scholarship, never silently alter data, results,
   causal claims, sample, method, legal rule, historical fact, definitions, or
   theorem statements — voice edits are subordinate to epistemic accuracy.
 - Do not "humanize" prose by degrading it: no deliberately inserted errors,
   typos, logical gaps, or bad citations — see
-  `references/human-scholarly-prose.md`.
+  `references/quality-and-editing.md#human-scholarly-prose`.
 
 ## Editing modes and output modes
 
@@ -198,7 +200,7 @@ Intensity (`SURFACE_EDIT` / `STRUCTURAL_EDIT` / `ARGUMENT_RECONSTRUCTION`)
 and output mode (draft / revise / polish / compress / expand / restructure /
 rebuild_argument / journal_adapt / book_chapter / author_voice /
 disciplinary_convert) are resolved separately — see
-`references/editing-modes.md`. Default to the lightest intensity consistent
+`references/quality-and-editing.md#editing-modes`. Default to the lightest intensity consistent
 with the request.
 
 ## Ecosystem position
@@ -219,30 +221,33 @@ full ecosystem contract, including this Skill's own conceptual
 
 ## Reference index
 
-| File | Loads when you need... |
+Reference files are grouped (five files); each section starts at an `<a id>`
+anchor, so read only the section you need.
+
+| Section | Loads when you need... |
 |---|---|
-| `references/voice-engine.md` | The voice-dimension schema and how to compose profiles |
-| `references/disciplinary-matrix.md` | Routing to the right discipline module(s) |
-| `references/genre-matrix.md` | The genre list and its defining features |
-| `references/research-design-matrix.md` | Design-driven claim ceilings, independent of discipline |
-| `references/argument-architectures.md` | Section-by-section argument shapes per genre family |
-| `references/claim-calibration.md` | Claim types, the claim-strength invariant, uncertainty language |
-| `references/citation-integrity.md` | No-fabrication rules, citation preservation, quotation discipline |
-| `references/human-scholarly-prose.md` | Anti-generic-AI prose rules, rhythm, transitions |
-| `references/quality-audit.md` | Integrity tests, quality states, repair order, stop rule |
-| `references/historical-voice-profiles.md` | Abstracted historical scholarly profiles and composite voices |
-| `references/era-calibration.md` | Adjusting prose for the intellectual era being emulated |
-| `references/author-voice-calibration.md` | Inferring and prioritizing the user's own voice |
-| `references/corpus-profile-integration.md` | Consuming a scholarly-corpus-builder profile |
-| `references/journal-style-adaptation.md` | Consuming a journal-fit-engine adaptation target |
-| `references/article-writing.md` | Article-scale drafting/rewriting |
-| `references/review-writing.md` | Narrative/systematic/scoping/meta-analysis/critical/synthesis reviews |
-| `references/commentary-writing.md` | Commentary, perspective, editorial, Nature-style essays |
-| `references/book-writing.md` | Book/chapter-scale drafting, monograph continuity |
-| `references/continuity-ledger.md` | Concept/claim/evidence/chapter ledger mechanics |
-| `references/multilingual-writing.md` | Non-English and translation-mode scholarly writing |
-| `references/editing-modes.md` | Editing intensity and output-mode definitions |
-| `references/interdisciplinary-writing.md` | Combining disciplines without collision |
+| `references/voice-profiles.md#voice-engine` | The voice-dimension schema and how to compose profiles |
+| `references/argument-and-claims.md#disciplinary-matrix` | Routing to the right discipline module(s) |
+| `references/writing-genres.md#genre-matrix` | The genre list and its defining features |
+| `references/argument-and-claims.md#research-design-matrix` | Design-driven claim ceilings, independent of discipline |
+| `references/argument-and-claims.md#argument-architectures` | Section-by-section argument shapes per genre family |
+| `references/argument-and-claims.md#claim-calibration` | Claim types, the claim-strength invariant, uncertainty language |
+| `references/argument-and-claims.md#citation-integrity` | No-fabrication rules, citation preservation, quotation discipline |
+| `references/quality-and-editing.md#human-scholarly-prose` | Anti-generic-AI prose rules, rhythm, transitions |
+| `references/quality-and-editing.md#quality-audit` | Integrity tests, quality states, repair order, stop rule |
+| `references/voice-profiles.md#historical-voice-profiles` | Abstracted historical scholarly profiles and composite voices |
+| `references/voice-profiles.md#era-calibration` | Adjusting prose for the intellectual era being emulated |
+| `references/voice-profiles.md#author-voice-calibration` | Inferring and prioritizing the user's own voice |
+| `references/integration.md#corpus-profile-integration` | Consuming a scholarly-corpus-builder profile |
+| `references/integration.md#journal-style-adaptation` | Consuming a journal-fit-engine adaptation target |
+| `references/writing-genres.md#article-writing` | Article-scale drafting/rewriting |
+| `references/writing-genres.md#review-writing` | Narrative/systematic/scoping/meta-analysis/critical/synthesis reviews |
+| `references/writing-genres.md#commentary-writing` | Commentary, perspective, editorial, Nature-style essays |
+| `references/writing-genres.md#book-writing` | Book/chapter-scale drafting, monograph continuity |
+| `references/quality-and-editing.md#continuity-ledger` | Concept/claim/evidence/chapter ledger mechanics |
+| `references/voice-profiles.md#multilingual-writing` | Non-English scholarly writing; translation principles (full translation: `translation-engine`) |
+| `references/quality-and-editing.md#editing-modes` | Editing intensity and output-mode definitions |
+| `references/writing-genres.md#interdisciplinary-writing` | Combining disciplines without collision |
 | `references/integration.md` | Ecosystem contract with the Router, Corpus Builder, Journal Fit Engine |
 
 Worked test cases live in the Suite repository's `evals/modules/scholarly-voice-engine/`,

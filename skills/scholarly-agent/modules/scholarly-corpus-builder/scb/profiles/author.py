@@ -1,7 +1,7 @@
 """Personal Author Profile builder — maps StyleProfile onto the schema
-in references/author-profile.md. Callers are responsible for the
+in references/profiles.md#author-profile. Callers are responsible for the
 authorization boundary (Tier 1 user-supplied works only — see
-references/author-profile.md "Authorization boundary"); this module
+references/profiles.md#author-profile "Authorization boundary"); this module
 only aggregates whatever Documents it is given.
 """
 

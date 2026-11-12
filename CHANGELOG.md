@@ -6,9 +6,76 @@ Suite versioning follows `docs/development.md#suite-versioning` /
 have no versions of their own; `COMPONENTS.json` records where each module
 was merged from.
 
+## v2.4.0 -- 2026-11-12
+
+v2.4.0 PREPARED -- NOT PUBLISHED
+
+**A seventh module for scholarly translation, and a Skill package that
+uploads to claude.ai.** Invoking the Skill is unchanged; nothing existing
+was renamed.
+
+### Added
+
+- **`translation-engine` module** (`modules/translation-engine/`), with its
+  own page (`MODULE.md`): scholarly translation (翻譯) between any two
+  languages, and conversion between Traditional and Simplified Chinese with
+  regional vocabulary (資訊 / 信息, 軟體 / 软件, 品質 / 质量). Three modes:
+  `faithful` (default), `academic` (the target language's academic
+  register, for submission), and `bilingual` (paragraph-by-paragraph view
+  for a co-author or supervisor). Claims, claim strength, citations,
+  numbers, quotations, and defined terms come through unchanged; problems in
+  the source are reported as escalations, never silently fixed.
+- **Runtime `tre/`** (standard library): `tre.glossary` (term candidates,
+  JSON / TSV glossaries, consistency check), `tre.invariants` (every DOI,
+  URL, formula, inline code, numbered citation, citation year, cited author
+  name, and digit-written number must survive; decimal commas and
+  full-width digits are matched; 萬 / 億-style conversions are flagged for
+  review; text left in the source script, the wrong Chinese script, missing
+  paragraphs, and dropped hedges or negations are flagged), `tre.report`,
+  and `python -m tre terms|check|bilingual`.
+- **`TRANSLATION_REPORT_V1`** protocol
+  (`protocols/translation-report.schema.json`): paragraph alignment,
+  glossary results, invariant result, untranslated text, translator's
+  notes, escalations, and a fixed notice that a fluent reader should check
+  the translation and that AI-assisted translation may need disclosure.
+- **`dist/scholarly-agent-skill-v<version>.zip`**, a second release asset
+  for uploading in claude.ai's Skills settings: only the
+  `scholarly-agent/` folder with `SKILL.md` at its top (171 files; the suite
+  ZIP is 192).
+- Evals (`evals/modules/translation-engine/`), four orchestration
+  fixtures, and tests (`tests/modules/tre/`).
+
+### Fixed
+
+- **claude.ai rejected the v2.3.0 package** with "Zip contains too many
+  files (maximum 200)": the Skill alone had 217 files and the suite ZIP
+  238. The Skill now has fewer files without losing content:
+  - the per-discipline guidance of the voice and journal-fit modules is one
+    `disciplines.md` per module (one anchored section per family) instead of
+    eleven files each;
+  - the voice module's 23 reference files are five grouped files and the
+    corpus module's 15 are four, each original file kept whole as an
+    anchored section (`references/<group>.md#<original-name>`), with every
+    link and path in the Skill, tests, and docs updated;
+  - the six module `LICENSE` files are one `skills/scholarly-agent/LICENSE`
+    that keeps every original copyright notice;
+  - two unused diagrams moved out of the Skill to `assets/voice-engine/`.
+- `scripts/package_suite.py` refuses to build either ZIP above 200 files,
+  and CI checks both, so a release can no longer exceed the upload limit.
+  `SKILL.md`'s description is checked against the 1024-character limit.
+
+### Changed
+
+- Routing: translating a whole abstract, section, or paper goes to the
+  translation module; a single title or sentence is still answered
+  directly. The voice module keeps writing in any language and points
+  finished-text translation to the new module.
+- `release.yml` publishes the Skill ZIP alongside the suite ZIP and checks
+  both for determinism.
+
 ## v2.3.0 -- 2026-11-10
 
-v2.3.0 PREPARED -- NOT PUBLISHED
+v2.3.0 PUBLISHED
 
 **Pre-submission review no longer stops after two rounds.** Installing and
 invoking the Skill is unchanged.
