@@ -32,6 +32,7 @@ MODULE_NAMES = [
     "journal-fit-engine",
     "peer-review-engine",
     "prose-polish-engine",
+    "translation-engine",
 ]
 
 PROTOCOL_FILES = {
@@ -48,6 +49,7 @@ PROTOCOL_FILES = {
     "review-report.schema.json": "REVIEW_REPORT_V1",
     "editorial-decision.schema.json": "EDITORIAL_DECISION_V1",
     "polish-report.schema.json": "POLISH_REPORT_V1",
+    "translation-report.schema.json": "TRANSLATION_REPORT_V1",
 }
 
 # The single source of truth for required workflow recipes lives in

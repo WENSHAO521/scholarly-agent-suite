@@ -1,6 +1,6 @@
 """Lexical features (PART XVII). Keyword/pattern-based proxies — every
 value here is a heuristic density, not a validated linguistic
-measurement (see references/style-feature-schema.md).
+measurement (see references/profiles.md#style-feature-schema).
 """
 
 from __future__ import annotations

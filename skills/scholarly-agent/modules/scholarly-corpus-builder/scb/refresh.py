@@ -1,4 +1,4 @@
-"""Corpus Selection Gate and refresh diff (references/refresh-policy.md,
+"""Corpus Selection Gate and refresh diff (references/corpus-policy.md#refresh-policy,
 PART LXIX-LXXII). Code form of the policy already documented there —
 this module does not change that policy, it executes it.
 """

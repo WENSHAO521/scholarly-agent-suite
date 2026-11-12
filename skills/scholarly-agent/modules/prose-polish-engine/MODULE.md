@@ -71,7 +71,8 @@ already in hand, polish toward it; never build one just for a polish.
 
 Not for: drafting from notes, restructuring, or strengthening an argument
 (voice); a single obvious grammar fix (answer directly); judging whether a
-text was written by AI (decline; see Integrity); translation as such.
+text was written by AI (decline; see Integrity); translation as such
+(translation-engine).
 
 ## Levels
 
@@ -146,7 +147,7 @@ how strongly a claim is made.
   passing an AI check for a submission or an assessment, remind them once,
   briefly, to follow the venue's AI-use policy.
 - **Meaning is fixed.** No change to data, results, citations, quotations,
-  or claim strength (`modules/scholarly-voice-engine/references/claim-calibration.md`
+  or claim strength (`modules/scholarly-voice-engine/references/argument-and-claims.md#claim-calibration`
   applies: never let a polish turn "is associated with" into "causes," or
   drop a hedge the evidence needs). Unverified citations stay flagged, never
   smoothed into confident prose.

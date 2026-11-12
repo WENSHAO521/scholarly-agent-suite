@@ -33,7 +33,7 @@ from jfe.journal_evidence import JournalEvidence
 PROTOCOL = "JOURNAL_STYLE_CONTEXT_V1"
 FRESHNESS_STATES = ("current", "aging", "stale")
 
-# references/refresh-policy.md / scholarly-corpus-builder's documented
+# references/corpus-policy.md#refresh-policy / scholarly-corpus-builder's documented
 # journal freshness windows (6-12 months) -- reused here rather than
 # inventing a second set of thresholds for the same kind of fact.
 _CURRENT_WINDOW_DAYS = 183   # ~6 months

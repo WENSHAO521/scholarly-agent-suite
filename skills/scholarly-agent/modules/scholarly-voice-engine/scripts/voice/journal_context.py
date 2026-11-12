@@ -13,10 +13,10 @@ different paths:
 
   official_requirements -> `hard_requirements` on JournalStyleContext.
       Always preserved verbatim, never confidence-gated, never overridden
-      by anything lower in references/corpus-profile-integration.md's
+      by anything lower in references/integration.md#corpus-profile-integration's
       precedence order (they sit between the user's explicit constraints
       and the manuscript's own scientific integrity -- see
-      references/journal-style-adaptation.md).
+      references/integration.md#journal-style-adaptation).
 
   observed_patterns -> fed into profile_merge.resolve_voice_precedence()
       as the existing "journal" layer, confidence-gated by `freshness`
@@ -133,7 +133,7 @@ def apply_journal_style_context(context: JournalStyleContext, layers: dict,
       hard_requirements     -- context.official_requirements, verbatim,
           returned separately because these sit ABOVE author/discipline/
           journal/historical precedence entirely (references/
-          journal-style-adaptation.md) and must never be confidence-gated
+          integration.md#journal-style-adaptation) and must never be confidence-gated
           or silently dropped by resolve_voice_precedence's layer logic.
       limitations           -- context.limitations, unchanged (propagate,
           never re-summarize away a freshness/evidence-gap warning).

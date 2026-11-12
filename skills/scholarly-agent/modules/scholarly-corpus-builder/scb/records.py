@@ -1,5 +1,5 @@
 """Canonical Scholarly Record — the single normalized shape every source
-adapter produces (see references/source-adapters.md and PART II of the
+adapter produces (see references/sources.md#source-adapters and PART II of the
 architecture note). Lightweight dataclasses only; no ORM, no database.
 """
 

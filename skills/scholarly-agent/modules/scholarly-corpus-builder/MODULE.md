@@ -62,13 +62,13 @@ Four corpus types, detailed in their own reference files:
 
 | Type | Purpose | Reference |
 |---|---|---|
-| Discipline | Current writing conventions of a field | `references/discipline-profile.md` |
-| Journal | Observable writing architecture of one venue | `references/journal-profile.md` |
-| Historical scholar | Transferable argument mechanics from historical work | `references/historical-profile.md` |
-| Author | The user's own established voice | `references/author-profile.md` |
+| Discipline | Current writing conventions of a field | `references/profiles.md#discipline-profile` |
+| Journal | Observable writing architecture of one venue | `references/profiles.md#journal-profile` |
+| Historical scholar | Transferable argument mechanics from historical work | `references/profiles.md#historical-profile` |
+| Author | The user's own established voice | `references/profiles.md#author-profile` |
 
 A journal or discipline profile is always an **empirical profile of a sample**,
-never a mandatory style — see `references/copyright-boundary.md` and the
+never a mandatory style — see `references/corpus-policy.md#copyright-boundary` and the
 Journal Instructions vs Observed Corpus distinction below.
 
 ## Workflow
@@ -79,11 +79,11 @@ Journal Instructions vs Observed Corpus distinction below.
 2. **Check the Corpus Selection Gate** — is there a cached profile, and is it
    `CURRENT`, `STALE`, `INSUFFICIENT`, or is this a `NEW_TARGET` /
    `USER_REQUESTED_REFRESH`? Reuse a `CURRENT` profile rather than rebuilding.
-   See `references/refresh-policy.md`.
+   See `references/corpus-policy.md#refresh-policy`.
 3. **Apply the source hierarchy** — Tier 1 user-authorized material first, then
    open metadata, then abstracts, then open full text, then public-domain
    historical sources. Never bypass paywalls or access controls. See
-   `references/source-hierarchy.md`.
+   `references/corpus-policy.md#source-hierarchy`.
 4. **Apply retrieval minimization** — ask "can metadata answer this?" before
    "can the abstract answer this?" before "is open full text materially
    necessary?" Only escalate tiers when the analytical result would actually
@@ -93,13 +93,13 @@ Journal Instructions vs Observed Corpus distinction below.
    `references/corpus-policy.md`.
 6. **Verify and record provenance** for every source used — never fabricate a
    DOI, ISSN, year, author list, or license. See
-   `references/provenance-schema.md`.
+   `references/sources.md#provenance-schema`.
 7. **Extract features**, not phrases — sentence, paragraph, argument, evidence,
    section-architecture, claim-calibration, and intellectual-rhythm features.
-   See `references/style-feature-schema.md`.
+   See `references/profiles.md#style-feature-schema`.
 8. **Assemble the profile** using the matching schema in
-   `references/journal-profile.md`, `discipline-profile.md`,
-   `historical-profile.md`, or `author-profile.md`.
+   `references/profiles.md#journal-profile`, `profiles.md#discipline-profile`,
+   `profiles.md#historical-profile`, or `profiles.md#author-profile`.
 9. **Stop** when the profile is sufficiently supported and additional sources
    would not materially change high-level features (see Stop Rule below).
 10. **Return the output contract** (below) — never raw corpus text by default.
@@ -111,7 +111,7 @@ paywalled full text, store unnecessary full-text corpora, reproduce long
 copyrighted passages, build characteristic-phrase imitation libraries, or
 construct living-author imitation systems. When access is unavailable, record
 metadata, mark `full_text_status = unavailable`, and continue with lawful
-evidence. Full policy: `references/copyright-boundary.md`.
+evidence. Full policy: `references/corpus-policy.md#copyright-boundary`.
 
 ## Retrieval minimization and the stop rule
 
@@ -170,20 +170,20 @@ bias, author-concentration bias) when material — see `references/corpus-policy
 ## Reference index (load only what you need)
 
 - `references/corpus-policy.md` — sampling ranges, sufficiency, build records, biases
-- `references/source-hierarchy.md` — tiers 1–5 and escalation rules
-- `references/provenance-schema.md` — per-source record schema and verification states
-- `references/style-feature-schema.md` — sentence/paragraph/argument/evidence/section/claim/rhythm features
-- `references/journal-profile.md` — journal profile schema and sampling rules
-- `references/discipline-profile.md` — discipline profile schema
-- `references/historical-profile.md` — historical scholar profile schema and safeguards
-- `references/author-profile.md` — personal author profile schema and authorization boundary
-- `references/copyright-boundary.md` — the hard legal/ethical rules
-- `references/refresh-policy.md` — freshness windows, corpus selection gate, incremental refresh, versioning
+- `references/corpus-policy.md#source-hierarchy` — tiers 1–5 and escalation rules
+- `references/sources.md#provenance-schema` — per-source record schema and verification states
+- `references/profiles.md#style-feature-schema` — sentence/paragraph/argument/evidence/section/claim/rhythm features
+- `references/profiles.md#journal-profile` — journal profile schema and sampling rules
+- `references/profiles.md#discipline-profile` — discipline profile schema
+- `references/profiles.md#historical-profile` — historical scholar profile schema and safeguards
+- `references/profiles.md#author-profile` — personal author profile schema and authorization boundary
+- `references/corpus-policy.md#copyright-boundary` — the hard legal/ethical rules
+- `references/corpus-policy.md#refresh-policy` — freshness windows, corpus selection gate, incremental refresh, versioning
 - `references/integration.md` — how downstream skills (Voice Engine, Journal Fit Engine, Router) should call this skill
-- `references/source-adapters.md` — capability matrix and known limitations for the six scholarly-API adapters + user files
-- `references/oa-resolution.md` — the access-state resolution sequence and retrieval-depth model
-- `references/reference-managers.md` — importing a user's Zotero/Mendeley/EndNote library (BibTeX, RIS, CSL-JSON) as seeds or citation sources, and exporting records back
-- `references/stability-analysis.md` — the split-corpus stability test and bootstrap resampler
+- `references/sources.md#source-adapters` — capability matrix and known limitations for the six scholarly-API adapters + user files
+- `references/sources.md#oa-resolution` — the access-state resolution sequence and retrieval-depth model
+- `references/sources.md#reference-managers` — importing a user's Zotero/Mendeley/EndNote library (BibTeX, RIS, CSL-JSON) as seeds or citation sources, and exporting records back
+- `references/profiles.md#stability-analysis` — the split-corpus stability test and bootstrap resampler
 
 ## Tool policy
 

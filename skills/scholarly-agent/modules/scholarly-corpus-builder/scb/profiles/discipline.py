@@ -1,5 +1,5 @@
 """Discipline Profile builder — maps StyleProfile onto the schema in
-references/discipline-profile.md.
+references/profiles.md#discipline-profile.
 """
 
 from __future__ import annotations

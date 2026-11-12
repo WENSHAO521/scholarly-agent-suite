@@ -26,7 +26,7 @@ _COMPARISON_PATHS: List[Tuple[str, ...]] = [
 
 # A profile that only exposes a label (e.g. journal profiles deliberately
 # expose "short"/"moderate"/"long" rather than a raw number — see
-# references/journal-profile.md) can still be compared to a profile that
+# references/profiles.md#journal-profile) can still be compared to a profile that
 # has the raw number, by bucketing the raw number with the same rule
 # (scb.profile_schema.label_sentence_length / label_density) and
 # comparing labels instead of fabricating false numeric precision.

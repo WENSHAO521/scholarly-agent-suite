@@ -1,8 +1,8 @@
 """Journal Profile builder — maps StyleProfile onto the schema in
-references/journal-profile.md. Fields this module cannot honestly
+references/profiles.md#journal-profile. Fields this module cannot honestly
 derive yet (e.g. abstract-only architecture, precise contribution
 *position*) are left as `null`/"not_computed" rather than guessed —
-see references/journal-profile.md's explicit distinction between
+see references/profiles.md#journal-profile's explicit distinction between
 OFFICIAL_REQUIREMENTS and OBSERVED_WRITING_PROFILE, which this profile
 is entirely the latter half of.
 """

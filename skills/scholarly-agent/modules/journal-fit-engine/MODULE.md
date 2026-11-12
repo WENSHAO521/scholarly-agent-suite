@@ -62,7 +62,7 @@ requests that don't involve venue selection.
    required adaptations, and a submission ladder. See
    [references/submission-strategy.md](references/submission-strategy.md).
 
-Load a discipline file from [disciplines/](disciplines/) only when the
+Load a discipline section from [disciplines.md](disciplines.md) only when the
 manuscript's field benefits from field-specific fit logic (e.g. law, math,
 humanities, clinical medicine weight dimensions very differently).
 
@@ -175,4 +175,4 @@ CANNOT_VERIFY should be handled.
 - [references/apc-open-access.md](references/apc-open-access.md) — APC, OA models, no-APC mode
 - [references/adaptation-policy.md](references/adaptation-policy.md) — adaptation types, cost, submission readiness, ethics
 - [references/integration.md](references/integration.md) — Corpus Builder / Voice Engine / Router integration contracts
-- [disciplines/](disciplines/) — per-discipline-family fit emphasis, one file per family in the shared taxonomy ([../../shared/disciplines.md](../../shared/disciplines.md)): natural sciences, mathematics and formal sciences, engineering/computing, medicine/health, social sciences, business and management, law, humanities, arts and design, education, interdisciplinary
+- [disciplines.md](disciplines.md) — per-discipline-family fit emphasis, one section per family in the shared taxonomy ([../../shared/disciplines.md](../../shared/disciplines.md)): natural sciences, mathematics and formal sciences, engineering/computing, medicine/health, social sciences, business and management, law, humanities, arts and design, education, interdisciplinary

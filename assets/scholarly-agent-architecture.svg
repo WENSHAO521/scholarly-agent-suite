@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 700" role="img" aria-label="Architecture of the Scholarly Agent: requests enter one Skill, whose dispatcher answers directly, loads one module, or runs a multi-module workflow recipe. The six modules are Model Router (execution planning), Corpus Builder (research evidence), Voice Engine (writing and argument), Journal Fit (publication strategy), Peer Review (pre-submission reviewers and editorial decision), and Prose Polish (removing templated phrasing in any language). They exchange data through thirteen versioned JSON protocols and share one integrity policy, and every workflow ends at a final quality gate with one of three outcomes: COMPLETE, COMPLETE_WITH_LIMITATIONS, or BLOCKED.">
-  <title>Scholarly Agent -- one Skill, six modules</title>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 700" role="img" aria-label="Architecture of the Scholarly Agent: requests enter one Skill, whose dispatcher answers directly, loads one module, or runs a multi-module workflow recipe. The seven modules are Model Router (execution planning), Corpus Builder (research evidence), Voice Engine (writing and argument), Journal Fit (publication strategy), Peer Review (pre-submission reviewers and editorial decision), Prose Polish (removing templated phrasing in any language), and Translation (scholarly translation between any two languages). They exchange data through fourteen versioned JSON protocols and share one integrity policy, and every workflow ends at a final quality gate with one of three outcomes: COMPLETE, COMPLETE_WITH_LIMITATIONS, or BLOCKED.">
+  <title>Scholarly Agent -- one Skill, seven modules</title>
   <defs>
     <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
       <path d="M0,0 L10,5 L0,10 Z" fill="#241f18" fill-opacity="0.7"/>
@@ -46,86 +46,98 @@
   </g>
 
   <!-- dispatcher to modules -->
-  <line x1="127" y1="228" x2="127" y2="250" class="line" marker-end="url(#arr)"/>
-  <line x1="268" y1="228" x2="268" y2="250" class="line" marker-end="url(#arr)"/>
-  <line x1="409" y1="228" x2="409" y2="250" class="line" marker-end="url(#arr)"/>
-  <line x1="550" y1="228" x2="550" y2="250" class="line" marker-end="url(#arr)"/>
-  <line x1="691" y1="228" x2="691" y2="250" class="line" marker-end="url(#arr)"/>
-  <line x1="833" y1="228" x2="833" y2="250" class="line" marker-end="url(#arr)"/>
+  <line x1="117" y1="228" x2="117" y2="250" class="line" marker-end="url(#arr)"/>
+  <line x1="238" y1="228" x2="238" y2="250" class="line" marker-end="url(#arr)"/>
+  <line x1="359" y1="228" x2="359" y2="250" class="line" marker-end="url(#arr)"/>
+  <line x1="480" y1="228" x2="480" y2="250" class="line" marker-end="url(#arr)"/>
+  <line x1="601" y1="228" x2="601" y2="250" class="line" marker-end="url(#arr)"/>
+  <line x1="722" y1="228" x2="722" y2="250" class="line" marker-end="url(#arr)"/>
+  <line x1="843" y1="228" x2="843" y2="250" class="line" marker-end="url(#arr)"/>
 
   <!-- Module cards -->
   <g>
-    <rect x="60" y="252" width="134" height="138" rx="10" fill="#ffffff" stroke="#6b6f80" stroke-opacity="0.6"/>
-    <rect x="60" y="252" width="134" height="6" rx="3" fill="#6b6f80"/>
-    <text x="127" y="280" text-anchor="middle" class="mono" font-size="11.5" font-weight="700" fill="#6b6f80">MODEL ROUTER</text>
-    <text x="127" y="297" text-anchor="middle" class="sans muted" font-size="10" font-style="italic">execution planning</text>
-    <text x="127" y="320" text-anchor="middle" class="sans ink" font-size="9.5">model tier and effort</text>
-    <text x="127" y="336" text-anchor="middle" class="sans ink" font-size="9.5">any platform</text>
-    <text x="127" y="352" text-anchor="middle" class="sans ink" font-size="9.5">subagent delegation</text>
-    <text x="127" y="377" text-anchor="middle" class="mono muted" font-size="10">policy only</text>
+    <rect x="60" y="252" width="114" height="138" rx="10" fill="#ffffff" stroke="#6b6f80" stroke-opacity="0.6"/>
+    <rect x="60" y="252" width="114" height="6" rx="3" fill="#6b6f80"/>
+    <text x="117" y="280" text-anchor="middle" class="mono" font-size="10.5" font-weight="700" fill="#6b6f80">MODEL ROUTER</text>
+    <text x="117" y="297" text-anchor="middle" class="sans muted" font-size="9.5" font-style="italic">execution planning</text>
+    <text x="117" y="320" text-anchor="middle" class="sans ink" font-size="8.8">model tier, effort</text>
+    <text x="117" y="336" text-anchor="middle" class="sans ink" font-size="8.8">any platform</text>
+    <text x="117" y="352" text-anchor="middle" class="sans ink" font-size="8.8">subagent delegation</text>
+    <text x="117" y="377" text-anchor="middle" class="mono muted" font-size="9">policy only</text>
   </g>
   <g>
-    <rect x="201" y="252" width="134" height="138" rx="10" fill="#ffffff" stroke="#4f7d5a" stroke-opacity="0.6"/>
-    <rect x="201" y="252" width="134" height="6" rx="3" fill="#4f7d5a"/>
-    <text x="268" y="280" text-anchor="middle" class="mono" font-size="11.5" font-weight="700" fill="#4f7d5a">CORPUS BUILDER</text>
-    <text x="268" y="297" text-anchor="middle" class="sans muted" font-size="10" font-style="italic">research evidence</text>
-    <text x="268" y="320" text-anchor="middle" class="sans ink" font-size="9.5">OpenAlex · Crossref · PMC</text>
-    <text x="268" y="336" text-anchor="middle" class="sans ink" font-size="9.5">Zotero · BibTeX · RIS</text>
-    <text x="268" y="352" text-anchor="middle" class="sans ink" font-size="9.5">profiles + provenance</text>
-    <text x="268" y="377" text-anchor="middle" class="mono muted" font-size="10">engine: scb/</text>
+    <rect x="181" y="252" width="114" height="138" rx="10" fill="#ffffff" stroke="#4f7d5a" stroke-opacity="0.6"/>
+    <rect x="181" y="252" width="114" height="6" rx="3" fill="#4f7d5a"/>
+    <text x="238" y="280" text-anchor="middle" class="mono" font-size="10.5" font-weight="700" fill="#4f7d5a">CORPUS</text>
+    <text x="238" y="297" text-anchor="middle" class="sans muted" font-size="9.5" font-style="italic">research evidence</text>
+    <text x="238" y="320" text-anchor="middle" class="sans ink" font-size="8.8">OpenAlex · Crossref</text>
+    <text x="238" y="336" text-anchor="middle" class="sans ink" font-size="8.8">Zotero · BibTeX · RIS</text>
+    <text x="238" y="352" text-anchor="middle" class="sans ink" font-size="8.8">profiles, provenance</text>
+    <text x="238" y="377" text-anchor="middle" class="mono muted" font-size="9">engine: scb/</text>
   </g>
   <g>
-    <rect x="342" y="252" width="134" height="138" rx="10" fill="#ffffff" stroke="#3f7a9e" stroke-opacity="0.6"/>
-    <rect x="342" y="252" width="134" height="6" rx="3" fill="#3f7a9e"/>
-    <text x="409" y="280" text-anchor="middle" class="mono" font-size="11.5" font-weight="700" fill="#3f7a9e">VOICE ENGINE</text>
-    <text x="409" y="297" text-anchor="middle" class="sans muted" font-size="10" font-style="italic">writing and argument</text>
-    <text x="409" y="320" text-anchor="middle" class="sans ink" font-size="9.5">discipline- and genre-aware</text>
-    <text x="409" y="336" text-anchor="middle" class="sans ink" font-size="9.5">claim calibration</text>
-    <text x="409" y="352" text-anchor="middle" class="sans ink" font-size="9.5">citations · continuity</text>
-    <text x="409" y="377" text-anchor="middle" class="mono muted" font-size="9">engine: scripts/voice/</text>
+    <rect x="302" y="252" width="114" height="138" rx="10" fill="#ffffff" stroke="#3f7a9e" stroke-opacity="0.6"/>
+    <rect x="302" y="252" width="114" height="6" rx="3" fill="#3f7a9e"/>
+    <text x="359" y="280" text-anchor="middle" class="mono" font-size="10.5" font-weight="700" fill="#3f7a9e">VOICE ENGINE</text>
+    <text x="359" y="297" text-anchor="middle" class="sans muted" font-size="9.5" font-style="italic">writing, argument</text>
+    <text x="359" y="320" text-anchor="middle" class="sans ink" font-size="8.8">discipline, genre</text>
+    <text x="359" y="336" text-anchor="middle" class="sans ink" font-size="8.8">claim calibration</text>
+    <text x="359" y="352" text-anchor="middle" class="sans ink" font-size="8.8">citations, continuity</text>
+    <text x="359" y="377" text-anchor="middle" class="mono muted" font-size="9">scripts/voice/</text>
   </g>
   <g>
-    <rect x="483" y="252" width="134" height="138" rx="10" fill="#ffffff" stroke="#b07a2a" stroke-opacity="0.6"/>
-    <rect x="483" y="252" width="134" height="6" rx="3" fill="#b07a2a"/>
-    <text x="550" y="280" text-anchor="middle" class="mono" font-size="11.5" font-weight="700" fill="#b07a2a">JOURNAL FIT</text>
-    <text x="550" y="297" text-anchor="middle" class="sans muted" font-size="10" font-style="italic">publication strategy</text>
-    <text x="550" y="320" text-anchor="middle" class="sans ink" font-size="9.5">candidates, hard filters</text>
-    <text x="550" y="336" text-anchor="middle" class="sans ink" font-size="9.5">scope · APC · OA · index</text>
-    <text x="550" y="352" text-anchor="middle" class="sans ink" font-size="9.5">evidence-backed fit</text>
-    <text x="550" y="377" text-anchor="middle" class="mono muted" font-size="10">engine: jfe/</text>
+    <rect x="423" y="252" width="114" height="138" rx="10" fill="#ffffff" stroke="#b07a2a" stroke-opacity="0.6"/>
+    <rect x="423" y="252" width="114" height="6" rx="3" fill="#b07a2a"/>
+    <text x="480" y="280" text-anchor="middle" class="mono" font-size="10.5" font-weight="700" fill="#b07a2a">JOURNAL FIT</text>
+    <text x="480" y="297" text-anchor="middle" class="sans muted" font-size="9.5" font-style="italic">publication strategy</text>
+    <text x="480" y="320" text-anchor="middle" class="sans ink" font-size="8.8">candidates, filters</text>
+    <text x="480" y="336" text-anchor="middle" class="sans ink" font-size="8.8">scope · APC · OA</text>
+    <text x="480" y="352" text-anchor="middle" class="sans ink" font-size="8.8">evidence-backed fit</text>
+    <text x="480" y="377" text-anchor="middle" class="mono muted" font-size="9">engine: jfe/</text>
   </g>
   <g>
-    <rect x="624" y="252" width="134" height="138" rx="10" fill="#ffffff" stroke="#7a5a8c" stroke-opacity="0.6"/>
-    <rect x="624" y="252" width="134" height="6" rx="3" fill="#7a5a8c"/>
-    <text x="691" y="280" text-anchor="middle" class="mono" font-size="11.5" font-weight="700" fill="#7a5a8c">PEER REVIEW</text>
-    <text x="691" y="297" text-anchor="middle" class="sans muted" font-size="10" font-style="italic">pre-submission review</text>
-    <text x="691" y="320" text-anchor="middle" class="sans ink" font-size="9.5">editor desk screen</text>
-    <text x="691" y="336" text-anchor="middle" class="sans ink" font-size="9.5">reviewer subagents</text>
-    <text x="691" y="352" text-anchor="middle" class="sans ink" font-size="9.5">editorial decision</text>
-    <text x="691" y="377" text-anchor="middle" class="mono muted" font-size="10">engine: prv/</text>
+    <rect x="544" y="252" width="114" height="138" rx="10" fill="#ffffff" stroke="#7a5a8c" stroke-opacity="0.6"/>
+    <rect x="544" y="252" width="114" height="6" rx="3" fill="#7a5a8c"/>
+    <text x="601" y="280" text-anchor="middle" class="mono" font-size="10.5" font-weight="700" fill="#7a5a8c">PEER REVIEW</text>
+    <text x="601" y="297" text-anchor="middle" class="sans muted" font-size="9.5" font-style="italic">pre-submission</text>
+    <text x="601" y="320" text-anchor="middle" class="sans ink" font-size="8.8">editor desk screen</text>
+    <text x="601" y="336" text-anchor="middle" class="sans ink" font-size="8.8">reviewer subagents</text>
+    <text x="601" y="352" text-anchor="middle" class="sans ink" font-size="8.8">editorial decision</text>
+    <text x="601" y="377" text-anchor="middle" class="mono muted" font-size="9">engine: prv/</text>
   </g>
   <g>
-    <rect x="766" y="252" width="134" height="138" rx="10" fill="#ffffff" stroke="#2f7f7a" stroke-opacity="0.6"/>
-    <rect x="766" y="252" width="134" height="6" rx="3" fill="#2f7f7a"/>
-    <text x="833" y="280" text-anchor="middle" class="mono" font-size="11.5" font-weight="700" fill="#2f7f7a">PROSE POLISH</text>
-    <text x="833" y="297" text-anchor="middle" class="sans muted" font-size="10" font-style="italic">polishing, any language</text>
-    <text x="833" y="320" text-anchor="middle" class="sans ink" font-size="9.5">templated phrasing out</text>
-    <text x="833" y="336" text-anchor="middle" class="sans ink" font-size="9.5">9 language catalogs</text>
-    <text x="833" y="352" text-anchor="middle" class="sans ink" font-size="9.5">citations kept intact</text>
-    <text x="833" y="377" text-anchor="middle" class="mono muted" font-size="10">engine: ppe/</text>
+    <rect x="665" y="252" width="114" height="138" rx="10" fill="#ffffff" stroke="#2f7f7a" stroke-opacity="0.6"/>
+    <rect x="665" y="252" width="114" height="6" rx="3" fill="#2f7f7a"/>
+    <text x="722" y="280" text-anchor="middle" class="mono" font-size="10.5" font-weight="700" fill="#2f7f7a">PROSE POLISH</text>
+    <text x="722" y="297" text-anchor="middle" class="sans muted" font-size="9.5" font-style="italic">any language</text>
+    <text x="722" y="320" text-anchor="middle" class="sans ink" font-size="8.8">templated phrasing out</text>
+    <text x="722" y="336" text-anchor="middle" class="sans ink" font-size="8.8">9 language catalogs</text>
+    <text x="722" y="352" text-anchor="middle" class="sans ink" font-size="8.8">citations intact</text>
+    <text x="722" y="377" text-anchor="middle" class="mono muted" font-size="9">engine: ppe/</text>
+  </g>
+  <g>
+    <rect x="786" y="252" width="114" height="138" rx="10" fill="#ffffff" stroke="#a0503c" stroke-opacity="0.6"/>
+    <rect x="786" y="252" width="114" height="6" rx="3" fill="#a0503c"/>
+    <text x="843" y="280" text-anchor="middle" class="mono" font-size="10.5" font-weight="700" fill="#a0503c">TRANSLATION</text>
+    <text x="843" y="297" text-anchor="middle" class="sans muted" font-size="9.5" font-style="italic">any two languages</text>
+    <text x="843" y="320" text-anchor="middle" class="sans ink" font-size="8.8">glossary-consistent</text>
+    <text x="843" y="336" text-anchor="middle" class="sans ink" font-size="8.8">繁 ⇄ 简, regional terms</text>
+    <text x="843" y="352" text-anchor="middle" class="sans ink" font-size="8.8">numbers, citations kept</text>
+    <text x="843" y="377" text-anchor="middle" class="mono muted" font-size="9">engine: tre/</text>
   </g>
 
   <!-- modules to protocol bus -->
-  <line x1="127" y1="390" x2="127" y2="408" class="line"/>
-  <line x1="268" y1="390" x2="268" y2="408" class="line"/>
-  <line x1="409" y1="390" x2="409" y2="408" class="line"/>
-  <line x1="550" y1="390" x2="550" y2="408" class="line"/>
-  <line x1="691" y1="390" x2="691" y2="408" class="line"/>
-  <line x1="833" y1="390" x2="833" y2="408" class="line"/>
+  <line x1="117" y1="390" x2="117" y2="408" class="line"/>
+  <line x1="238" y1="390" x2="238" y2="408" class="line"/>
+  <line x1="359" y1="390" x2="359" y2="408" class="line"/>
+  <line x1="480" y1="390" x2="480" y2="408" class="line"/>
+  <line x1="601" y1="390" x2="601" y2="408" class="line"/>
+  <line x1="722" y1="390" x2="722" y2="408" class="line"/>
+  <line x1="843" y1="390" x2="843" y2="408" class="line"/>
 
   <!-- Protocols -->
   <rect x="60" y="408" width="840" height="58" rx="10" fill="#f1ede3" stroke="#241f18" stroke-opacity="0.25"/>
-  <text x="480" y="429" text-anchor="middle" class="sans ink" font-size="12.5"><tspan class="mono" font-weight="700">protocols/</tspan>  13 versioned JSON schemas carry every handoff between modules</text>
+  <text x="480" y="429" text-anchor="middle" class="sans ink" font-size="12.5"><tspan class="mono" font-weight="700">protocols/</tspan>  14 versioned JSON schemas carry every handoff between modules</text>
   <text x="480" y="451" text-anchor="middle" class="mono muted" font-size="10">SCHOLARLY_PROFILE_V1 · MANUSCRIPT_PROFILE_V1 · JOURNAL_STYLE_CONTEXT_V1 · TARGET_JOURNAL_PROFILE_V1 · …</text>
 
   <!-- Shared policy -->

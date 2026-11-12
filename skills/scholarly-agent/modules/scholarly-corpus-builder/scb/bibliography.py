@@ -3,7 +3,7 @@
 These three formats cover the export options of Zotero, Mendeley, EndNote,
 JabRef, and most citation managers, so a user's existing library can become
 a corpus seed list or a citation source without retyping it. See
-references/reference-managers.md for when and how to use it.
+references/sources.md#reference-managers for when and how to use it.
 
 Integrity rules (shared/integrity-policy.md, shared/provenance-policy.md):
 

@@ -64,7 +64,7 @@ scope high, article type high.
 **Mathematics:** subject classification very high, theorem/problem class
 high, technical depth high, article length/style medium.
 
-See [disciplines/](../disciplines/) for the full per-family breakdown,
+See [disciplines.md](../disciplines.md) for the full per-family breakdown,
 including engineering/computing, humanities, law, business and management, arts and design, education, and
 interdisciplinary work.
 
@@ -113,7 +113,7 @@ somewhat relevant to several fields but central to none. Identify which venue
 logic the *primary contribution* actually serves — e.g. an AI+medicine paper
 could target medical informatics, a clinical specialty, AI methods venues, or
 digital health; the choice follows the primary contribution, not the
-keyword overlap. See [disciplines/interdisciplinary.md](../disciplines/interdisciplinary.md).
+keyword overlap. See [disciplines.md#interdisciplinary](../disciplines.md#interdisciplinary).
 
 ## Geographic and internationalization fit
 

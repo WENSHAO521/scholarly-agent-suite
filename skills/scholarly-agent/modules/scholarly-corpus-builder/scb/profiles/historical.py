@@ -1,7 +1,7 @@
 """Historical Scholar Profile builder — maps StyleProfile onto the
-schema in references/historical-profile.md. Deliberately excludes any
-excerpt/quotation storage — see references/copyright-boundary.md and
-references/historical-profile.md's "do not build phrase-copying
+schema in references/profiles.md#historical-profile. Deliberately excludes any
+excerpt/quotation storage — see references/corpus-policy.md#copyright-boundary and
+references/profiles.md#historical-profile's "do not build phrase-copying
 libraries" rule; only aggregate, non-attributable statistics and named
 abstract patterns are retained.
 """

@@ -81,17 +81,17 @@ jobs:
         if: steps.decide.outputs.publish == 'true'
         run: |
           python scripts/package_suite.py
-          first="$(sha256sum dist/scholarly-agent-suite-v*.zip | cut -d' ' -f1)"
+          first="$(sha256sum dist/scholarly-agent-suite-v*.zip dist/scholarly-agent-skill-v*.zip | cut -d' ' -f1 | tr '\n' ' ')"
           mv dist/release-manifest.json release-manifest.first.json
-          rm dist/scholarly-agent-suite-v*.zip
+          rm dist/scholarly-agent-suite-v*.zip dist/scholarly-agent-skill-v*.zip
           python scripts/package_suite.py
-          second="$(sha256sum dist/scholarly-agent-suite-v*.zip | cut -d' ' -f1)"
+          second="$(sha256sum dist/scholarly-agent-suite-v*.zip dist/scholarly-agent-skill-v*.zip | cut -d' ' -f1 | tr '\n' ' ')"
           rm release-manifest.first.json
           if [ "${first}" != "${second}" ]; then
             echo "Packaging is not deterministic: ${first} != ${second}" >&2
             exit 1
           fi
-          (cd dist && sha256sum scholarly-agent-suite-v*.zip release-manifest.json > SHA256SUMS)
+          (cd dist && sha256sum scholarly-agent-suite-v*.zip scholarly-agent-skill-v*.zip release-manifest.json > SHA256SUMS)
           cat dist/SHA256SUMS
 
       - name: Publish GitHub release
@@ -107,6 +107,7 @@ jobs:
           fi
           gh release create "${tag}" \
             dist/scholarly-agent-suite-v*.zip \
+            dist/scholarly-agent-skill-v*.zip \
             dist/release-manifest.json \
             dist/SHA256SUMS \
             --target "${GITHUB_SHA}" \

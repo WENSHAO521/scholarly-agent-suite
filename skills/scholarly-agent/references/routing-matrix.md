@@ -6,21 +6,25 @@ means invoke only if current/verifiable evidence is genuinely required;
 "no" means do not invoke even if installed (rule 156: use the smallest
 sufficient specialist set for the requested outcome).
 
-| User intent | Router | Corpus Builder | Voice Engine | Journal Fit | Peer Review | Polish |
-|---|---|---|---|---|---|---|
-| Light edit of a paragraph (wording, clarity) | optional | no | yes | no | no | no |
-| Draft an article | optional | maybe | yes | no | no | no |
-| Literature review | optional | yes | yes | no | no | no |
-| Find a journal | optional | maybe | no | yes | no | no |
-| Adapt manuscript for a target journal | optional | maybe | yes | yes | no | no |
-| Build an author voice profile | no | yes | yes | no | no | no |
-| Book project | optional | yes | yes | no | no | no |
-| End-to-end paper (idea to submission-ready) | yes, if available | yes | yes | optional | optional | optional (final pass) |
-| Pre-submission peer review / editorial decision | optional (subagent dispatch) | no | no | maybe | yes | no |
-| Peer review, then revise and write the response letter | optional (subagent dispatch) | maybe | yes | maybe | yes | optional (final pass) |
-| Import or export a Zotero / BibTeX / RIS library | no | yes | no | no | no | no |
-| Polish (潤色) finished text so it no longer reads templated or machine-made, any language | no | no | no | no | no | yes |
-| Polish, and the diagnosis shows the argument itself needs work | optional | no | yes (escalations) | no | no | yes |
+| User intent | Router | Corpus Builder | Voice Engine | Journal Fit | Peer Review | Polish | Translation |
+|---|---|---|---|---|---|---|---|
+| Light edit of a paragraph (wording, clarity) | optional | no | yes | no | no | no | no |
+| Draft an article | optional | maybe | yes | no | no | no | no |
+| Literature review | optional | yes | yes | no | no | no | no |
+| Find a journal | optional | maybe | no | yes | no | no | no |
+| Adapt manuscript for a target journal | optional | maybe | yes | yes | no | no | no |
+| Build an author voice profile | no | yes | yes | no | no | no | no |
+| Book project | optional | yes | yes | no | no | no | no |
+| End-to-end paper (idea to submission-ready) | yes, if available | yes | yes | optional | optional | optional (final pass) | no |
+| Pre-submission peer review / editorial decision | optional (subagent dispatch) | no | no | maybe | yes | no | no |
+| Peer review, then revise and write the response letter | optional (subagent dispatch) | maybe | yes | maybe | yes | optional (final pass) | no |
+| Import or export a Zotero / BibTeX / RIS library | no | yes | no | no | no | no | no |
+| Polish (潤色) finished text so it no longer reads templated or machine-made, any language | no | no | no | no | no | yes | no |
+| Polish, and the diagnosis shows the argument itself needs work | optional | no | yes (escalations) | no | no | yes | no |
+| Translate (翻譯) an abstract, article, chapter, or reviewer letter into another language | no | no | no | no | no | no | yes |
+| Convert between Traditional and Simplified Chinese (簡轉繁 / 繁轉簡) with regional terms | no | no | no | no | no | no | yes |
+| Translate for a named journal (its language and style rules) | no | no | no | maybe (style context, if not in hand) | no | no | yes |
+| Draft in one language, submit in another | optional | maybe | yes (draft first) | optional | no | no | yes (after the draft is final) |
 
 ## Negative examples (do not orchestrate)
 
@@ -30,7 +34,8 @@ direct answer or a single specialist:
 - "Fix this grammar." -- direct edit or scholarly-voice-engine alone.
 - "What's a DOI?" -- direct answer, no Skill.
 - "Format this citation in APA." -- direct answer or scholarly-voice-engine.
-- "Translate this title into English." -- direct answer.
+- "Translate this title into English." -- direct answer (a single title or
+  sentence; a whole abstract, section, or paper goes to translation-engine).
 - "What does this term mean?" -- direct answer.
 
 ## Why Router is always "optional" here

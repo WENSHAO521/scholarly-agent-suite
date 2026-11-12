@@ -1,6 +1,6 @@
 """Style Profile Schema (PART XXIII). Aggregates the analytics engine's
 per-document outputs into one corpus-level profile matching the schema
-in references/style-feature-schema.md.
+in references/profiles.md#style-feature-schema.
 
 Simplification documented honestly: feature confidence here is derived
 from sample size alone (n<5 illustrative/low, 5-19 limited/medium, 20+
@@ -63,7 +63,7 @@ def label_sentence_length(median: float) -> str:
     """Shared bucketing rule so a raw numeric sentence length (e.g. from
     an author profile) and a label-only profile (e.g. a journal
     profile, which deliberately does not expose raw numbers — see
-    references/journal-profile.md) can still be compared honestly by
+    references/profiles.md#journal-profile) can still be compared honestly by
     label rather than by fabricated precision (used by
     scb/profiles/journal.py and scb/comparison.py)."""
     if median <= 15:

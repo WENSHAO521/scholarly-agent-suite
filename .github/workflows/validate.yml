@@ -82,13 +82,23 @@ jobs:
               for module in [
                   "adaptive-model-router", "scholarly-corpus-builder",
                   "scholarly-voice-engine", "journal-fit-engine", "peer-review-engine",
-                  "prose-polish-engine",
+                  "prose-polish-engine", "translation-engine",
               ]:
                   assert f"scholarly-agent-suite/skills/scholarly-agent/modules/{module}/MODULE.md" in names
               assert "scholarly-agent-suite/skills/scholarly-agent/modules/peer-review-engine/prv/decision.py" in names
               assert "scholarly-agent-suite/skills/scholarly-agent/modules/prose-polish-engine/ppe/invariants.py" in names
+              assert "scholarly-agent-suite/skills/scholarly-agent/modules/translation-engine/tre/invariants.py" in names
               assert "scholarly-agent-suite/skills/scholarly-agent/modules/scholarly-corpus-builder/scb/bibliography.py" in names
               assert not any(n.split("/")[1] in ("tests", "evals", ".github", "scripts") for n in names if len(n.split("/")) > 1)
+              assert len(names) <= 200, f"suite ZIP has {len(names)} files (claude.ai limit 200)"
+          skill_zip = glob.glob("dist/scholarly-agent-skill-v*.zip")[0]
+          with zipfile.ZipFile(skill_zip) as zf:
+              assert zf.testzip() is None
+              names = zf.namelist()
+              assert len(names) <= 200, f"skill ZIP has {len(names)} files (claude.ai limit 200)"
+              assert all(n.startswith("scholarly-agent/") for n in names)
+              assert [n for n in names if n.endswith("/SKILL.md")] == ["scholarly-agent/SKILL.md"]
+              assert "scholarly-agent/modules/translation-engine/MODULE.md" in names
           print("Runtime package sanity check passed.")
           PY
 

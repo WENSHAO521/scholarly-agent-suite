@@ -36,10 +36,19 @@ action, check here before extending its scope.
   Problems with the argument or structure that it notices go to
   scholarly-voice-engine as `escalations`. It never scores text for AI
   authorship or optimizes against a detector (integrity rule 14).
+- **translation-engine changes the language, never the content.** It
+  re-expresses a text in another language (or the other Chinese script) and
+  may restructure sentences within a paragraph in `academic` mode; it never
+  changes claims, claim strength, evidence, citations, numbers, quotations,
+  or defined terms, and never silently corrects the source: source errors go
+  out as `escalations`. Rewriting for a new argument, audience, or genre
+  belongs to scholarly-voice-engine; a wording-only pass in one language
+  belongs to prose-polish-engine.
 - **The scholarly-agent dispatcher (`SKILL.md`) does not duplicate module
   logic.** It decomposes tasks, selects the minimal module set, and
   assembles results -- it does not itself perform routing, corpus
-  acquisition, prose writing, journal ranking, peer review, or polishing (rule 3, rule 156).
+  acquisition, prose writing, journal ranking, peer review, polishing, or
+  translation (rule 3, rule 156).
 
 ## Why this matters
 

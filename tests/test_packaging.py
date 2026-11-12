@@ -1,5 +1,6 @@
 """Acceptance criteria: Packaging (spec sections 82-86, 144)."""
 import json
+import re
 import zipfile
 from pathlib import Path
 
@@ -62,7 +63,7 @@ def test_runtime_allowlist_includes_skill_and_all_modules():
     assert "skills/scholarly-agent/SKILL.md" in rel
     for name in [
         "adaptive-model-router", "scholarly-corpus-builder",
-        "scholarly-voice-engine", "journal-fit-engine", "peer-review-engine", "prose-polish-engine",
+        "scholarly-voice-engine", "journal-fit-engine", "peer-review-engine", "prose-polish-engine", "translation-engine",
     ]:
         assert f"skills/scholarly-agent/modules/{name}/MODULE.md" in rel
 
@@ -171,6 +172,63 @@ def test_release_manifest_has_no_private_machine_paths(tmp_path, monkeypatch):
     assert manifest["skill"] == "scholarly-agent"
     for name in [
         "adaptive-model-router", "scholarly-corpus-builder",
-        "scholarly-voice-engine", "journal-fit-engine", "peer-review-engine", "prose-polish-engine",
+        "scholarly-voice-engine", "journal-fit-engine", "peer-review-engine", "prose-polish-engine", "translation-engine",
     ]:
         assert name in manifest["modules"]
+
+
+# --- claude.ai Skill upload (v2.4.0) -------------------------------------
+# claude.ai rejected the v2.3.0 suite ZIP with "Zip contains too many files
+# (maximum 200)". Both release ZIPs must stay at or under the limit, and the
+# dedicated Skill ZIP must have SKILL.md (with name and description) at the
+# top of a single folder.
+
+def test_both_release_zips_fit_the_claude_ai_upload_limit():
+    assert package_suite.MAX_UPLOAD_FILES == 200
+    assert len(package_suite.iter_runtime_files()) <= 200
+    assert len(package_suite.iter_skill_files()) <= 200
+
+
+def test_skill_zip_contains_only_the_skill_folder(tmp_path, monkeypatch):
+    monkeypatch.setattr(package_suite, "DIST_DIR", tmp_path)
+    version = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
+    files = package_suite.iter_skill_files()
+    zip_path = package_suite.build_skill_zip(files, version)
+    assert zip_path.name == f"scholarly-agent-skill-v{version}.zip"
+    with zipfile.ZipFile(zip_path) as zf:
+        names = zf.namelist()
+        assert zf.testzip() is None
+        skill_md = zf.read("scholarly-agent/SKILL.md").decode("utf-8")
+    assert all(n.startswith("scholarly-agent/") for n in names)
+    assert [n for n in names if n.endswith("/SKILL.md")] == ["scholarly-agent/SKILL.md"]
+    assert "scholarly-agent/LICENSE" in names
+    assert "scholarly-agent/modules/translation-engine/tre/report.py" in names
+    assert "scholarly-agent/protocols/translation-report.schema.json" in names
+    assert not any(n.startswith("scholarly-agent/agents/") for n in names)
+    assert not any("__pycache__" in n for n in names)
+    assert skill_md.startswith("---\nname: scholarly-agent\ndescription: ")
+
+
+def test_skill_frontmatter_fits_claude_ai_limits():
+    text = (ROOT / "skills" / "scholarly-agent" / "SKILL.md").read_text(encoding="utf-8")
+    front = text.split("---")[1]
+    name = re.search(r"^name:\s*(.+)$", front, re.M).group(1).strip()
+    desc = re.search(r"^description:\s*(.+)$", front, re.M).group(1).strip()
+    assert re.fullmatch(r"[a-z0-9-]{1,64}", name)
+    assert 0 < len(desc) <= 1024, len(desc)
+    assert "<" not in desc and ">" not in desc
+
+
+def test_skill_zip_is_deterministic(tmp_path, monkeypatch):
+    version = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
+    files = package_suite.iter_skill_files()
+    monkeypatch.setattr(package_suite, "DIST_DIR", tmp_path / "a")
+    first = package_suite.build_skill_zip(files, version).read_bytes()
+    monkeypatch.setattr(package_suite, "DIST_DIR", tmp_path / "b")
+    assert package_suite.build_skill_zip(files, version).read_bytes() == first
+
+
+def test_upload_limit_check_refuses_an_oversized_package():
+    import pytest
+    with pytest.raises(SystemExit):
+        package_suite.check_upload_limit([ROOT / "VERSION"] * 201, "Skill ZIP")

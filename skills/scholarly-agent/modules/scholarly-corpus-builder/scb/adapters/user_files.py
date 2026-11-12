@@ -1,5 +1,5 @@
 """User File Adapter (PART III §9). The highest-priority source for
-personal author-corpus material (Tier 1 in references/source-hierarchy.md).
+personal author-corpus material (Tier 1 in references/corpus-policy.md#source-hierarchy).
 
 Deliberately local-only: this module never makes a network call, and a
 user manuscript is never sent to an external scholarly API "merely for

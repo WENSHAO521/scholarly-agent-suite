@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parent.parent
 SKILL_DIR = ROOT / "skills" / "scholarly-agent"
 MODULE_NAMES = [
     "adaptive-model-router", "scholarly-corpus-builder",
-    "scholarly-voice-engine", "journal-fit-engine", "peer-review-engine", "prose-polish-engine",
+    "scholarly-voice-engine", "journal-fit-engine", "peer-review-engine", "prose-polish-engine", "translation-engine",
 ]
 
 

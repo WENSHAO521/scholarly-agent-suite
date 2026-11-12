@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parent.parent
 SKILL_DIR = ROOT / "skills" / "scholarly-agent"
 MODULES = [
     "adaptive-model-router", "scholarly-corpus-builder",
-    "scholarly-voice-engine", "journal-fit-engine", "peer-review-engine", "prose-polish-engine",
+    "scholarly-voice-engine", "journal-fit-engine", "peer-review-engine", "prose-polish-engine", "translation-engine",
 ]
 
 # A relative path escaping the Skill directory toward repository-root folders.
@@ -31,7 +31,7 @@ def test_module_md_has_no_path_escaping_the_skill(name):
 
 @pytest.mark.parametrize("name", MODULES)
 def test_module_internal_references_resolve_within_module(name):
-    """Every references/*.md, disciplines/*.md, assets/*.md path mentioned in
+    """Every references/*.md, disciplines*.md, assets/*.md path mentioned in
     a MODULE.md must exist inside that same module directory."""
     module_dir = SKILL_DIR / "modules" / name
     text = (module_dir / "MODULE.md").read_text(encoding="utf-8")

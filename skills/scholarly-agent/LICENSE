@@ -1,0 +1,46 @@
+MIT License
+
+Copyright (c) 2026 Scholarly Agent Suite contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+This file covers the whole scholarly-agent Skill directory. The four modules
+merged in v2.0.0 were independently MIT-licensed component Skills; their
+original copyright notices are kept below. Each module was released under
+the identical MIT permission notice printed above, which applies to that
+module's directory under modules/<name>/ together with its own copyright line. Native modules (peer-review-engine, prose-polish-engine,
+translation-engine) are covered by the notice at the top of this file.
+
+---
+
+modules/adaptive-model-router/: MIT License, Copyright (c) 2026 WENSHAO521
+
+---
+
+modules/scholarly-corpus-builder/: MIT License, Copyright (c) 2026 Scholarly Corpus Builder Contributors
+
+---
+
+modules/scholarly-voice-engine/: MIT License, Copyright (c) 2026 Scholarly Voice Engine contributors
+
+---
+
+modules/journal-fit-engine/: MIT License, Copyright (c) 2026 journal-fit-engine contributors
