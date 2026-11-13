@@ -1,9 +1,12 @@
 """Locate templated phrasing in a text and measure how dense it is.
 
-``diagnose(text)`` returns every catalog match (ppe.patterns) plus four
+``diagnose(text)`` returns every catalog match (ppe.patterns) plus the
 structural habits the catalog cannot express as a phrase: paragraphs or
 consecutive sentences that open the same way, paragraphs whose sentences
-all run the same length, reflexive three-item lists, and dash habits.
+all run the same length, reflexive three-item lists, dash habits, and two
+signs of defensive writing -- a sentence carrying three or more hedges,
+and a paragraph in which nearly every sentence is hedged
+(references/defensive-writing.md).
 Citations, quotations, URLs, DOIs, and formulas are masked first, so a
 phrase quoted from a source is never flagged. Any language works: phrase
 findings need a catalog (ppe.patterns), structural findings do not.
@@ -11,7 +14,11 @@ findings need a catalog (ppe.patterns), structural findings do not.
 ``pattern_load`` (low / moderate / high) summarizes weighted findings per
 1,000 words, or per 1,000 characters for languages written without spaces
 (Chinese, Japanese, Thai). It describes this
-text's phrasing and nothing else (ppe.POLISH_NOTICE).
+text's phrasing and nothing else (ppe.POLISH_NOTICE). ``defensive`` counts
+the findings in ppe.DEFENSIVE_CATEGORIES, and ``hedge_rate`` is the share
+of sentences that carry at least one hedge (None for a language without a
+hedge list): a high rate is a prompt to ask what evidence each hedge
+answers to, not a target to drive to zero.
 """
 
 from __future__ import annotations
@@ -21,9 +28,10 @@ import statistics
 from collections import Counter, defaultdict
 from typing import Dict, List, Optional, Tuple
 
+from ppe import DEFENSIVE_CATEGORIES
 from ppe.invariants import protected_spans
-from ppe.languages import (CONNECTIVE_OPENERS, detect_language, sentence_splitter, triplet_regex,
-                           uses_char_units)
+from ppe.languages import (CONNECTIVE_OPENERS, detect_language, hedge_regex, sentence_splitter,
+                           triplet_regex, uses_char_units)
 from ppe.patterns import patterns_for
 
 WEIGHTS = {"remove": 3, "revise": 2, "watch": 1}
@@ -33,6 +41,12 @@ _DASH = re.compile(r"—|(?<=\w) -- (?=\w)|(?<=\w)--(?=\w)")
 _CHAR = re.compile(r"[\u3040-\u30ff\u3400-\u9fff\uf900-\ufaff\u0e00-\u0e7f]")
 _WORD = re.compile(r"[^\W_]+(?:['’-][^\W_]+)*")
 _NO_DASH_CHECK = {"zh", "ja", "ko"}
+# Defensive-writing thresholds: hedges in one sentence before it reads as a
+# pile-up, and the share of hedged sentences (in a paragraph of at least
+# BLANKET_MIN_SENTENCES) before the hedging stops marking real uncertainty.
+PILEUP_HEDGES = 3
+BLANKET_SHARE = 0.75
+BLANKET_MIN_SENTENCES = 3
 
 
 def _mask(text: str) -> str:
@@ -91,18 +105,34 @@ def _finding(kind_id, category, severity, para, sent, start, end, text, hint):
 
 
 def diagnose(text: str, lang: Optional[str] = None) -> Dict[str, object]:
-    """Findings, counts by category, density, and pattern load for ``text``."""
+    """Findings, counts by category, density, pattern load, and the
+    defensive-writing figures (``defensive``, ``hedge_rate``) for ``text``."""
     lang = lang or detect_language(text)
     masked = _mask(text)
     patterns = [(p, p.compiled()) for p in patterns_for(lang)]
+    hedge_rx = hedge_regex(lang)
+    hedge_c = re.compile(hedge_rx, 0 if lang in ("zh", "ja", "ko") else re.IGNORECASE) if hedge_rx else None
     findings: List[Dict[str, object]] = []
     para_openers: List[Tuple[int, int, str]] = []
+    n_sentences = n_hedged = 0
 
     for pi, (poff, para) in enumerate(_paragraphs(masked)):
         sentences = _sentences(para, lang)
         prev_open, run = None, 0
+        hedged_here = 0
         for si, (soff, sent) in enumerate(sentences):
             base = poff + soff
+            if hedge_c is not None:
+                n_hedges = len(hedge_c.findall(sent))
+                n_sentences += 1
+                if n_hedges:
+                    n_hedged += 1
+                    hedged_here += 1
+                if n_hedges >= PILEUP_HEDGES:
+                    findings.append(_finding("struct-hedge-pileup", "hedge-blanket", "revise", pi, si,
+                                             base, base + len(sent), text,
+                                             "%d hedges in one sentence; keep the one the evidence needs, "
+                                             "on the claim it qualifies" % n_hedges))
             for pat, rx in patterns:
                 for m in rx.finditer(sent):
                     findings.append(_finding(pat.id, pat.category, pat.severity, pi, si,
@@ -116,6 +146,12 @@ def diagnose(text: str, lang: Optional[str] = None) -> Dict[str, object]:
                                          base, base + len(sent), text,
                                          "three sentences in a row open with %r; vary the entry point" % op))
             prev_open = op
+        if (hedge_c is not None and len(sentences) >= BLANKET_MIN_SENTENCES
+                and hedged_here / len(sentences) >= BLANKET_SHARE):
+            findings.append(_finding("struct-hedge-blanket", "hedge-blanket", "revise", pi, 0,
+                                     poff, poff + len(para), text,
+                                     "%d of %d sentences are hedged; state the well-supported ones plainly so "
+                                     "the hedges left mark real uncertainty" % (hedged_here, len(sentences))))
         lengths = [_units(s, lang) for _, s in sentences]
         if len(lengths) >= 5 and statistics.mean(lengths) > 0:
             cv = statistics.pstdev(lengths) / statistics.mean(lengths)
@@ -182,10 +218,17 @@ def diagnose(text: str, lang: Optional[str] = None) -> Dict[str, object]:
         "density": density,
         "pattern_load": load,
         "must_remove": must_remove,
+        "defensive": sum(1 for f in findings if f["category"] in DEFENSIVE_CATEGORIES),
+        "hedge_rate": round(n_hedged / n_sentences, 2) if n_sentences else None,
     }
+
+
+def defensive_findings(diagnosis: Dict[str, object]) -> List[Dict[str, object]]:
+    """Only the findings that belong to defensive writing."""
+    return [f for f in diagnosis["findings"] if f["category"] in DEFENSIVE_CATEGORIES]
 
 
 def summary(diagnosis: Dict[str, object]) -> Dict[str, object]:
     """The compact form recorded in POLISH_REPORT_V1."""
-    keys = ("pattern_load", "density", "by_category", "must_remove", "units")
+    keys = ("pattern_load", "density", "by_category", "must_remove", "units", "defensive", "hedge_rate")
     return {k: diagnosis[k] for k in keys}

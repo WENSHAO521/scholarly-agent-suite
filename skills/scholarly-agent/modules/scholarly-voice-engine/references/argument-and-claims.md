@@ -489,6 +489,15 @@ the point of asserting anything is a failure mode, not caution (see
 `quality-and-editing.md#human-scholarly-prose`). A well-supported descriptive or formal claim
 should be stated plainly.
 
+The same applies when drafting: do not write defensively in the first
+place. Apologies for the work, vague pre-emptive caveats ("this study has
+some limitations"), disclaimers ("by no means exhaustive"), and
+justifications of routine choices are defects, not caution. State each real
+limitation once, specifically (what, which result, which direction, what
+still holds). The warrant test and the six forms of defensive writing are
+in `modules/prose-polish-engine/references/defensive-writing.md`; the polish
+module applies them to finished text.
+
 ### Scope conditions
 
 Strengthen a claim's credibility by narrowing it rather than by removing

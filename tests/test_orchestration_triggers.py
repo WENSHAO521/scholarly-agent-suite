@@ -65,7 +65,7 @@ def test_each_module_keeps_its_scope_line():
         "scholarly-voice-engine": ["writing", "voice"],
         "journal-fit-engine": ["journal", "fit"],
         "peer-review-engine": ["peer review", "reviewer", "editorial decision"],
-        "prose-polish-engine": ["polishing", "any language", "templated phrasing", "citation"],
+        "prose-polish-engine": ["polishing", "any language", "templated phrasing", "defensive writing", "citation"],
         "translation-engine": ["translation", "any two languages", "traditional and simplified chinese", "citations"],
     }
     for name, terms in boundary_terms.items():

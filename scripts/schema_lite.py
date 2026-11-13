@@ -54,12 +54,18 @@ def validate(instance: Any, schema: dict, schema_dir: Path, path: str = "$") -> 
 
     schema_type = schema.get("type")
     if schema_type:
-        expected = _TYPE_MAP[schema_type]
-        # bool is a subclass of int in Python -- keep integer/number distinct from boolean.
-        if schema_type in ("integer", "number") and isinstance(instance, bool):
-            raise ValidationError(path, f"expected {schema_type}, got boolean")
-        if not isinstance(instance, expected):
-            raise ValidationError(path, f"expected {schema_type}, got {type(instance).__name__}")
+        # A list of types ("type": ["number", "null"]) accepts any one of them.
+        types = schema_type if isinstance(schema_type, list) else [schema_type]
+
+        def _matches(t):
+            # bool is a subclass of int in Python -- keep integer/number distinct from boolean.
+            if t in ("integer", "number") and isinstance(instance, bool):
+                return False
+            return isinstance(instance, _TYPE_MAP[t])
+
+        if not any(_matches(t) for t in types):
+            got = "boolean" if isinstance(instance, bool) else type(instance).__name__
+            raise ValidationError(path, f"expected {' or '.join(types)}, got {got}")
 
     if schema.get("format") == "date" and isinstance(instance, str):
         if not _DATE_RE.match(instance):

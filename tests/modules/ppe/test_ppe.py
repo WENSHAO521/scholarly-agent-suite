@@ -268,3 +268,163 @@ def test_runtime_has_no_detector_scoring():
     src = "\n".join(p.read_text(encoding="utf-8") for p in (MODULE_DIR / "ppe").glob("*.py")).lower()
     for word in ("ai_probability", "humanness", "detector_score", "perplexity", "zero-width", "\\u200b"):
         assert word not in src, word
+
+
+# --- defensive writing (v2.5.0) -------------------------------------------
+
+DEFENSIVE_PHRASE_CATEGORIES = ("defensive-hedge", "preemptive-caveat", "disclaimer", "apologetic-framing",
+                               "over-justification")
+
+EN_DEFENSIVE = (
+    "While this study has some limitations, it could be argued that peer feedback may possibly suggest "
+    "a potential benefit (Lee, 2020). These findings should be interpreted with caution. It is reasonable "
+    "to assume that further research is needed. This modest attempt is by no means exhaustive, and we "
+    "humbly suggest that it was carefully designed for the sake of rigour."
+)
+ZH_DEFENSIVE = (
+    "本研究也存在一些不足，結果應謹慎看待。從某種意義上說，這或可認為是一種拋磚引玉的嘗試，"
+    "不當之處在所難免，敬請讀者批評指正。限於篇幅，本文無意窮盡所有案例。"
+    "為了保證研究的嚴謹性，我們有理由認為此結論成立。"
+)
+DEFENSIVE_SAMPLES = {
+    "ja": "本研究には限界がある。浅学非才の筆者による拙稿であり、網羅的なものではない。厳密を期すため、と言えなくもない。",
+    "ko": "본 연구는 여러 한계를 가진다. 부족한 점이 많지만 지면의 한계로 어느 정도는 타당하다고 볼 수 있다.",
+    "es": "Si bien este estudio presenta limitaciones, podría decirse que es una modesta contribución que no pretende ser exhaustiva. Es razonable suponer que sí.",
+    "fr": "Bien que cette étude présente certaines limites, on pourrait dire que cette modeste contribution ne prétend pas à l'exhaustivité. Il est raisonnable de supposer que oui.",
+    "de": "Obwohl diese Studie gewisse Grenzen hat, könnte man sagen, dass dieser bescheidene Beitrag keinen Anspruch auf Vollständigkeit erhebt. Es ist daher vernünftig anzunehmen, dass er hilft.",
+    "pt": "Embora este estudo tenha algumas limitações, pode-se dizer que esta modesta contribuição não pretende ser exaustiva. É razoável supor que sim.",
+    "ru": "Хотя данное исследование имеет ряд ограничений, можно сказать, что этот скромный вклад не претендует на полноту. Представляется разумным предположить, что это так.",
+}
+
+
+def test_every_catalog_language_covers_defensive_writing():
+    assert set(ppe.DEFENSIVE_CATEGORIES) <= set(CATEGORIES)
+    for lang in CATALOG_LANGUAGES:
+        cats = {p.category for p in patterns_for(lang)}
+        for needed in DEFENSIVE_PHRASE_CATEGORIES:
+            assert needed in cats, (lang, needed)
+
+
+def test_english_defensive_writing_is_found():
+    d = diagnose(EN_DEFENSIVE, "en")
+    cats = {f["category"] for f in d["findings"]}
+    assert set(DEFENSIVE_PHRASE_CATEGORIES) <= cats
+    assert {"en-cav-limitations-opener", "en-def-could-be-argued", "en-cav-interpret-caution",
+            "en-cav-further-research", "en-disc-not-exhaustive", "en-apol-humble",
+            "en-apol-modest-attempt", "en-just-reasonable", "en-just-for-the-sake"} <= {f["id"] for f in d["findings"]}
+    assert d["defensive"] >= 10
+
+
+@pytest.mark.parametrize("text", [ZH_DEFENSIVE, "限于篇幅，本文无意穷尽。抛砖引玉，不当之处在所难免，敬请批评指正。为了确保研究的严谨性，学界普遍认为如此。"])
+def test_chinese_defensive_writing_traditional_and_simplified(text):
+    d = diagnose(text, "zh")
+    cats = {f["category"] for f in d["findings"]}
+    assert {"disclaimer", "apologetic-framing", "over-justification"} <= cats
+
+
+def test_chinese_defensive_ids():
+    ids = {f["id"] for f in diagnose(ZH_DEFENSIVE, "zh")["findings"]}
+    assert {"zh-cav-buzu", "zh-cav-jinshen", "zh-def-mouzhong", "zh-def-huoke", "zh-apol-paozhuan",
+            "zh-apol-zhizheng", "zh-disc-pianfu", "zh-disc-wuyi", "zh-just-yanjin", "zh-just-youliyou"} <= ids
+
+
+@pytest.mark.parametrize("lang,text", list(DEFENSIVE_SAMPLES.items()))
+def test_each_catalog_language_flags_defensive_writing(lang, text):
+    d = diagnose(text, lang)
+    cats = {f["category"] for f in d["findings"]}
+    assert {"preemptive-caveat", "apologetic-framing", "disclaimer"} <= cats, (lang, d["findings"])
+    assert d["defensive"] >= 3
+
+
+def test_warranted_uncertainty_is_not_flagged_as_defensive():
+    text = ("In this cohort, exposure is associated with a 12% higher risk (95% CI 3-21%) (Lee, 2020). "
+            "The design is observational, so the estimate may still reflect confounding by income. "
+            "Self-reported smoking usually understates exposure, which would bias the estimate towards zero.")
+    d = diagnose(text, "en")
+    assert d["defensive"] == 0, d["findings"]
+
+
+def test_hedge_pileup_and_blanket():
+    pileup = "The results may perhaps suggest that the effect could possibly be larger than expected."
+    ids = {f["id"] for f in diagnose(pileup, "en")["findings"]}
+    assert "struct-hedge-pileup" in ids
+    blanket = ("The effect may be larger in cities. Rural areas might show less change. "
+               "Older voters could respond differently. Turnout probably fell overall.")
+    d = diagnose(blanket, "en")
+    assert any(f["id"] == "struct-hedge-blanket" for f in d["findings"])
+    assert d["hedge_rate"] == 1.0
+    plain = ("The effect is larger in cities (Table 2). Rural areas show less change. "
+             "Older voters respond the same way. Turnout may have fallen overall.")
+    d = diagnose(plain, "en")
+    assert not any(f["category"] == "hedge-blanket" for f in d["findings"])
+    assert d["hedge_rate"] == 0.25
+
+
+def test_hedge_rate_is_none_without_a_hedge_list():
+    d = diagnose("Questo studio analizza il caso. Forse il caso è raro. Forse no.", "it")
+    assert d["hedge_rate"] is None
+    assert not any(f["category"] == "hedge-blanket" for f in d["findings"])
+
+
+def test_quoted_defensive_phrasing_is_not_flagged():
+    text = 'The minister said, "It could be argued that further research is needed." (Ng, 2020)'
+    assert diagnose(text, "en")["defensive"] == 0
+
+
+EN_DEFENSIVE_POLISHED = (
+    "Students who received peer feedback revised more (Lee, 2020). The courses were not randomized, "
+    "so this is an association. The review covers two courses."
+)
+
+
+def test_report_rejects_silently_dropped_hedges():
+    r = build_polish_report(EN_DEFENSIVE, EN_DEFENSIVE_POLISHED, "standard")
+    assert r["invariants"]["hedges"]["polished"] < r["invariants"]["hedges"]["original"]
+    assert any("hedges fell" in e for e in validate_polish_report(r))
+
+
+def test_report_accepts_hedges_dropped_with_calibration():
+    ledger = [
+        {"before": "may possibly suggest a potential benefit", "after": "revised more",
+         "decision": "scoped", "warrant": "non-randomized courses: association only, stated once"},
+        {"before": "These findings should be interpreted with caution.", "after": "",
+         "decision": "consolidated", "warrant": "same limitation as the randomization sentence"},
+    ]
+    r = build_polish_report(EN_DEFENSIVE, EN_DEFENSIVE_POLISHED, "standard", calibration=ledger)
+    assert validate_polish_report(r) == []
+    validate_file(r, PROTOCOLS / "polish-report.schema.json")
+    assert r["before"]["defensive"] > r["after"]["defensive"] == 0
+    # a logged change in a defensive category also accounts for the drop
+    r = build_polish_report(EN_DEFENSIVE, EN_DEFENSIVE_POLISHED, "standard",
+                            changes=[{"category": "defensive-hedge", "before": "it could be argued that", "after": ""}])
+    assert validate_polish_report(r) == []
+
+
+def test_calibration_entries_are_checked():
+    bad = [{"before": "a", "after": "b", "decision": "deleted", "warrant": "x"},
+           {"before": "a", "after": "b", "decision": "removed", "warrant": "  "},
+           {"before": "a", "decision": "kept"}]
+    r = build_polish_report(EN_DEFENSIVE, EN_DEFENSIVE_POLISHED, "standard", calibration=bad)
+    errors = validate_polish_report(r)
+    assert any("unknown decision" in e for e in errors)
+    assert any("needs a warrant" in e for e in errors)
+    assert any("calibration[2] missing" in e for e in errors)
+    with pytest.raises(ValidationError):
+        validate_file(r, PROTOCOLS / "polish-report.schema.json")
+
+
+def test_cli_diagnose_defensive_only(tmp_path, capsys):
+    f = tmp_path / "t.txt"
+    f.write_text("Furthermore, " + EN_DEFENSIVE, encoding="utf-8")
+    assert cli_main(["diagnose", str(f), "--defensive"]) == 0
+    out = json.loads(capsys.readouterr().out)
+    assert out["findings"] and all(x["category"] in ppe.DEFENSIVE_CATEGORIES for x in out["findings"])
+
+
+def test_defensive_writing_reference_keeps_warranted_uncertainty():
+    text = (MODULE_DIR / "references" / "defensive-writing.md").read_text(encoding="utf-8")
+    assert "never licenses a stronger claim" in text
+    assert "warrant test" in text.lower()
+    for cat in ppe.DEFENSIVE_CATEGORIES:
+        if cat != "hedge-stack":
+            assert "`%s`" % cat in text, cat

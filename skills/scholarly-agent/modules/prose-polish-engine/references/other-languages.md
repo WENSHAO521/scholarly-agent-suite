@@ -31,6 +31,9 @@ equivalent in every language:
 | hedge-stack | Is the claim hedged twice? |
 | contrast-template | Is "not only … but also / non seulement … mais aussi / не только … но и" a habit? |
 | nominalization | Is a verb buried in "carry out an analysis / realizar un análisis / 分析を行う / провести анализ"? |
+| defensive-hedge, hedge-blanket | Does each hedge answer to a source of uncertainty you can name ("on pourrait dire / ある意味で / в некотором смысле")? Is every sentence hedged? |
+| preemptive-caveat, disclaimer | Is a limitation conceded vaguely, or the scope fenced off ("erhebt keinen Anspruch auf Vollständigkeit / 網羅的ではない / не претендует на полноту")? |
+| apologetic-framing, over-justification | Does the text apologize for itself ("modesta contribución / 浅学非才 / 부족한 점이 많지만") or defend routine choices? |
 | structural habits | Same openers, same sentence length, reflexive three-item lists, dashes |
 
 ## Procedure for a language without a catalog
@@ -54,6 +57,15 @@ broken up; Romance languages use longer sentences than English academic
 prose without that being a defect. Polish toward the conventions of the
 language and discipline, not toward English.
 
+The defensive categories follow [defensive-writing.md](defensive-writing.md)
+in every language: the warrant test decides, not the phrase. Every
+language with a catalog has at least one pattern in each phrase-level
+defensive category, and the hedge-blanket checks run wherever
+`ppe.languages` has a hedge list. Some academic cultures are more formally
+modest than others (Japanese and Korean prefaces, Chinese 後記): keep a
+venue-expected formula outside the body text with a `kept_because`, never
+inside the argument.
+
 ## Catalog summaries
 
 Full patterns are in `ppe/patterns.py`. These are the commonest ones.
@@ -66,6 +78,7 @@ Full patterns are in `ppe/patterns.py`. These are the commonest ones.
 - Frames: 「近年、…の急速な発展に伴い」「新たな視点を提供する」「本研究の目的は」
 - Summary: 「以上のことから」「総じて」「まとめると」
 - Nominalization: 「分析を行う」→「分析する」
+- Defensive: 「と言えなくもない」「本研究には限界がある」「網羅的ではない」「浅学非才」「ご叱正を仰ぎたい」
 - だ・である調とです・ます調を混ぜない。原文の文体を保つ。
 
 ### Korean (ko)
@@ -76,6 +89,7 @@ Full patterns are in `ppe/patterns.py`. These are the commonest ones.
 - Frames: 「최근 …의 급속한 발전에 따라」「새로운 시사점을 제공한다」
 - Summary: 「결론적으로」「요약하면」「종합하면」
 - Nominalization: 「분석을 진행하였다」→「분석하였다」
+- Defensive: 「~라고 볼 수도 있다」「추가 연구가 필요하다」「지면의 한계」「부족한 점이 많지만」「졸고」
 - 학술 문체(-다)를 유지하고 경어체와 섞지 않는다.
 
 ### Spanish (es)
@@ -86,6 +100,7 @@ Full patterns are in `ppe/patterns.py`. These are the commonest ones.
 - Frames: «en el mundo actual», «arrojar luz sobre», «sentar las bases», «el presente estudio pretende»
 - Summary: «En conclusión,», «En definitiva,»
 - Nominalization: «realizar un análisis» → «analizar»
+- Defensive: «podría decirse», «si bien este estudio presenta limitaciones», «no pretende ser exhaustivo», «modesta contribución», «en aras del rigor»
 
 ### French (fr)
 
@@ -95,6 +110,7 @@ Full patterns are in `ppe/patterns.py`. These are the commonest ones.
 - Frames: « dans le monde actuel », « mettre en lumière », « ouvrir de nouvelles perspectives », « cette étude vise à »
 - Summary: « En conclusion, », « En somme, »
 - Nominalization: « procéder à une analyse » → « analyser »
+- Defensive: « on pourrait dire », « les résultats doivent être interprétés avec prudence », « sans prétendre à l'exhaustivité », « modeste contribution », « par souci de rigueur »
 - Respect French typography (espaces insécables before ; : ! ?, guillemets « »).
 
 ### German (de)
@@ -105,6 +121,7 @@ Full patterns are in `ppe/patterns.py`. These are the commonest ones.
 - Frames: „in der heutigen Welt", „wirft ein neues Licht auf", „ebnet den Weg", „Ziel dieser Arbeit ist es"
 - Summary: „Zusammenfassend lässt sich sagen"
 - Nominalization: „eine Analyse wurde durchgeführt" → „analysiert"
+- Defensive: „man könnte sagen", „weitere Forschung ist nötig", „erhebt keinen Anspruch auf Vollständigkeit", „bescheidener Beitrag", „der Vollständigkeit halber"
 
 ### Portuguese (pt)
 
@@ -113,6 +130,7 @@ Full patterns are in `ppe/patterns.py`. These are the commonest ones.
 - Empty emphasis: «vale ressaltar que», «é importante destacar que», «desempenha um papel crucial»
 - Frames: «no mundo atual», «lançar luz sobre», «abrir caminho», «o presente estudo visa»
 - Summary: «Em suma,», «Em conclusão,»
+- Defensive: «pode-se dizer», «os resultados devem ser interpretados com cautela», «não pretende ser exaustivo», «modesta contribuição», «em nome do rigor»
 - Keep the author's variety (pt-BR or pt-PT) in spelling and vocabulary.
 
 ### Russian (ru)
@@ -123,3 +141,4 @@ Full patterns are in `ppe/patterns.py`. These are the commonest ones.
 - Frames: «в современном мире», «проливает свет на», «открывает новые перспективы», «целью данного исследования является»
 - Summary: «В заключение,», «Подводя итог,»
 - Nominalization: «провести анализ» → «проанализировать»
+- Defensive: «можно сказать», «результаты следует интерпретировать с осторожностью», «не претендует на полноту», «скромный вклад», «для полноты»

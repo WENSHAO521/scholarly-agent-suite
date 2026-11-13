@@ -6,9 +6,75 @@ Suite versioning follows `docs/development.md#suite-versioning` /
 have no versions of their own; `COMPONENTS.json` records where each module
 was merged from.
 
+## v2.5.0 -- 2026-11-13
+
+v2.5.0 PREPARED -- NOT PUBLISHED
+
+**The polish module now stops defensive writing (防禦性寫作).** Polishing
+removes hedges that answer to no evidence, hedges on every sentence,
+pre-emptive caveats, disclaimers, apologies for the work, and
+justifications of routine choices, and keeps every uncertainty the
+evidence warrants, stated once and specifically. Invoking the Skill is
+unchanged; nothing was renamed, and existing POLISH_REPORT_V1 reports stay
+valid.
+
+### Added
+
+- **Defense pass** in `prose-polish-engine` (pass 2 of
+  `references/polishing-passes.md`, at every level) and a new reference,
+  `references/defensive-writing.md`: the warrant test (each qualifier must
+  answer to a nameable source of uncertainty: design ceiling, statistics,
+  scope, measurement, contested interpretation, extrapolation), the six
+  forms with English and Chinese before/after examples, how to write a
+  limitation that is not defensive (what, which result, which direction,
+  what still holds), what each level covers, and discipline notes
+  (interpretive hedges in the humanities, required limitations sections
+  in medicine, terms of art in law, 序 / 後記 conventions in Chinese).
+- **Six categories** in `ppe.CATEGORIES` and `ppe.DEFENSIVE_CATEGORIES`:
+  `defensive-hedge`, `hedge-blanket`, `preemptive-caveat`, `disclaimer`,
+  `apologetic-framing`, `over-justification`. Phrase patterns for all five
+  phrase-level categories in all nine catalog languages (en, zh, ja, ko,
+  es, fr, de, pt, ru), e.g. "it could be argued that", "should be
+  interpreted with caution", "by no means exhaustive", "this modest
+  attempt", 「從某種意義上說」「有待進一步研究」「限於篇幅」「拋磚引玉」
+  「為了保證研究的嚴謹性」.
+- **Structural checks** in `ppe.diagnose`: `struct-hedge-pileup` (three or
+  more hedges in one sentence) and `struct-hedge-blanket` (three quarters
+  or more of a paragraph's sentences hedged). The diagnosis also reports
+  `defensive` (count) and `hedge_rate` (share of hedged sentences);
+  `ppe.diagnose.defensive_findings()` and `python -m ppe diagnose FILE
+  --defensive` list only the defensive findings.
+- **Calibration ledger** in `POLISH_REPORT_V1` (optional `calibration`
+  field; `before`/`after` gain optional `defensive` and `hedge_rate`;
+  `invariants` gains optional `hedges`): one entry per qualifier examined,
+  with `decision` (`kept`, `scoped`, `removed`, `consolidated`) and a
+  non-empty `warrant`. `validate_polish_report` rejects a report whose
+  hedge count fell with no ledger entry and no logged defensive change, so
+  a hedge the evidence needs cannot disappear silently.
+- Drafting guidance: the voice module's claim-calibration section now
+  tells the writer not to write defensively in the first place and points
+  to the same warrant test.
+- Evals PP-009 to PP-012 (including a case where the hedging follows from
+  an overreaching claim and must be escalated, not deleted, and a
+  humanities case where interpretive hedges stay), orchestration fixtures
+  pol-004 and pol-005, and tests in `tests/modules/ppe/`.
+
+### Changed
+
+- Polishing now has six passes after protection (residue, defense, words,
+  connectives, sentences, paragraphs). The level table,
+  the hand-back order (a one-line defensive-writing summary from the
+  ledger), and the dispatcher's polish description and triggers
+  (「去掉防禦性寫作」「限定語太多」, "cut the hedging") include the new pass.
+- `scripts/schema_lite.py` accepts a list of types (`"type": ["number",
+  "null"]`).
+- README, README.zh-TW, and both architecture diagrams describe the polish
+  module as removing templated phrasing and defensive writing.
+- Package size: the Skill ZIP has 172 files, the suite ZIP 193 (limit 200).
+
 ## v2.4.0 -- 2026-11-12
 
-v2.4.0 PREPARED -- NOT PUBLISHED
+v2.4.0 PUBLISHED
 
 **A seventh module for scholarly translation, and a Skill package that
 uploads to claude.ai.** Invoking the Skill is unchanged; nothing existing

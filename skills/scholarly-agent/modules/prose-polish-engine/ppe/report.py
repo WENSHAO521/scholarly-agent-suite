@@ -1,7 +1,8 @@
 """POLISH_REPORT_V1: build it from an original and a polished text, and
 validate one. Mirrors protocols/polish-report.schema.json plus the rules a
 schema cannot express (status follows the invariant check; residue left in
-the polished text always fails)."""
+the polished text always fails; a polish that removed hedges must say why,
+in ``calibration`` or in a logged change of a defensive category)."""
 
 from __future__ import annotations
 
@@ -9,7 +10,7 @@ from typing import Any, Dict, Iterable, List, Optional
 
 import re
 
-from ppe import CATEGORIES, LEVELS, POLISH_NOTICE, STATUSES
+from ppe import CALIBRATION_DECISIONS, CATEGORIES, DEFENSIVE_CATEGORIES, LEVELS, POLISH_NOTICE, STATUSES
 from ppe.diagnose import detect_language, diagnose, summary
 from ppe.invariants import check_invariants
 from ppe.languages import has_catalog, supported_note
@@ -17,18 +18,25 @@ from ppe.languages import has_catalog, supported_note
 REQUIRED = ["protocol", "language", "catalog", "level", "before", "after", "changes", "remaining",
             "invariants", "status", "notice"]
 CHANGE_REQUIRED = ["category", "before", "after"]
+CALIBRATION_REQUIRED = ["before", "after", "decision", "warrant"]
 
 
 def build_polish_report(original: str, polished: str, level: str = "standard",
                         changes: Iterable[Dict[str, str]] = (), lang: Optional[str] = None,
                         protected_terms: Iterable[str] = (), escalations: Iterable[str] = (),
-                        limitations: Iterable[str] = ()) -> Dict[str, Any]:
+                        limitations: Iterable[str] = (),
+                        calibration: Iterable[Dict[str, str]] = ()) -> Dict[str, Any]:
     """Diagnose both versions, check invariants, and assemble the report.
 
     ``changes`` is the polisher's own log: one ``{category, before, after}``
     entry per edit worth showing the author (``note`` optional).
     ``escalations`` lists argument- or structure-level problems noticed
     but deliberately not fixed here (they belong to the voice module).
+    ``calibration`` is the defensive-writing ledger: one ``{before, after,
+    decision, warrant}`` entry per qualifier the polisher kept, scoped,
+    removed, or consolidated, where ``warrant`` names the evidence the
+    hedge answers to, or says why it answers to none
+    (references/defensive-writing.md).
     """
     if level not in LEVELS:
         raise ValueError("unknown level %r" % level)
@@ -56,6 +64,11 @@ def build_polish_report(original: str, polished: str, level: str = "standard",
         "status": status,
         "notice": POLISH_NOTICE,
     }
+    if "hedges" in inv["checks"]:
+        report["invariants"]["hedges"] = dict(inv["checks"]["hedges"])
+    calibration = [dict(c) for c in calibration]
+    if calibration:
+        report["calibration"] = calibration
     if escalations:
         report["escalations"] = list(escalations)
     limitations = supported_note(lang) + list(limitations)
@@ -100,4 +113,21 @@ def validate_polish_report(report: Dict[str, Any]) -> List[str]:
     after = report["after"]
     if isinstance(after, dict) and after.get("must_remove") and report["status"] != "FAIL":
         errors.append("chat residue left in the polished text must make the report FAIL")
+    calibration = report.get("calibration", [])
+    for i, c in enumerate(calibration):
+        missing = [k for k in CALIBRATION_REQUIRED if k not in c] if isinstance(c, dict) else CALIBRATION_REQUIRED
+        if missing:
+            errors.append("calibration[%d] missing %s" % (i, missing))
+            continue
+        if c["decision"] not in CALIBRATION_DECISIONS:
+            errors.append("calibration[%d] unknown decision %r" % (i, c["decision"]))
+        if not str(c["warrant"]).strip():
+            errors.append("calibration[%d] needs a warrant: the evidence the hedge answers to, or why none" % i)
+    hedges = inv.get("hedges") if isinstance(inv, dict) else None
+    if isinstance(hedges, dict) and hedges.get("polished", 0) < hedges.get("original", 0):
+        logged = any(isinstance(c, dict) and c.get("category") in DEFENSIVE_CATEGORIES for c in report["changes"])
+        if not calibration and not logged:
+            errors.append("hedges fell from %d to %d with no calibration entry or defensive-category change "
+                          "saying why; a hedge the evidence needs must never be dropped silently"
+                          % (hedges["original"], hedges["polished"]))
     return errors

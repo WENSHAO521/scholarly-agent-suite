@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 700" role="img" aria-label="Scholarly Agent 架構圖：需求進入同一個 Skill，由調度器決定直接回答、載入單一模組，或依工作流程串接多個模組。七個模組是模型路由（執行規劃）、語料建構（研究證據）、寫作引擎（寫作與論證）、期刊匹配（投稿策略）、同儕審稿（投稿前審稿人與編輯決定）、文字潤色（任何語言，去除套話）與學術翻譯（任兩種語言互譯）。模組透過十四份有版本的 JSON 協定交換資料、共用一套誠信政策，每個工作流程最後都經過品質關卡，結果為 COMPLETE、COMPLETE_WITH_LIMITATIONS 或 BLOCKED。">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 700" role="img" aria-label="Scholarly Agent 架構圖：需求進入同一個 Skill，由調度器決定直接回答、載入單一模組，或依工作流程串接多個模組。七個模組是模型路由（執行規劃）、語料建構（研究證據）、寫作引擎（寫作與論證）、期刊匹配（投稿策略）、同儕審稿（投稿前審稿人與編輯決定）、文字潤色（任何語言，去除套話與防禦性寫作）與學術翻譯（任兩種語言互譯）。模組透過十四份有版本的 JSON 協定交換資料、共用一套誠信政策，每個工作流程最後都經過品質關卡，結果為 COMPLETE、COMPLETE_WITH_LIMITATIONS 或 BLOCKED。">
   <title>Scholarly Agent：一個 Skill、七個模組</title>
   <defs>
     <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
@@ -111,7 +111,7 @@
     <text x="722" y="280" text-anchor="middle" class="mono" font-size="10.5" font-weight="700" fill="#2f7f7a">文字潤色</text>
     <text x="722" y="297" text-anchor="middle" class="sans muted" font-size="9.5" font-style="italic">潤色（任何語言）</text>
     <text x="722" y="320" text-anchor="middle" class="sans ink" font-size="8.8">去除套話與語言水印</text>
-    <text x="722" y="336" text-anchor="middle" class="sans ink" font-size="8.8">九種語言句式清單</text>
+    <text x="722" y="336" text-anchor="middle" class="sans ink" font-size="8.8">去除防禦性寫作</text>
     <text x="722" y="352" text-anchor="middle" class="sans ink" font-size="8.8">引用與數據不變</text>
     <text x="722" y="377" text-anchor="middle" class="mono muted" font-size="9">engine: ppe/</text>
   </g>
