@@ -140,7 +140,10 @@ pytest tests/
   paragraphs, hedges), glossaries, `TRANSLATION_REPORT_V1`, and the CLI;
   `tests/modules/ppe/` -- polish
   pattern catalogs, language detection for any language, diagnosis,
-  invariant checks, `POLISH_REPORT_V1`, and the no-detector-scoring rule.
+  defensive-writing findings (catalog coverage in all nine languages, hedge
+  pile-ups and blankets, warranted hedges left alone, the calibration
+  ledger and the silently-dropped-hedge rule), invariant checks,
+  `POLISH_REPORT_V1`, and the no-detector-scoring rule.
 - `tests/modules/scb/`, `tests/modules/jfe/`, `tests/modules/voice/` -- each
   module's own unit tests, merged from its former repository in v2.0.0
   (fixtures included). Tests of the former repositories' own packaging and
@@ -202,6 +205,12 @@ under `skill_zip`, and both ZIPs are attached to every release.
   the language explicitly for close relatives (Serbian Cyrillic vs Russian,
   Persian vs Arabic, Malay vs Indonesian). Hedge and negation counts are
   keyword-based and only flag changes for review.
+- Defensive-writing detection (v2.5.0) is a short phrase list per language
+  plus two hedge-count checks; it cannot tell a warranted hedge from a
+  defensive one. That judgment is the polisher's warrant test
+  (`prose-polish-engine/references/defensive-writing.md`), and the
+  `calibration` ledger is what records it. `hedge_rate` and the hedge-blanket
+  check run only where `ppe.languages.HEDGES` has a list.
 - `scb.__version__` (recorded as the builder version in corpus build
   manifests) is the Suite `VERSION`; in a plain-Skill install without that
   file it falls back to `0.0.0`.

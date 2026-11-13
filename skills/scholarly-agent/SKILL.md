@@ -1,6 +1,6 @@
 ---
 name: scholarly-agent
-description: Evidence-first academic research and writing agent for any discipline. Use for scholarly work such as drafting or revising research articles, reviews, commentaries, theses, book chapters and monographs; building literature corpora and discipline, journal, historical or author-voice style profiles; finding and adapting to target journals; reviewing a manuscript before submission with independent reviewer reports and an editorial decision before submission; polishing finished prose in any language to remove templated, machine-sounding phrasing while keeping meaning and citations intact; translating academic text between any two languages, including Traditional and Simplified Chinese, with claims, citations, numbers and terms intact; and planning how a multi-stage research task should be executed. Loads only the internal module(s) a request needs. Do not invoke for casual, marketing or administrative writing, or for a one-line factual question that needs no scholarly workflow.
+description: Evidence-first academic research and writing agent for any discipline. Use for scholarly work such as drafting or revising research articles, reviews, commentaries, theses, book chapters and monographs; building literature corpora and discipline, journal, historical or author-voice style profiles; finding and adapting to target journals; reviewing a manuscript before submission with independent reviewer reports and an editorial decision; polishing finished prose in any language to remove templated, machine-sounding phrasing and defensive over-hedging while keeping meaning and citations intact; translating academic text between any two languages, including Traditional and Simplified Chinese, with claims, citations, numbers and terms intact; and planning how a multi-stage research task should be executed. Loads only the internal module(s) a request needs. Do not invoke for casual, marketing or administrative writing, or for a one-line factual question that needs no scholarly workflow.
 ---
 
 # Scholarly Agent
@@ -27,7 +27,7 @@ here as modules from the start.
 | `modules/scholarly-corpus-builder/MODULE.md` | Research evidence | retrieving or verifying literature, building a corpus, or compiling a discipline / journal / historical / author-voice style profile |
 | `modules/journal-fit-engine/MODULE.md` | Publication strategy | a manuscript profile, journal candidates, hard filters (scope, APC, open access, indexing), fit scoring, submission strategy, or a target journal's style context |
 | `modules/peer-review-engine/MODULE.md` | Pre-submission peer review | a pre-submission review: editor desk screen, independent reviewer reports (as isolated subagents when the host can dispatch), an editorial decision with required changes, or a check of a revision and response-to-reviewers letter |
-| `modules/prose-polish-engine/MODULE.md` | Prose polishing | polishing (潤色) finished text in any language: removing templated phrasing (stock connectives, empty emphasis, formulaic openings and closings, repeated sentence shapes) so it no longer reads machine-made, with citations, numbers, quotations, and claims unchanged |
+| `modules/prose-polish-engine/MODULE.md` | Prose polishing | polishing (潤色) finished text in any language: removing templated phrasing (stock connectives, empty emphasis, formulaic openings and closings, repeated sentence shapes) so it no longer reads machine-made, and defensive writing (hedges with no evidential warrant, pre-emptive caveats, disclaimers, apologetic framing, over-justification) while keeping every warranted uncertainty, with citations, numbers, quotations, and claims unchanged |
 | `modules/translation-engine/MODULE.md` | Scholarly translation | translating (翻譯) an abstract, article, chapter, thesis, or reviewer letter between any two languages, or converting between Traditional and Simplified Chinese with regional terms: glossary-consistent terminology, the target's academic register, and citations, numbers, formulas, and claim strength unchanged |
 | `modules/adaptive-model-router/MODULE.md` | Execution planning | deciding model tier, reasoning effort, subagent delegation, validation depth, or escalation for a large or high-stakes task (only meaningful when the host can actually dispatch) |
 
@@ -57,7 +57,7 @@ Then follow one of three paths:
   or "Translate this title".
 - **Single module.** The request sits inside one module's scope, e.g.
   "revise this section" (voice), "polish this so it doesn't read
-  machine-written" / 「潤色、去 AI 味」 (polish), "translate my abstract into
+  machine-written" / 「潤色、去 AI 味」 / 「去掉防禦性寫作、限定語太多」 (polish), "translate my abstract into
   English" / 「中譯英、簡轉繁」 (translation), "build a journal style profile"
   (corpus), "find journals for this finished manuscript" (journal fit),
   "review my paper as a reviewer would" (peer review).
@@ -229,8 +229,9 @@ putting its module directory on `sys.path`:
 - `modules/peer-review-engine/prv/` -- reviewer panel and subagent
   briefings, review-report validation, editorial decision, response matrix,
   revision-round checks (`import prv`).
-- `modules/prose-polish-engine/ppe/` -- templated-phrasing catalogs (nine
-  languages) and diagnosis for any language, the check that polishing kept
+- `modules/prose-polish-engine/ppe/` -- templated-phrasing and
+  defensive-writing catalogs (nine languages) and diagnosis for any
+  language (including hedge pile-ups and hedge blankets), the check that polishing kept
   every citation, number, quotation, and formula, and `POLISH_REPORT_V1`
   (`import ppe`).
 - `modules/translation-engine/tre/` -- term extraction and glossary

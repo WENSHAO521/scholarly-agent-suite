@@ -2,7 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://scholarly-agent-suite/protocols/polish-report.schema.json",
   "title": "POLISH_REPORT_V1",
-  "description": "What a prose-polish-engine pass changed and what it kept: templated-phrasing counts before and after, the change log, findings left in place, and the check that citations, numbers, quotations, and formulas survived unchanged. Produced by prose-polish-engine (ppe.report.build_polish_report) and consumed by the dispatcher's final quality gate. See modules/prose-polish-engine/references/polish-report.md.",
+  "description": "What a prose-polish-engine pass changed and what it kept: templated-phrasing counts before and after, the change log, the defensive-writing calibration ledger, findings left in place, and the check that citations, numbers, quotations, and formulas survived unchanged. Produced by prose-polish-engine (ppe.report.build_polish_report) and consumed by the dispatcher's final quality gate. See modules/prose-polish-engine/references/polish-report.md.",
   "type": "object",
   "required": [
     "protocol",
@@ -66,6 +66,17 @@
         },
         "units": {
           "type": "integer"
+        },
+        "defensive": {
+          "type": "integer",
+          "description": "findings in the defensive-writing categories (ppe.DEFENSIVE_CATEGORIES); added in v2.5.0"
+        },
+        "hedge_rate": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "share of sentences carrying at least one hedge; null for a language without a hedge list"
         }
       },
       "additionalProperties": false
@@ -99,6 +110,17 @@
         },
         "units": {
           "type": "integer"
+        },
+        "defensive": {
+          "type": "integer",
+          "description": "findings in the defensive-writing categories (ppe.DEFENSIVE_CATEGORIES); added in v2.5.0"
+        },
+        "hedge_rate": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "description": "share of sentences carrying at least one hedge; null for a language without a hedge list"
         }
       },
       "additionalProperties": false
@@ -128,7 +150,13 @@
               "repeated-opener",
               "uniform-rhythm",
               "triplet-habit",
-              "dash-habit"
+              "dash-habit",
+              "defensive-hedge",
+              "hedge-blanket",
+              "preemptive-caveat",
+              "disclaimer",
+              "apologetic-framing",
+              "over-justification"
             ]
           },
           "before": {
@@ -212,6 +240,22 @@
         },
         "length_ratio": {
           "type": "number"
+        },
+        "hedges": {
+          "type": "object",
+          "required": [
+            "original",
+            "polished"
+          ],
+          "properties": {
+            "original": {
+              "type": "integer"
+            },
+            "polished": {
+              "type": "integer"
+            }
+          },
+          "additionalProperties": false
         }
       },
       "additionalProperties": false
@@ -226,6 +270,44 @@
     },
     "notice": {
       "type": "string"
+    },
+    "calibration": {
+      "type": "array",
+      "description": "Defensive-writing ledger (references/defensive-writing.md): one entry per qualifier examined -- kept, scoped to the claim it qualifies, removed, or consolidated into one limitation statement -- with the warrant (the evidence the hedge answers to, or why it answers to none).",
+      "items": {
+        "type": "object",
+        "required": [
+          "before",
+          "after",
+          "decision",
+          "warrant"
+        ],
+        "properties": {
+          "before": {
+            "type": "string"
+          },
+          "after": {
+            "type": "string"
+          },
+          "decision": {
+            "type": "string",
+            "enum": [
+              "kept",
+              "scoped",
+              "removed",
+              "consolidated"
+            ]
+          },
+          "warrant": {
+            "type": "string",
+            "minLength": 1
+          },
+          "note": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
     },
     "escalations": {
       "type": "array",

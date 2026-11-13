@@ -12,6 +12,12 @@ category from ppe.CATEGORIES and a severity:
 - ``watch``   legitimate in moderation; flag only when it recurs or does no
               work in its sentence.
 
+Defensive writing (hedges that answer to no evidence, pre-emptive
+caveats, disclaimers, apologetic framing, over-justification) has its own
+categories; see references/defensive-writing.md. A match there is a
+question for the polisher (what evidence does this qualifier answer to?),
+never an instruction to delete a hedge the evidence needs.
+
 Chinese patterns list Traditional and Simplified forms together. The
 catalog is deliberately small and literal: it names phrasing an editor
 would mark, not a statistical model of anything.
@@ -133,6 +139,82 @@ EN_PATTERNS: List[Pattern] = [
        r"\bthe (implementation|utilization|examination|investigation|establishment|enhancement|facilitation) of\b",
        "use the verb"),
     _p("en-nominal-utilize", "en", "nominalization", "watch", r"\butili[sz](e|es|ed|ing|ation)\b", "'use'"),
+    # defensive writing (references/defensive-writing.md)
+    _p("en-def-could-be-argued", "en", "defensive-hedge", "revise",
+       r"\bit (could|can|might|may) (perhaps |possibly )?be (argued|said|suggested|claimed|contended) that\b"
+       r"|\bone (could|might|may) (perhaps )?(argue|say|suggest|contend) that\b",
+       "make the argument and own it, or attribute it with a citation"),
+    _p("en-def-seems-to-suggest", "en", "defensive-hedge", "revise",
+       r"\b(seems?|appears?|tends?) to (suggest|indicate|imply)\b|\b(may|might|could) suggest (a |the )?(possible|potential)\b"
+       r"|\bsuggests? (a |the )?(possible|potential)\b",
+       "one qualifier, sized to the evidence: 'suggests' or 'may indicate'"),
+    _p("en-def-not-impossible", "en", "defensive-hedge", "revise",
+       r"\bit is not (impossible|inconceivable|unreasonable|implausible) (that|to)\b"
+       r"|\bnot (entirely|altogether|wholly|completely) (without|unlike|unrelated)\b",
+       "say how likely or how related, in positive terms"),
+    _p("en-def-arguably", "en", "defensive-hedge", "watch",
+       r"\barguably\b|\bin (a|some) (sense|ways?)\b|\bin a way\b|\bmore or less\b|\bsomewhat\b",
+       "say in which sense or to what degree, or drop it"),
+    _p("en-cav-limitations-opener", "en", "preemptive-caveat", "revise",
+       r"\b(while|although|though|despite the fact that) (this|the present|our|the current) "
+       r"(study|analysis|paper|article|research|approach|work) (has|had|is subject to|is not without|has its own) "
+       r"((some|several|certain|a number of|its|obvious|clear) )?limitations\b",
+       "state the limitation once, specifically, where it bears on a result"),
+    _p("en-cav-should-be-noted", "en", "preemptive-caveat", "revise",
+       r"\bit (should|must) be (noted|acknowledged|borne in mind|kept in mind|recogni[sz]ed|stressed|emphasi[sz]ed) that\b",
+       "drop the frame; if it is a limitation, say what it limits"),
+    _p("en-cav-interpret-caution", "en", "preemptive-caveat", "revise",
+       r"\b(these|the|our|such) (results|findings|estimates|conclusions) (should|must|need to) be "
+       r"(interpreted|treated|viewed|taken|read|considered) with (some |considerable |due |great |appropriate )?(caution|care)\b",
+       "say which result, why, and which reading still holds"),
+    _p("en-cav-further-research", "en", "preemptive-caveat", "revise",
+       r"\b(further|more|additional|future) (research|work|studies|investigation) (is|are) (needed|required|warranted|necessary)\b"
+       r"|\bno (definitive|firm|final) conclusions? can be drawn\b",
+       "name the data or design that would settle it, or cut"),
+    _p("en-cav-not-to-say", "en", "preemptive-caveat", "watch",
+       r"\b(this|that) is not to (say|suggest|imply|claim) that\b",
+       "keep only if it heads off a reading a reader would actually make"),
+    _p("en-cav-admittedly", "en", "preemptive-caveat", "watch",
+       r"^\s*(of course|admittedly|granted|to be sure|needless to say|that (being )?said),",
+       "concede only what a reader would raise"),
+    _p("en-disc-not-exhaustive", "en", "disclaimer", "revise",
+       r"\b(is|are) (by no means|not intended to be|not meant to be|in no way) (an? )?(exhaustive|comprehensive|complete|definitive)\b"
+       r"|\bdoes not (claim|purport|pretend|aim|attempt|seek) to (be|offer|provide|give) (an? )?(exhaustive|comprehensive|complete|definitive)\b"
+       r"|\bmakes? no claims? (to|of) (completeness|comprehensiveness|exhaustiveness)\b",
+       "state the actual scope in positive terms: what is covered, which period, which sources"),
+    _p("en-disc-no-claim", "en", "disclaimer", "watch",
+       r"\b(we|I|the authors?) (do|does) not (claim|wish to claim|intend to claim|mean to suggest|wish to suggest)\b|\bno claim is made\b",
+       "keep if it rules out a reading readers would make (e.g. causality); cut if it rules out nothing"),
+    _p("en-disc-beyond-scope", "en", "disclaimer", "watch",
+       r"\b(is|are|lies|lie|falls?|remains?) (beyond|outside) the scope of (this|the present|the current) "
+       r"(paper|study|article|review|chapter|work|analysis)\b",
+       "fine once; repeated, it reads as fencing off the reader"),
+    _p("en-apol-humble", "en", "apologetic-framing", "revise",
+       r"\b(we|I) (humbly|modestly|tentatively|cautiously) (suggest|propose|submit|offer|argue|venture)\b"
+       r"|\bin (my|our) (humble|modest) (opinion|view)\b|\b(we|I) apologi[sz]e\b|\bplease (forgive|excuse)\b",
+       "state the claim at the size the evidence gives it"),
+    _p("en-apol-modest-attempt", "en", "apologetic-framing", "revise",
+       r"\b(modest|humble|small|tentative|limited|preliminary|rudimentary) (attempt|effort|endeavou?r|contribution)\b",
+       "describe what the work contributes, without size words"),
+    _p("en-apol-merely", "en", "apologetic-framing", "watch",
+       r"\b(this|the present|our) (paper|study|article|work|chapter) (merely|simply|only|just) (aims|seeks|tries|attempts|hopes|wishes)\b"
+       r"|\b(we|I) (try|attempt|endeavou?r) to\b",
+       "say what you do: 'we estimate', not 'we try to estimate'"),
+    _p("en-just-reasonable", "en", "over-justification", "revise",
+       r"\bit (is|seems|appears) (therefore |thus |hence )?(reasonable|justified|fair|legitimate|safe|appropriate) to "
+       r"(assume|argue|conclude|say|suggest|believe|expect)\b|\bthere is (good |every |some )?reason to believe\b",
+       "give the reason itself, or state the claim"),
+    _p("en-just-widely-accepted", "en", "over-justification", "revise",
+       r"\bas is (widely|generally|commonly|well) (known|accepted|acknowledged|recogni[sz]ed|established)\b"
+       r"|\bit is (widely|generally|commonly|well) (known|accepted|acknowledged|recogni[sz]ed|established) that\b",
+       "the citation carries the point; drop the appeal to consensus"),
+    _p("en-just-for-the-sake", "en", "over-justification", "revise",
+       r"\bfor the sake of (rigou?r|completeness|transparency|thoroughness|robustness|caution)\b|\bto be on the safe side\b",
+       "say what the step does; a standard step needs a citation, not a defence"),
+    _p("en-just-ensure-rigor", "en", "over-justification", "watch",
+       r"\b(in order )?to (ensure|guarantee|maximi[sz]e|enhance) the (rigou?r|robustness|reliability|validity|objectivity|credibility) of\b"
+       r"|\b(carefully|rigorously|meticulously|thoroughly) (designed|selected|chosen|conducted|considered|controlled|validated)\b",
+       "describe the procedure; adverbs do not make it rigorous"),
 ]
 
 ZH_PATTERNS: List[Pattern] = [
@@ -198,6 +280,61 @@ ZH_PATTERNS: List[Pattern] = [
     _p("zh-nominal-jinxing", "zh", "nominalization", "revise",
        r"(進行|进行)(了)?(深入的|系統的|系统的|全面的)?(分析|研究|探討|探讨|調查|调查|比較|比较|評估|评估|討論|讨论|檢驗|检验)",
        "去掉「進行」，直接用動詞"),
+    # 防禦性寫作（references/defensive-writing.md）
+    _p("zh-def-mouzhong", "zh", "defensive-hedge", "revise",
+       r"某種(程度|意義)上|某种(程度|意义)上|從某種(角度|意義)(來看|上說|而言)|从某种(角度|意义)(来看|上说|而言)",
+       "說出在哪種意義、到什麼程度，否則刪去"),
+    _p("zh-def-huoke", "zh", "defensive-hedge", "revise",
+       r"或可(認為|认为|說|说|視為|视为)|(似乎|好像)(可能|或許|或许|也許|也许)|可能(似乎|好像)"
+       r"|也許可以(說|認為)|或许可以(说|认为)|似乎(可以|能夠|能够)(說|说|認為|认为)",
+       "保留一個限定，依證據強度選擇，或直接陳述"),
+    _p("zh-def-shuangfou", "zh", "defensive-hedge", "watch",
+       r"不能(說|说)(完全)?(沒有|没有|不)|不無|不无|並非(完全)?(沒有|不)|并非(完全)?(没有|不)",
+       "雙重否定是在閃躲；正面說出程度"),
+    _p("zh-cav-buzu", "zh", "preemptive-caveat", "revise",
+       r"(本文|本研究|研究)(也|仍|還|还|尚)?(存在|有)(一定的|一些|諸多|诸多|若干|許多|许多)?(不足|局限|侷限|缺陷)",
+       "具體說出哪個限制、影響哪個結論；在研究限制一節說一次"),
+    _p("zh-cav-jinshen", "zh", "preemptive-caveat", "revise",
+       r"(結果|结果|結論|结论|發現|发现)(應|应|需|須|须|要)?(謹慎|谨慎|審慎|审慎)(地)?(看待|解讀|解读|解釋|解释|推論|推论|推廣|推广)",
+       "說出哪個結果、為什麼、哪種解讀仍然成立"),
+    _p("zh-cav-youdai", "zh", "preemptive-caveat", "revise",
+       r"有待(進一步|进一步|後續|后续|未來|未来)?的?(研究|探討|探讨|驗證|验证|深入)|(仍|尚)?需(要)?(進一步|进一步)(的)?(研究|探討|探讨|驗證|验证)",
+       "說出需要什麼資料或研究設計才能回答，否則刪去"),
+    _p("zh-cav-dangran", "zh", "preemptive-caveat", "watch",
+       r"(^|[。！？])\s*(當然|当然|誠然|诚然|固然|不過|不过)[，,]",
+       "讀者不會提出的反駁，就不必先讓步"),
+    _p("zh-cav-bingbushi", "zh", "preemptive-caveat", "watch",
+       r"(這|这)(並|并)不(是說|是说|意味著|意味着|代表)",
+       "只在讀者真的會這樣誤讀時保留"),
+    _p("zh-disc-wuyi", "zh", "disclaimer", "revise",
+       r"本(文|研究)(並|并)?(無意|无意|不打算|不試圖|不试图|不企圖|不企图|不求)|(無意|无意)(於|于)?(窮盡|穷尽|面面俱到)",
+       "正面說明涵蓋範圍：哪些材料、哪段時間、哪些問題"),
+    _p("zh-disc-pianfu", "zh", "disclaimer", "revise",
+       r"(限於|限于|囿於|囿于|受限於|受限于)篇幅|篇幅(所限|有限)",
+       "直接說涵蓋什麼；篇幅不是學術理由"),
+    _p("zh-disc-fanwei", "zh", "disclaimer", "watch",
+       r"不在本(文|研究)(的)?(討論|讨论|研究)?(範圍|范围)|超出(了)?本(文|研究)(的)?(討論|讨论|研究)?(範圍|范围)",
+       "說一次可以；反覆出現就像在築圍牆"),
+    _p("zh-apol-paozhuan", "zh", "apologetic-framing", "revise",
+       r"拋磚引玉|抛砖引玉|不揣(淺陋|浅陋|冒昧)|才疏學淺|才疏学浅|管窺之見|管窥之见|一孔之見|一孔之见|淺見|浅见|拙見|拙见|淺陋|浅陋",
+       "刪去自謙；貢獻照實說"),
+    _p("zh-apol-zhizheng", "zh", "apologetic-framing", "revise",
+       r"(不當|不当|不妥|疏漏|錯漏|错漏|謬誤|谬误|不足)之處(在所難免|在所难免)|(不當|不妥|疏漏)之处在所难免"
+       r"|(敬請|敬请|懇請|恳请|還請|还请)[^。]{0,8}(指正|斧正|批評|批评)|(筆者|笔者)(學識|学识|水平|能力)(有限|所限)",
+       "刪去；正文不向讀者道歉"),
+    _p("zh-apol-changshi", "zh", "apologetic-framing", "watch",
+       r"(初步|粗淺|粗浅|膚淺|肤浅|簡單|简单)的?(嘗試|尝试|探索|探討|探讨)",
+       "說出做了什麼，不必先說它粗淺"),
+    _p("zh-just-yanjin", "zh", "over-justification", "revise",
+       r"(為了|为了|為|为)(保證|保证|確保|确保)(研究|結果|结果|分析)?(的)?(嚴謹性|严谨性|科學性|科学性|客觀性|客观性|可靠性|準確性|准确性)"
+       r"|(為|为)(嚴謹|严谨|慎重|穩妥|稳妥)起見|出於(嚴謹|严谨|謹慎|谨慎)",
+       "說出這一步做什麼；標準程序附引用即可，不必辯護"),
+    _p("zh-just-youliyou", "zh", "over-justification", "revise",
+       r"有理由(認為|认为|相信|推斷|推断)|(可以|足以)合理地?(認為|认为|推斷|推断)|不難(看出|發現|理解)|不难(看出|发现|理解)",
+       "說出理由本身，或直接陳述"),
+    _p("zh-just-gongren", "zh", "over-justification", "revise",
+       r"(學界|学界|學術界|学术界)(普遍|一致|公認|公认)(認為|认为|認同|认同)|(公認|公认)的是",
+       "附上文獻讓文獻說話；不要訴諸共識"),
 ]
 
 # Shorthand for the languages below: residue, connective, emphasis,
@@ -222,6 +359,11 @@ JA_PATTERNS = _lang("ja", [
     ("hedge-stack", "hedge-stack", "revise", r"かもしれない可能性|可能性が(ある|あり)かもしれ|おそらく.{0,10}かもしれない", "限定は一つに"),
     ("contrast-dakede", "contrast-template", "watch", r"だけでなく.{1,40}も", "繰り返すなら直接述べる"),
     ("nominal-okonau", "nominalization", "revise", r"(分析|検討|調査|考察|比較|評価)を(行う|行った|行って|実施し)", "「分析した」など動詞で"),
+    ("def-ieru", "defensive-hedge", "revise", r"と言えなくもない|と言えるのではないだろうか|と(も)?言えるかもしれない|ある意味で(は)?|ではないかと(思われる|考えられる)", "限定は一つにして言い切る"),
+    ("cav-genkai", "preemptive-caveat", "revise", r"本(研究|稿)には(いくつかの|一定の)?(限界|課題)が(ある|あり)|慎重に(解釈|検討)する必要がある|さらなる(研究|検討)が(必要|求められる)|今後の課題としたい", "どの限界がどの結論に効くかを一度だけ"),
+    ("disc-moura", "disclaimer", "revise", r"網羅的なものではない|網羅(すること)?を(目指す|意図する)ものではない|紙幅の(都合|関係)(上)?", "扱う範囲を肯定的に述べる"),
+    ("apol-sengaku", "apologetic-framing", "revise", r"浅学非才|筆者の力不足|ご(批判|叱正|教示)を(仰ぎ|請い)たい|拙(稿|論)", "削除し、貢献をそのまま述べる"),
+    ("just-datou", "over-justification", "revise", r"(妥当|合理的)であると(考えられる|言える)|厳密(性)?を期(す|する)ため", "理由そのものを書く"),
 ])
 
 KO_PATTERNS = _lang("ko", [
@@ -239,6 +381,11 @@ KO_PATTERNS = _lang("ko", [
     ("hedge-stack", "hedge-stack", "revise", r"가능성이 있을 수 있|아마도 .{0,12}수 있을 것", "한정어는 하나만"),
     ("contrast-ppunman", "contrast-template", "watch", r"뿐만 아니라", "반복되면 직접 진술"),
     ("nominal-jinhaeng", "nominalization", "revise", r"(분석|검토|조사|비교|평가)(을|를) (진행|수행|실시)(하였|했|한다|하였다)", "「분석하였다」처럼 동사로"),
+    ("def-bolsu", "defensive-hedge", "revise", r"(라고|다고) 볼 수도 있|(라고|다고) 할 수 있을지도|어떤 의미에서(는)?|어느 정도(는)?", "한정은 하나만, 주장은 분명히"),
+    ("cav-hangye", "preemptive-caveat", "revise", r"(본|이) 연구는 .{0,10}(한계|제한점)(을|를|이|가) (가지|가진|갖|있)|신중하게 해석(해야|할 필요가)|추가(적인)? 연구가 필요", "어떤 한계가 어떤 결론에 영향을 주는지 한 번만"),
+    ("disc-mangna", "disclaimer", "revise", r"망라(하지|한 것은) 않|(지면|분량)(의|상) (한계|제약)|본 (연구|논문)의 범위를 (벗어나|넘어서)", "다루는 범위를 긍정문으로"),
+    ("apol-bujok", "apologetic-framing", "revise", r"(부족한|미흡한) 점이 (많|있)|(질정|편달)을 (바란다|바랍니다)|졸고|미력하나마", "삭제하고 기여를 그대로 쓰기"),
+    ("just-tadang", "over-justification", "revise", r"(타당|합리적)하다고 (볼 수 있|판단된)|엄밀성을 (기하기|확보하기) 위(해|하여)", "이유 자체를 쓰기"),
 ])
 
 ES_PATTERNS = _lang("es", [
@@ -257,6 +404,11 @@ ES_PATTERNS = _lang("es", [
     ("hedge-stack", "hedge-stack", "revise", r"\b(podría|puede|podrían|pueden) (posiblemente|potencialmente|quizás)\b|\bquizás (podría|pueda)\b", "una sola matización"),
     ("contrast-nosolo", "contrast-template", "watch", r"\bno solo\b[^.;]{1,120}\bsino (también|que)\b", "afirmar directamente si se repite"),
     ("nominal-llevar", "nominalization", "watch", r"\b(llevar a cabo|realizar|efectuar) (un|una) (análisis|estudio|evaluación|revisión)\b", "usar el verbo"),
+    ("def-podria-decirse", "defensive-hedge", "revise", r"\b(podría|cabría|se podría) (decirse|afirmarse|argumentarse|sostenerse)\b|\ben cierto (sentido|modo)\b|\bde alguna manera\b", "una sola matización; afirmar o atribuir"),
+    ("cav-limitaciones", "preemptive-caveat", "revise", r"\b(si bien|aunque) (este|el presente) (estudio|trabajo|artículo) (tiene|presenta) (algunas |ciertas )?limitaciones\b|\b(los|estos) resultados deben (interpretarse|tomarse) con (cautela|precaución)\b|\bse (requiere|requieren|necesita|necesitan) (más|futuras|nuevas) investigaciones\b", "decir qué limitación afecta a qué resultado, una vez"),
+    ("disc-exhaustivo", "disclaimer", "revise", r"\bno (pretende|aspira a) ser (exhaustiv|definitiv|complet)\w*|\bexcede el alcance de (este|el presente)\b", "decir el alcance real en positivo"),
+    ("apol-modesta", "apologetic-framing", "revise", r"\b(modesta|humilde) (contribución|aportación)\b|\bhumildemente\b|\bmodesto (intento|aporte)\b", "decir qué aporta, sin disculparse"),
+    ("just-razonable", "over-justification", "revise", r"\bes (razonable|lícito|legítimo) (suponer|pensar|afirmar|concluir)\b|\ben aras del rigor\b|\bcon el fin de garantizar el rigor\b", "dar la razón misma"),
 ])
 
 FR_PATTERNS = _lang("fr", [
@@ -275,6 +427,11 @@ FR_PATTERNS = _lang("fr", [
     ("hedge-stack", "hedge-stack", "revise", r"\bpourrai(t|ent) (éventuellement|potentiellement|peut-être)\b|\bpeut-être pourrai(t|ent)\b", "une seule nuance"),
     ("contrast-nonseulement", "contrast-template", "watch", r"\bnon seulement\b[^.;]{1,120}\bmais (aussi|également|encore)\b", "affirmer directement si répété"),
     ("nominal-proceder", "nominalization", "watch", r"\b(procéder à|effectuer|réaliser) (une|un) (analyse|étude|évaluation|examen)\b", "utiliser le verbe"),
+    ("def-pourrait-dire", "defensive-hedge", "revise", r"\b(on|l'on) pourrait (dire|avancer|soutenir|affirmer)\b|\bdans une certaine mesure\b|\bd'une certaine (manière|façon)\b|\ben quelque sorte\b", "une seule nuance ; assumer ou attribuer"),
+    ("cav-limites", "preemptive-caveat", "revise", r"\b(bien que|même si) (cette|la présente) (étude|recherche) (présente|comporte|ait) (certaines |quelques )?limites\b|\b(ces |les )?résultats doivent être (interprétés|pris) avec (prudence|précaution)\b|\bdes recherches (futures|ultérieures|supplémentaires) sont nécessaires\b", "dire quelle limite touche quel résultat, une fois"),
+    ("disc-exhaustif", "disclaimer", "revise", r"\bne (prétend|vise) pas à (l')?(être )?(exhausti|définiti|complet)\w*|\bsans prétendre à l'exhaustivité\b|\bdépasse le cadre de (cet|cette|la présente)\b", "dire la portée réelle en positif"),
+    ("apol-modeste", "apologetic-framing", "revise", r"\b(modeste|humble) (contribution|tentative|essai)\b|\bhumblement\b|\bnous nous permettons de\b", "dire ce que le travail apporte"),
+    ("just-raisonnable", "over-justification", "revise", r"\bil (est|semble) (raisonnable|légitime|permis) de (supposer|penser|conclure|considérer)\b|\bpar souci de rigueur\b|\bafin de garantir la rigueur\b", "donner la raison elle-même"),
 ])
 
 DE_PATTERNS = _lang("de", [
@@ -293,6 +450,11 @@ DE_PATTERNS = _lang("de", [
     ("hedge-stack", "hedge-stack", "revise", r"\bkönnte(n)? (möglicherweise|eventuell|potenziell|vielleicht)\b", "nur eine Einschränkung"),
     ("contrast-nichtnur", "contrast-template", "watch", r"\bnicht nur\b[^.;]{1,120}\bsondern auch\b", "bei Wiederholung direkt sagen"),
     ("nominal-durchgefuehrt", "nominalization", "watch", r"\b(Analyse|Untersuchung|Bewertung|Überprüfung|Auswertung) (wurde |wird |werden )?durchgeführt\b", "Verb verwenden"),
+    ("def-koennte-sagen", "defensive-hedge", "revise", r"\b(man )?könnte (man )?(sagen|argumentieren|behaupten)\b|\bin gewisser (Weise|Hinsicht)\b|\bgewissermaßen\b|\bin gewissem (Maße|Umfang)\b", "eine Einschränkung; behaupten oder belegen"),
+    ("cav-grenzen", "preemptive-caveat", "revise", r"\b(obwohl|auch wenn) (diese|die vorliegende) (Studie|Arbeit|Untersuchung) (gewisse |einige )?(Grenzen|Limitationen|Einschränkungen) (hat|aufweist)\b|\bErgebnisse (sind|sollten) (nur )?mit Vorsicht (zu )?interpretier\w*|\bweitere Forschung ist (nötig|notwendig|erforderlich)\b", "sagen, welche Grenze welches Ergebnis betrifft, einmal"),
+    ("disc-vollstaendig", "disclaimer", "revise", r"\bkeinen Anspruch auf (Vollständigkeit|Allgemeingültigkeit)\b|\bden Rahmen (dieser|der vorliegenden) (Arbeit|Studie|Untersuchung) sprengen\b|\bsprengt den Rahmen\b", "den tatsächlichen Umfang positiv nennen"),
+    ("apol-bescheiden", "apologetic-framing", "revise", r"\b(bescheidene[nr]?|kleine[nr]?) (Beitrag|Versuch)\b|\bin aller Bescheidenheit\b", "sagen, was die Arbeit beiträgt"),
+    ("just-vernuenftig", "over-justification", "revise", r"\bes (ist|scheint) (daher |somit )?(vernünftig|plausibel|legitim|gerechtfertigt),? anzunehmen\b|\bder Vollständigkeit halber\b|\bum (die )?(Wissenschaftlichkeit|Objektivität|Validität) zu (gewährleisten|sichern)\b", "den Grund selbst nennen"),
 ])
 
 PT_PATTERNS = _lang("pt", [
@@ -311,6 +473,11 @@ PT_PATTERNS = _lang("pt", [
     ("hedge-stack", "hedge-stack", "revise", r"\b(poderia|pode|poderiam|podem) (possivelmente|potencialmente|talvez)\b|\btalvez (possa|poderia)\b", "uma só ressalva"),
     ("contrast-naoso", "contrast-template", "watch", r"\bnão (só|apenas|somente)\b[^.;]{1,120}\bmas também\b", "afirmar diretamente se repetido"),
     ("nominal-realizar", "nominalization", "watch", r"\b(realizar|efetuar|conduzir) (uma|um) (análise|estudo|avaliação|revisão)\b", "usar o verbo"),
+    ("def-poderia-dizer", "defensive-hedge", "revise", r"\b(poderia|pode)-se (dizer|argumentar|afirmar)\b|\bde certa (forma|maneira)\b|\bem certo sentido\b|\bem certa medida\b", "uma só ressalva; afirmar ou atribuir"),
+    ("cav-limitacoes", "preemptive-caveat", "revise", r"\b(embora|ainda que) (este|o presente) (estudo|trabalho|artigo) (tenha|apresente) (algumas |certas )?limitações\b|\b(os |estes )?resultados devem ser interpretados com (cautela|cuidado)\b|\b(são necessárias|é necessária) (mais|novas|futuras) pesquisas?\b", "dizer que limitação afeta que resultado, uma vez"),
+    ("disc-exaustivo", "disclaimer", "revise", r"\bnão (pretende|tem a pretensão de) ser (exaustiv|definitiv|complet)\w*|\bfoge ao escopo (deste|do presente)\b|\bextrapola o escopo\b", "dizer o escopo real em positivo"),
+    ("apol-modesta", "apologetic-framing", "revise", r"\b(modesta|humilde) (contribuição|tentativa)\b|\bhumildemente\b", "dizer o que o trabalho traz"),
+    ("just-razoavel", "over-justification", "revise", r"\bé (razoável|lícito|legítimo) (supor|pensar|afirmar|concluir)\b|\bem nome do rigor\b|\ba fim de garantir o rigor\b", "dar a própria razão"),
 ])
 
 RU_PATTERNS = _lang("ru", [
@@ -329,6 +496,11 @@ RU_PATTERNS = _lang("ru", [
     ("hedge-stack", "hedge-stack", "revise", r"(?<![\w-])(может|могут) (потенциально|возможно)(?![\w-])|(?<![\w-])возможно,? (может|могут)(?![\w-])", "одна оговорка"),
     ("contrast-netolko", "contrast-template", "watch", r"(?<![\w-])не только(?![\w-])[^.;]{1,120}(?<![\w-])но и(?![\w-])", "при повторе сказать прямо"),
     ("nominal-provedenie", "nominalization", "watch", r"(?<![\w-])(провед|осуществл)\w* (анализ|исследовани|оценк)\w*", "использовать глагол"),
+    ("def-mozhno-skazat", "defensive-hedge", "revise", r"(?<![\w-])(можно было бы|можно) (сказать|утверждать)(?![\w-])|(?<![\w-])в (некотором|определённом|определенном) (смысле|роде)(?![\w-])|(?<![\w-])в (какой-то|определённой|определенной) (мере|степени)(?![\w-])", "одна оговорка; утверждать или ссылаться"),
+    ("cav-ogranichenia", "preemptive-caveat", "revise", r"(?<![\w-])(хотя|несмотря на то,? что) (данное|настоящее) исследование (имеет|не лишено) (ряд\w* |некоторы\w+ )?ограничени\w*|(?<![\w-])результаты следует (интерпретировать|трактовать) с осторожностью|(?<![\w-])требуются дальнейшие исследования", "сказать, какое ограничение влияет на какой вывод, один раз"),
+    ("disc-polnota", "disclaimer", "revise", r"(?<![\w-])не претенду\w+ на (полноту|исчерпывающ\w+|окончательн\w+)|(?<![\w-])выходит за рамки (данной|настоящей|этой) (статьи|работы)", "назвать реальный охват"),
+    ("apol-skromny", "apologetic-framing", "revise", r"(?<![\w-])скромн\w+ (вклад|попытк\w+)(?![\w-])", "сказать, что работа даёт"),
+    ("just-razumno", "over-justification", "revise", r"(?<![\w-])(представляется|является) (разумным|обоснованным|правомерным) (предположить|считать|утверждать)(?![\w-])|(?<![\w-])(для|ради) (полноты|строгости)(?![\w-])", "назвать саму причину"),
 ])
 
 CATALOG = {
