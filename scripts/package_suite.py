@@ -4,11 +4,13 @@
 Packages exactly the runtime allowlist from the spec (rule 81):
 
     scholarly-agent-suite/
+      .claude-plugin/
       .codex-plugin/
+      .agents/plugins/marketplace.json
       skills/            (the single scholarly-agent Skill, including its
                           modules/, protocols/ and shared/)
       workflows/
-      README.md
+      README.md and README.zh-TW.md
       LICENSE
       VERSION
       COMPONENTS.json
@@ -42,8 +44,7 @@ for uploading the Skill directly in claude.ai's Skills settings. That upload rej
 files ("Zip contains too many files (maximum 200)"), so this ZIP holds only
 the Skill folder itself (`scholarly-agent/SKILL.md` at its top) minus
 descriptors other runtimes use (`agents/`). Both ZIPs are checked against
-MAX_UPLOAD_FILES and the build fails rather than producing an archive the
-upload would refuse.
+MAX_UPLOAD_FILES to preserve the existing release size contract.
 
 Usage: python scripts/package_suite.py
 """
@@ -55,14 +56,20 @@ import zipfile
 from datetime import datetime, timezone
 from pathlib import Path
 
+from sync_manifests import CLAUDE, CODEX_MARKETPLACE, MARKETPLACE
+
 ROOT = Path(__file__).resolve().parent.parent
 DIST_DIR = ROOT / "dist"
 
 RUNTIME_ALLOWLIST = [
     ".codex-plugin",
+    CLAUDE,
+    MARKETPLACE,
+    CODEX_MARKETPLACE,
     "skills",
     "workflows",
     "README.md",
+    "README.zh-TW.md",
     "LICENSE",
     "VERSION",
     "COMPONENTS.json",
@@ -83,8 +90,7 @@ EXCLUDE_DIR_NAMES = {"__pycache__", ".git", "tests", "evals", "dist", ".github"}
 # instead of by directory name here.
 FIXED_ZIP_TIMESTAMP = (2026, 1, 1, 0, 0, 0)
 
-# claude.ai's Skill upload refuses a ZIP with more than 200 files. Keep
-# both archives under it so either one uploads.
+# claude.ai's Skill upload refuses a ZIP with more than 200 files.
 MAX_UPLOAD_FILES = 200
 SKILL_DIR = ROOT / "skills" / "scholarly-agent"
 # Paths (relative to SKILL_DIR) left out of the claude.ai Skill ZIP: the

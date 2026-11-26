@@ -2,6 +2,8 @@
 import json
 from pathlib import Path
 
+import sync_manifests
+
 ROOT = Path(__file__).resolve().parent.parent
 
 
@@ -51,3 +53,27 @@ def test_single_skill_present():
     skills = sorted(p.name for p in (ROOT / "skills").iterdir() if p.is_dir())
     assert skills == ["scholarly-agent"]
     assert (ROOT / "skills" / "scholarly-agent" / "SKILL.md").exists()
+
+
+def test_platform_manifests_share_brand_version_and_skill_root():
+    expected = sync_manifests.expected_manifests()
+    for path, manifest in expected.items():
+        assert sync_manifests.read_json(path) == manifest, path
+    marketplace = expected[sync_manifests.MARKETPLACE]["plugins"][0]
+    codex_source = expected[sync_manifests.CODEX_MARKETPLACE]["plugins"][0]["source"]
+    assert (ROOT / marketplace["source"]).resolve() == (ROOT / codex_source["path"]).resolve() == ROOT
+    assert marketplace["version"] == load_manifest()["version"]
+
+
+def test_version_is_regenerated_without_editing_any_manifest(tmp_path, monkeypatch):
+    for path in ("VERSION", "COMPONENTS.json", sync_manifests.CODEX):
+        dest = tmp_path / path
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        dest.write_bytes((ROOT / path).read_bytes())
+    (tmp_path / "VERSION").write_text("9.8.7\n", encoding="utf-8")
+    monkeypatch.setattr(sync_manifests, "ROOT", tmp_path)
+    generated = sync_manifests.expected_manifests()
+    assert generated[sync_manifests.CODEX]["version"] == "9.8.7"
+    assert generated[sync_manifests.CLAUDE]["version"] == "9.8.7"
+    assert generated[sync_manifests.MARKETPLACE]["plugins"][0]["version"] == "9.8.7"
+    assert generated["COMPONENTS.json"]["suite_version"] == "9.8.7"

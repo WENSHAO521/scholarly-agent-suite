@@ -72,11 +72,61 @@
 
 ## 安裝
 
-**在 claude.ai 安裝。** 從最新的 [release](https://github.com/WENSHAO521/scholarly-agent-suite/releases) 下載 `scholarly-agent-skill-v<版本>.zip`，在 claude.ai 的「設定 > Skills > 上傳 Skill」上傳。這個檔只包含 `scholarly-agent/` 資料夾（約 170 個檔案，上傳上限為 200 個），`SKILL.md` 位於最上層。自 v2.4.0 起，打包超過上限時建置會直接失敗。
+### Claude Desktop
 
-**以外掛安裝。** 透過 [`.codex-plugin/plugin.json`](.codex-plugin/plugin.json) 安裝本倉庫，或解壓縮發行包（`scholarly-agent-suite-v<版本>.zip`）。
+開啟 **Settings → Plugins → Add → Add Marketplace → Add from a repository**，
+輸入 `https://github.com/WENSHAO521/scholarly-agent-suite`，選擇 **Sync**，
+再安裝 **Scholarly Agent Suite** 並開啟新工作階段。若欄位要求
+「擁有者／儲存庫」，填入 `WENSHAO521/scholarly-agent-suite`。使用市集的
+重新同步功能取得新版，若客戶端提供自動更新，可在該市集啟用。
+要移除時，在 Plugins 解除安裝外掛，也可移除市集。組織管理的市集另有權限及儲存庫可見性限制。
 
-**以一般 Skill 安裝。** 把 `skills/scholarly-agent/` 複製到你的 skills 目錄即可。它是自足的：模組、協定、共用政策與工作流程都在這一個資料夾裡。
+### Claude Code
+
+在 Claude Code 工作階段執行以下指令。
+
+```text
+/plugin marketplace add WENSHAO521/scholarly-agent-suite
+/plugin install scholarly-agent-suite@scholarly-agent-suite
+```
+
+新版也可直接執行
+`/plugin install scholarly-agent-suite --marketplace WENSHAO521/scholarly-agent-suite`。
+重新載入外掛或開啟新工作階段後，輸入
+`/scholarly-agent-suite:scholarly-agent`。可用
+`claude plugin details scholarly-agent-suite` 查看載入的 Skill。
+在 `/plugin` 啟用市集自動更新，或在終端機依序執行
+`claude plugin marketplace update scholarly-agent-suite` 與
+`claude plugin update scholarly-agent-suite@scholarly-agent-suite`。
+解除安裝用 `claude plugin uninstall scholarly-agent-suite@scholarly-agent-suite`，
+移除市集用 `claude plugin marketplace remove scholarly-agent-suite`。
+
+### Codex
+
+執行 `codex plugin marketplace add WENSHAO521/scholarly-agent-suite`，
+在 ChatGPT 桌面程式的 **Plugins** 目錄選擇 **Scholarly Agent Suite** 市集並安裝。
+開啟新工作階段，以 `$scholarly-agent` 呼叫。離線安裝時，從
+[Releases](https://github.com/WENSHAO521/scholarly-agent-suite/releases)
+解壓縮 `scholarly-agent-suite-v<版本>.zip`，將解壓後的
+`scholarly-agent-suite` 資料夾絕對路徑傳給 `codex plugin marketplace add`。
+Git 市集可用 `codex plugin marketplace upgrade scholarly-agent-suite` 更新。
+在 Plugins 目錄解除安裝，必要時用 `codex plugin marketplace remove scholarly-agent-suite` 移除市集。
+
+### Claude.ai 與手動安裝
+
+從 Releases 下載 `scholarly-agent-skill-v<版本>.zip`，在 Claude.ai
+的 **Customize → Skills** 上傳並啟用，再開啟新對話。更新時以新版 ZIP
+取代原有 Skill，也可在同一頁移除。手動安裝時，將完整的
+`skills/scholarly-agent/` 資料夾複製到 Claude Code 的
+`~/.claude/skills/` 或 Codex 的 `~/.agents/skills/`。
+更新或移除時，取代或刪除該資料夾，再重新開啟工作階段。完整資料夾內含
+七個模組、Python 工具、工作流程、協定及共用政策。本機執行 Python 工具需 Python 3.10 以上。
+
+### 故障排除
+
+- 找不到 `.claude-plugin/marketplace.json` 時，請使用 GitHub 儲存庫首頁網址，省略 `.git` 及分支或檔案路徑。若已有舊市集來源，移除後重新新增並同步。
+- 找不到 Skill 時，確認外掛已啟用，開啟新工作階段並查看外掛的元件清單。若同時看見手動安裝或上傳的副本，可停用重複項目。
+- Claude.ai 上傳失敗時，選用專用 Skill ZIP。ZIP 內只有一個 `scholarly-agent/` 資料夾，`SKILL.md` 位於該資料夾最上層，檔案總數符合 200 檔上限。
 
 在本機檢查：
 

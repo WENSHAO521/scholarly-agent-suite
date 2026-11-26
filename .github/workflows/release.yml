@@ -8,8 +8,7 @@ name: Release
 # byte-deterministic, and publishes release v<VERSION> (creating the tag on
 # the pushed commit) with the CHANGELOG section as release notes.
 #
-# So releasing is: bump VERSION (+ .codex-plugin/plugin.json and
-# COMPONENTS.json, which validate_suite.py checks), add a `## v<VERSION>`
+# So releasing is: bump VERSION, run scripts/sync_manifests.py, add a `## v<VERSION>`
 # CHANGELOG section, and merge to master. Pushing a `v*` tag by hand still
 # works and publishes that tag. An existing release is never overwritten.
 
@@ -67,7 +66,9 @@ jobs:
 
       - name: Suite acceptance-criteria validation
         if: steps.decide.outputs.publish == 'true'
-        run: python scripts/validate_suite.py
+        run: |
+          python scripts/sync_manifests.py --check
+          python scripts/validate_suite.py
 
       - name: Unit + integration tests
         if: steps.decide.outputs.publish == 'true'
@@ -93,6 +94,20 @@ jobs:
           fi
           (cd dist && sha256sum scholarly-agent-suite-v*.zip scholarly-agent-skill-v*.zip release-manifest.json > SHA256SUMS)
           cat dist/SHA256SUMS
+
+      - uses: actions/setup-node@v4
+        if: steps.decide.outputs.publish == 'true'
+        with:
+          node-version: "22"
+
+      - name: Install native plugin clients
+        if: steps.decide.outputs.publish == 'true'
+        run: npm install --global @anthropic-ai/claude-code@2.1.332 @openai/codex@0.172.0
+
+      - name: Validate Claude schema and install both release plugins
+        if: steps.decide.outputs.publish == 'true'
+        timeout-minutes: 5
+        run: python scripts/smoke_plugins.py
 
       - name: Publish GitHub release
         if: steps.decide.outputs.publish == 'true'

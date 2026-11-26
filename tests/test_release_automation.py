@@ -67,6 +67,7 @@ def test_workflow_never_overwrites_a_release():
 def test_workflow_validates_tests_and_checks_determinism_before_publishing():
     publish = WORKFLOW.index("gh release create")
     for step in ["scripts/validate_suite.py", "pytest tests/", "release_notes.py",
+                 "scripts/sync_manifests.py --check", "scripts/smoke_plugins.py",
                  "Packaging is not deterministic", "SHA256SUMS"]:
         assert step in WORKFLOW
         assert WORKFLOW.index(step) < publish, f"{step} must run before publishing"

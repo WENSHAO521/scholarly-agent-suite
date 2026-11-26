@@ -121,20 +121,71 @@ up.
 
 ## Install
 
-**In claude.ai.** Download `scholarly-agent-skill-v<version>.zip` from the
-latest [release](https://github.com/WENSHAO521/scholarly-agent-suite/releases)
-and upload it in claude.ai's Skills settings (Upload skill). It holds
-only the `scholarly-agent/` folder (about 170 files; the upload accepts at
-most 200), with `SKILL.md` at the top. Since v2.4.0 the build fails rather
-than produce a package over that limit.
+### Claude Desktop
 
-**As a plugin.** Install this repository through
-[`.codex-plugin/plugin.json`](.codex-plugin/plugin.json), or unzip a
-release package (`scholarly-agent-suite-v<version>.zip`).
+Open **Settings → Plugins → Add → Add Marketplace → Add from a repository**.
+Enter `https://github.com/WENSHAO521/scholarly-agent-suite`, choose **Sync**,
+then install **Scholarly Agent Suite** and start a new session. If the form
+asks for an owner/repository identifier, use `WENSHAO521/scholarly-agent-suite`.
+Use the marketplace's refresh or re-sync action to check for a new version.
+Where the client offers automatic updates, enable them for this marketplace.
+To uninstall, remove Scholarly Agent Suite from Plugins and, optionally,
+remove its marketplace. Organization-managed marketplace syncing has its
+own permissions and repository visibility requirements.
 
-**As a plain Skill.** Copy `skills/scholarly-agent/` into your host's skills
-directory. It is self-contained: modules, protocols, shared policy, and
-workflow recipes all live inside that one folder.
+### Claude Code
+
+Run these commands in a Claude Code session:
+
+```text
+/plugin marketplace add WENSHAO521/scholarly-agent-suite
+/plugin install scholarly-agent-suite@scholarly-agent-suite
+```
+
+On current Claude Code, you can also use
+`/plugin install scholarly-agent-suite --marketplace WENSHAO521/scholarly-agent-suite`.
+Reload plugins or start a new session and invoke
+`/scholarly-agent-suite:scholarly-agent`. In a terminal,
+`claude plugin details scholarly-agent-suite` lists the loaded Skill.
+Use the marketplace's **Enable auto-update** option in `/plugin`, or update
+manually with `claude plugin marketplace update scholarly-agent-suite` followed
+by `claude plugin update scholarly-agent-suite@scholarly-agent-suite`.
+Remove it with `claude plugin uninstall scholarly-agent-suite@scholarly-agent-suite`
+and optionally `claude plugin marketplace remove scholarly-agent-suite`.
+
+### Codex
+
+Run `codex plugin marketplace add WENSHAO521/scholarly-agent-suite`.
+Open the ChatGPT desktop **Plugins** directory, select **Scholarly Agent Suite**
+as the marketplace, and install the plugin. Start a new session and invoke
+`$scholarly-agent`. For offline setup, extract
+`scholarly-agent-suite-v<version>.zip` from [Releases](https://github.com/WENSHAO521/scholarly-agent-suite/releases)
+and pass the absolute path to the extracted `scholarly-agent-suite` directory
+to `codex plugin marketplace add`. Refresh a Git-backed source with
+`codex plugin marketplace upgrade scholarly-agent-suite`. Uninstall the plugin
+in the directory and optionally run `codex plugin marketplace remove scholarly-agent-suite`.
+
+### Claude.ai and manual Skill installation
+
+Upload `scholarly-agent-skill-v<version>.zip` from Releases in Claude.ai's
+**Customize → Skills**. Enable the Skill and start a new chat. For updates,
+replace the uploaded Skill with the new ZIP. Remove it from the same page.
+For a manual local install, copy the complete `skills/scholarly-agent/` folder
+to `~/.claude/skills/` for Claude Code or `~/.agents/skills/` for Codex.
+Replace or remove that folder to update or uninstall, then restart the session.
+Use the complete folder so the seven modules, Python tools, workflows,
+protocols, and shared policies stay together. Local Python tools need Python 3.10+.
+
+### Troubleshooting
+
+- For a missing `.claude-plugin/marketplace.json`, enter the GitHub repository
+  URL without `.git`, a branch URL, or a file path. If an old source was
+  registered, remove it, add the repository again, and sync.
+- If the Skill is absent, enable the installed plugin, start a new session,
+  and check its component inventory. Disable any duplicate manual or
+  uploaded copy if both copies appear.
+- For an upload error, use the dedicated Skill ZIP. It contains a single
+  `scholarly-agent/` folder headed by `SKILL.md` and fits the 200-file limit.
 
 To check a local checkout:
 

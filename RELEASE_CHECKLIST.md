@@ -7,7 +7,8 @@ must be byte-identical), and publishes the release with the ZIP,
 `release-manifest.json`, `SHA256SUMS`, and the version's CHANGELOG section
 as notes. An existing release is never overwritten.
 
-So a release is: bump the version, write the CHANGELOG section, and merge.
+To release, bump `VERSION`, run `python scripts/sync_manifests.py`, write the
+CHANGELOG section, and merge the versioned pull request into `master`.
 Before merging a version bump, confirm the items below. This is the
 concrete procedure behind rule 97 / rule 145.
 
@@ -22,6 +23,12 @@ concrete procedure behind rule 97 / rule 145.
 ## Validate
 
 - [ ] `python scripts/validate_suite.py` passes with 0 failures.
+- [ ] `python scripts/sync_manifests.py --check` passes.
+- [ ] After packaging, `python scripts/smoke_plugins.py` passes with Claude
+      Code and Codex installed. It runs Claude's strict validator and has both
+      hosts install, discover, and uninstall the built plugin in temporary profiles.
+- [ ] Verify the GitHub-source sync in Claude Desktop and upload the standalone
+      Skill ZIP in Claude.ai with an eligible account when testing those interfaces.
 - [ ] `python scripts/package_suite.py` builds both ZIPs; each has at most
       200 files (the claude.ai upload limit), and
       `scholarly-agent-skill-v<VERSION>.zip` has `scholarly-agent/SKILL.md`
@@ -64,8 +71,9 @@ concrete procedure behind rule 97 / rule 145.
 
 ## Version consistency
 
-- [ ] `VERSION` == `.codex-plugin/plugin.json` `version` ==
-      `COMPONENTS.json` `suite_version` (the release tag is `v<VERSION>`).
+- [ ] `VERSION` matches the Claude and Codex plugin manifests, the Claude
+      marketplace entry, and `COMPONENTS.json` `suite_version`. The release
+      tag is `v<VERSION>`.
 - [ ] `CHANGELOG.md` has a `## v<VERSION> -- <date>` section;
       `python scripts/release_notes.py` prints it. The workflow refuses to
       publish without one.
