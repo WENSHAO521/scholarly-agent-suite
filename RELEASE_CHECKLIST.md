@@ -27,10 +27,11 @@ concrete procedure behind rule 97 / rule 145.
 - [ ] After packaging, `python scripts/smoke_plugins.py` passes with Claude
       Code and Codex installed. It runs Claude's strict validator and has both
       hosts install, discover, and uninstall the built plugin in temporary profiles.
-- [ ] Verify the GitHub-source sync in Claude Desktop and upload the standalone
-      Skill ZIP in Claude.ai with an eligible account when testing those interfaces.
-- [ ] `python scripts/package_suite.py` builds both ZIPs; each has at most
-      200 files (the claude.ai upload limit), and
+- [ ] Run and record the separate Desktop Marketplace, Cowork, Claude.ai,
+      Claude Code, and Codex checks in [platform-acceptance.md](docs/platform-acceptance.md).
+      Record account-backed checks as unverified when they cannot be run.
+- [ ] `python scripts/package_suite.py` builds three ZIPs; each has at most
+      200 files, and
       `scholarly-agent-skill-v<VERSION>.zip` has `scholarly-agent/SKILL.md`
       at its top.
 - [ ] `pytest tests/` passes.
@@ -56,7 +57,7 @@ concrete procedure behind rule 97 / rule 145.
 - [ ] `python scripts/package_suite.py` builds
       `dist/scholarly-agent-suite-v<VERSION>.zip` with no `tests/`, `evals/`,
       `.github/`, dev scripts, or component `.git` metadata inside.
-- [ ] `release-manifest.json` inside the ZIP lists the exact suite version,
+- [ ] The separately published `release-manifest.json` lists the exact suite version,
       component versions, source commits, protocol versions, file count, and
       a SHA-256 checksum, with no private machine paths.
 - [ ] Inspect the built ZIP directly (not just the source tree) and confirm
@@ -67,7 +68,7 @@ concrete procedure behind rule 97 / rule 145.
       repository contains the file; the acceptance condition is the built
       artifact containing it.
 - [ ] Re-running packaging from a clean checkout of the same commit produces
-      a ZIP with the same SHA-256 (deterministic ordering/timestamps).
+      all three ZIPs with the same SHA-256 (deterministic ordering/timestamps).
 
 ## Version consistency
 

@@ -85,8 +85,6 @@ jobs:
               names = zf.namelist()
               assert all(n.startswith("scholarly-agent-suite/") for n in names)
               assert "scholarly-agent-suite/.codex-plugin/plugin.json" in names
-              assert "scholarly-agent-suite/.claude-plugin/plugin.json" in names
-              assert "scholarly-agent-suite/.claude-plugin/marketplace.json" in names
               assert "scholarly-agent-suite/.agents/plugins/marketplace.json" in names
               skill_mds = [n for n in names if n.endswith("/SKILL.md")]
               assert skill_mds == ["scholarly-agent-suite/skills/scholarly-agent/SKILL.md"], skill_mds
@@ -110,6 +108,14 @@ jobs:
               assert all(n.startswith("scholarly-agent/") for n in names)
               assert [n for n in names if n.endswith("/SKILL.md")] == ["scholarly-agent/SKILL.md"]
               assert "scholarly-agent/modules/translation-engine/MODULE.md" in names
+          with zipfile.ZipFile(glob.glob("dist/scholarly-agent-claude-plugin-v*.zip")[0]) as zf:
+              assert zf.testzip() is None
+              names = zf.namelist()
+              assert len(names) <= 200
+              root = "scholarly-agent-suite/"
+              assert root + ".claude-plugin/plugin.json" in names
+              assert all(n == root + "LICENSE" or n == root + ".claude-plugin/plugin.json"
+                         or n.startswith(root + "skills/scholarly-agent/") for n in names)
           print("Runtime package sanity check passed.")
           PY
 
@@ -120,9 +126,16 @@ jobs:
       - name: Install native plugin clients
         run: npm install --global @anthropic-ai/claude-code@2.1.332 @openai/codex@0.172.0
 
-      - name: Validate Claude schema and install both plugins from the built ZIP
+      - name: Claude Code marketplace schema and packaged installation
         timeout-minutes: 5
-        run: python scripts/smoke_plugins.py
+        run: python scripts/smoke_plugins.py --platform claude
+
+      - name: Claude.ai Skill ZIP layout and integrity
+        run: python scripts/smoke_plugins.py --platform skill
+
+      - name: Codex packaged installation
+        timeout-minutes: 5
+        run: python scripts/smoke_plugins.py --platform codex
 
       - name: Upload runtime package (CI artifact only -- not a release)
         uses: actions/upload-artifact@v4

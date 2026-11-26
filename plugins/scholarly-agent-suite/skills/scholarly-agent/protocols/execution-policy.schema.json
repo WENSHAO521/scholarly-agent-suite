@@ -1,0 +1,47 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://scholarly-agent-suite/protocols/execution-policy.schema.json",
+  "title": "EXECUTION_POLICY_V1",
+  "description": "Produced by adaptive-model-router (or a reasonable built-in default when the Router is not active) and consumed by scholarly-agent to bound how a workflow stage executes. Describes policy, not private reasoning: it never carries a model name as a hard requirement, chain-of-thought, or a numeric savings guarantee.",
+  "type": "object",
+  "required": ["protocol", "mode"],
+  "properties": {
+    "protocol": { "const": "EXECUTION_POLICY_V1" },
+    "mode": {
+      "type": "string",
+      "enum": ["conservative", "balanced", "aggressive"],
+      "description": "Coarse execution posture, not a model identifier."
+    },
+    "context_policy": {
+      "type": "object",
+      "description": "Guidance on how much context/evidence a stage should gather before acting.",
+      "properties": {
+        "max_context_items": { "type": "integer", "minimum": 0 },
+        "prefer_compressed_handoff": { "type": "boolean" }
+      },
+      "additionalProperties": true
+    },
+    "delegation_policy": {
+      "type": "object",
+      "properties": {
+        "allow_delegation": { "type": "boolean" },
+        "max_parallel_delegates": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": true
+    },
+    "validation_policy": {
+      "type": "object",
+      "properties": {
+        "require_validation": { "type": "boolean" },
+        "max_repair_attempts": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": true
+    },
+    "constraints": {
+      "type": "object",
+      "description": "Hard/soft user constraints propagated from the workflow state (see shared/terminology.md).",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

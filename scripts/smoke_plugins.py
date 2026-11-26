@@ -4,7 +4,9 @@ import argparse
 import json
 import os
 import re
+import shutil
 import subprocess
+import sys
 import tempfile
 import zipfile
 from pathlib import Path
@@ -12,7 +14,7 @@ from queue import Queue
 from threading import Thread
 
 from package_suite import ROOT, SKILL_DIR, normalized_bytes
-from sync_manifests import CODEX_MARKETPLACE, MARKETPLACE, CLAUDE
+from sync_manifests import CLAUDE_ROOT, CODEX_MARKETPLACE, MARKETPLACE
 
 PLUGIN = "scholarly-agent-suite"
 PLUGIN_ID = f"{PLUGIN}@{PLUGIN}"
@@ -32,6 +34,24 @@ def verify_skill(skill_dir, *, manual=False):
         if not actual.is_file() or normalized_bytes(actual) != normalized_bytes(path):
             raise RuntimeError(f"Missing or modified installed resource: {actual}")
 
+    # Import the shipped engines and resolve workflows outside the checkout.
+    script = """
+import sys
+from pathlib import Path
+skill = Path(sys.argv[1])
+for name in ("scholarly-corpus-builder", "journal-fit-engine", "scholarly-voice-engine",
+             "peer-review-engine", "prose-polish-engine", "translation-engine"):
+    sys.path.insert(0, str(skill / "modules" / name))
+sys.path.insert(0, str(skill / "scripts"))
+import scb, jfe, prv, ppe, tre, scripts.voice, workflow_resolver
+assert all(workflow_resolver.resolve_workflow(skill, name).ok
+           for name in workflow_resolver.KNOWN_WORKFLOWS)
+for package in (scb, jfe, prv, ppe, tre, scripts.voice, workflow_resolver):
+    assert Path(package.__file__).is_relative_to(skill)
+"""
+    subprocess.run([sys.executable, "-I", "-B", "-c", script, str(skill_dir)],
+                   cwd=skill_dir.parent, check=True, timeout=30)
+
 
 def smoke_claude(executable, suite, sandbox, version):
     env = {**os.environ, "CLAUDE_CONFIG_DIR": str(sandbox / "claude")}
@@ -48,7 +68,7 @@ def smoke_claude(executable, suite, sandbox, version):
         return result.stdout
 
     run("validate", "--strict", str(suite / MARKETPLACE))
-    run("validate", "--strict", str(suite / CLAUDE))
+    run("validate", "--strict", str(suite / CLAUDE_ROOT / ".claude-plugin/plugin.json"))
     run("marketplace", "add", str(suite))
     run("install", PLUGIN_ID)
     installed = next(p for p in json.loads(run("list", "--json")) if p["id"] == PLUGIN_ID)
@@ -58,7 +78,7 @@ def smoke_claude(executable, suite, sandbox, version):
     if not re.search(r"Skills \(1\)\s+scholarly-agent\b", inventory):
         raise RuntimeError(f"Claude did not load the Skill:\n{inventory}")
     plugin_root = Path(installed.get("readFromFolder") or installed["installPath"])
-    verify_skill(plugin_root / "skills" / SKILL_DIR.name)
+    verify_skill(plugin_root / "skills" / SKILL_DIR.name, manual=True)
     run("uninstall", PLUGIN_ID)
     if any(p["id"] == PLUGIN_ID for p in json.loads(run("list", "--json"))):
         raise RuntimeError("Claude plugin is still installed")
@@ -144,21 +164,35 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--claude", default="claude", help="Claude Code executable")
     parser.add_argument("--codex", default="codex", help="Codex executable")
+    parser.add_argument("--platform", choices=("all", "claude", "skill", "codex"), default="all")
     args = parser.parse_args()
     version = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
     with tempfile.TemporaryDirectory(prefix="scholarly-agent smoke ") as tmp:
         sandbox = Path(tmp).resolve()
-        for package in ("suite", "skill"):
+
+        def extract(package, target):
             archive = ROOT / "dist" / f"scholarly-agent-{package}-v{version}.zip"
             with zipfile.ZipFile(archive) as zf:
-                zf.extractall(sandbox)
-        verify_skill(sandbox / SKILL_DIR.name, manual=True)
-        print("Standalone Skill ZIP: resources verified", flush=True)
-        suite = sandbox / PLUGIN
-        smoke_claude(args.claude, suite, sandbox, version)
-        print("Claude Code: strict schema validation, installation, Skill load and removal passed", flush=True)
-        smoke_codex(args.codex, suite, sandbox, version)
-        print("Codex: installation, Skill load and removal passed")
+                zf.extractall(target)
+
+        if args.platform in ("all", "skill"):
+            extract("skill", sandbox)
+            verify_skill(sandbox / SKILL_DIR.name, manual=True)
+            print("Claude.ai Skill ZIP: resources verified", flush=True)
+        if args.platform in ("all", "claude"):
+            extract("claude-plugin", sandbox / "claude-archive")
+            market = sandbox / "marketplace"
+            plugin = market / CLAUDE_ROOT
+            plugin.parent.mkdir(parents=True)
+            shutil.move(sandbox / "claude-archive" / PLUGIN, plugin)
+            (market / MARKETPLACE).parent.mkdir()
+            shutil.copyfile(ROOT / MARKETPLACE, market / MARKETPLACE)
+            smoke_claude(args.claude, market, sandbox, version)
+            print("Claude Code: strict schema validation, installation, Skill load and removal passed", flush=True)
+        if args.platform in ("all", "codex"):
+            extract("suite", sandbox)
+            smoke_codex(args.codex, sandbox / PLUGIN, sandbox, version)
+            print("Codex: installation, Skill load and removal passed")
 
 
 if __name__ == "__main__":

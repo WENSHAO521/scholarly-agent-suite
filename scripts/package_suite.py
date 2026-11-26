@@ -4,13 +4,12 @@
 Packages exactly the runtime allowlist from the spec (rule 81):
 
     scholarly-agent-suite/
-      .claude-plugin/
       .codex-plugin/
       .agents/plugins/marketplace.json
       skills/            (the single scholarly-agent Skill, including its
                           modules/, protocols/ and shared/)
       workflows/
-      README.md and README.zh-TW.md
+      README.md, README.zh-TW.md, and docs/platform-acceptance.md
       LICENSE
       VERSION
       COMPONENTS.json
@@ -43,8 +42,9 @@ It also builds a second ZIP, `dist/scholarly-agent-skill-v<version>.zip`,
 for uploading the Skill directly in claude.ai's Skills settings. That upload rejects archives with more than 200
 files ("Zip contains too many files (maximum 200)"), so this ZIP holds only
 the Skill folder itself (`scholarly-agent/SKILL.md` at its top) minus
-descriptors other runtimes use (`agents/`). Both ZIPs are checked against
-MAX_UPLOAD_FILES to preserve the existing release size contract.
+descriptors other runtimes use (`agents/`). A third ZIP contains the
+generated Claude plugin directory, with the manifest and the same Skill.
+All three ZIPs are checked against MAX_UPLOAD_FILES.
 
 Usage: python scripts/package_suite.py
 """
@@ -56,26 +56,28 @@ import zipfile
 from datetime import datetime, timezone
 from pathlib import Path
 
-from sync_manifests import CLAUDE, CODEX_MARKETPLACE, MARKETPLACE
+from sync_manifests import (
+    CLAUDE_FILE_LIMIT, CLAUDE_ROOT, CODEX_MARKETPLACE, RUNTIME_EXCLUDES,
+    claude_skill_files, generated_files, sync,
+)
 
 ROOT = Path(__file__).resolve().parent.parent
 DIST_DIR = ROOT / "dist"
 
 RUNTIME_ALLOWLIST = [
     ".codex-plugin",
-    CLAUDE,
-    MARKETPLACE,
     CODEX_MARKETPLACE,
     "skills",
     "workflows",
     "README.md",
     "README.zh-TW.md",
+    "docs/platform-acceptance.md",
     "LICENSE",
     "VERSION",
     "COMPONENTS.json",
 ]
 
-EXCLUDE_DIR_NAMES = {"__pycache__", ".git", "tests", "evals", "dist", ".github"}
+EXCLUDE_DIR_NAMES = RUNTIME_EXCLUDES
 # "scripts" was previously in this set as a blanket exclusion, on the
 # (until now correct) assumption that no component ever needs a directory
 # literally named "scripts" in its packaged runtime tree -- the Suite's own
@@ -91,11 +93,8 @@ EXCLUDE_DIR_NAMES = {"__pycache__", ".git", "tests", "evals", "dist", ".github"}
 FIXED_ZIP_TIMESTAMP = (2026, 1, 1, 0, 0, 0)
 
 # claude.ai's Skill upload refuses a ZIP with more than 200 files.
-MAX_UPLOAD_FILES = 200
+MAX_UPLOAD_FILES = CLAUDE_FILE_LIMIT
 SKILL_DIR = ROOT / "skills" / "scholarly-agent"
-# Paths (relative to SKILL_DIR) left out of the claude.ai Skill ZIP: the
-# cross-runtime descriptor is read by other hosts, never by claude.ai.
-SKILL_ZIP_EXCLUDE_PREFIXES = ("agents/",)
 
 
 def iter_runtime_files() -> list[Path]:
@@ -116,17 +115,19 @@ def iter_runtime_files() -> list[Path]:
 
 def iter_skill_files() -> list[Path]:
     """Files for the claude.ai Skill ZIP: the Skill folder only."""
-    files: list[Path] = []
-    for sub in sorted(SKILL_DIR.rglob("*")):
-        if sub.is_dir():
-            continue
-        rel = sub.relative_to(SKILL_DIR)
-        if any(part in EXCLUDE_DIR_NAMES for part in rel.parts):
-            continue
-        if rel.as_posix().startswith(SKILL_ZIP_EXCLUDE_PREFIXES):
-            continue
-        files.append(sub)
-    return sorted(files, key=lambda p: p.relative_to(SKILL_DIR).as_posix())
+    return claude_skill_files()
+
+
+def build_claude_zip(version: str) -> tuple[Path, int]:
+    prefix = f"{CLAUDE_ROOT}/"
+    entries = [
+        ("scholarly-agent-suite/" + path.removeprefix(prefix), ROOT / path)
+        for path in sorted(generated_files()) if path.startswith(prefix)
+    ]
+    DIST_DIR.mkdir(exist_ok=True)
+    zip_path = DIST_DIR / f"scholarly-agent-claude-plugin-v{version}.zip"
+    _write_zip(zip_path, entries)
+    return zip_path, len(entries)
 
 
 def check_upload_limit(files: list[Path], label: str) -> None:
@@ -189,6 +190,7 @@ def sha256_of(path: Path) -> str:
 def write_release_manifest(
     zip_path: Path, files: list[Path], version: str, skill_zip_path: Path | None = None,
     skill_files: list[Path] | None = None,
+    claude_zip: tuple[Path, int] | None = None,
 ) -> Path:
     components = json.loads((ROOT / "COMPONENTS.json").read_text(encoding="utf-8"))
     manifest = {
@@ -209,6 +211,13 @@ def write_release_manifest(
             "file_count": len(skill_files or []),
             "sha256": sha256_of(skill_zip_path),
         }
+    if claude_zip is not None:
+        path, count = claude_zip
+        manifest["claude_plugin_zip"] = {
+            "filename": path.name,
+            "file_count": count,
+            "sha256": sha256_of(path),
+        }
     manifest_path = DIST_DIR / "release-manifest.json"
     manifest_path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
     return manifest_path
@@ -216,6 +225,9 @@ def write_release_manifest(
 
 def main() -> int:
     version = (ROOT / "VERSION").read_text(encoding="utf-8").strip()
+    drift = sync(check=True)
+    if drift:
+        raise SystemExit("Generated distribution drift. Run python scripts/sync_manifests.py.")
     files = iter_runtime_files()
     if not files:
         print("No runtime files found -- aborting.")
@@ -225,11 +237,14 @@ def main() -> int:
     check_upload_limit(skill_files, "Skill ZIP")
     zip_path = build_zip(files, version)
     skill_zip_path = build_skill_zip(skill_files, version)
-    manifest_path = write_release_manifest(zip_path, files, version, skill_zip_path, skill_files)
+    claude_zip = build_claude_zip(version)
+    manifest_path = write_release_manifest(zip_path, files, version, skill_zip_path, skill_files, claude_zip)
     print(f"Built {zip_path} ({len(files)} files)")
     print(f"SHA-256: {sha256_of(zip_path)}")
     print(f"Built {skill_zip_path} ({len(skill_files)} files; upload this one in claude.ai)")
     print(f"SHA-256: {sha256_of(skill_zip_path)}")
+    print(f"Built {claude_zip[0]} ({claude_zip[1]} files; Claude plugin)")
+    print(f"SHA-256: {sha256_of(claude_zip[0])}")
     print(f"Manifest: {manifest_path}")
     return 0
 
