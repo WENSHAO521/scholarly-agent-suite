@@ -1,0 +1,2 @@
+# POSI snapshot fixtures are verified byte-for-byte against SHA256SUMS.
+/tests/modules/jfe/fixtures/posi/snapshot/** -text
