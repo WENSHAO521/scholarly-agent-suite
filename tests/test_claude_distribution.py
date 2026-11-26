@@ -58,6 +58,16 @@ def test_claude_zip_contains_only_generated_runtime(tmp_path, monkeypatch):
     assert package_suite.build_claude_zip(version)[0].read_bytes() == first
 
 
+def test_skill_zip_uses_platform_independent_path_order(tmp_path, monkeypatch):
+    monkeypatch.setattr(package_suite, "DIST_DIR", tmp_path)
+    files = package_suite.iter_skill_files()
+    names = [path.relative_to(package_suite.SKILL_DIR).as_posix() for path in files]
+    assert names == sorted(names)
+    archive = package_suite.build_skill_zip(files, "9.8.7")
+    with zipfile.ZipFile(archive) as zf:
+        assert zf.namelist() == [f"scholarly-agent/{name}" for name in names]
+
+
 def test_sync_recreates_runtime_and_preserves_source(tmp_path, monkeypatch):
     for name in ("VERSION", "COMPONENTS.json", "LICENSE", sync_manifests.CODEX):
         target = tmp_path / name
