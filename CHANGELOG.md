@@ -6,6 +6,21 @@ Suite versioning follows `docs/development.md#suite-versioning` /
 have no versions of their own; `COMPONENTS.json` records where each module
 was merged from.
 
+## v2.6.2 -- 2026-11-26
+
+v2.6.2 PREPARED -- NOT PUBLISHED
+
+### Fixed
+
+- Sort Skill ZIP entries by platform-independent POSIX paths so Windows and
+  Linux produce the same archive and SHA-256 for the same release. Added a
+  regression test for the archive entry order.
+
+### Desktop acceptance
+
+- Claude Desktop Marketplace and Cowork account-backed synchronization
+  remain separate acceptance checks. See `docs/platform-acceptance.md`.
+
 ## v2.6.1 -- 2026-11-26
 
 v2.6.1 PREPARED -- NOT PUBLISHED

@@ -77,7 +77,7 @@ def claude_skill_files():
             if relative.name != "LICENSE" and path.suffix not in {".md", ".json", ".py"}:
                 raise ValueError(f"Unsupported Claude runtime file type: {relative}")
             files.append(path)
-    return sorted(files)
+    return sorted(files, key=lambda path: path.relative_to(skill).as_posix())
 
 
 def generated_files():
