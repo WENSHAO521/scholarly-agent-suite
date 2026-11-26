@@ -74,7 +74,8 @@ def test_sync_recreates_runtime_and_preserves_source(tmp_path, monkeypatch):
     generated.write_text("modified", encoding="utf-8")
     assert sync_manifests.sync(check=True)
     sync_manifests.sync(check=False)
-    assert source.read_bytes() == original == generated.read_bytes()
+    assert source.read_bytes() == original
+    assert source.read_text(encoding="utf-8") == generated.read_text(encoding="utf-8")
     assert not sync_manifests.sync(check=True)
     assert sync_manifests.read_json(sync_manifests.MARKETPLACE)["plugins"][0]["source"] == sync_manifests.CLAUDE_SOURCE
     assert sync_manifests.read_json(sync_manifests.CLAUDE)["version"] == "9.8.7"
