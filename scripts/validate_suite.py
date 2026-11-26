@@ -259,8 +259,10 @@ def main() -> int:
     report = Report()
     validate_plugin_manifest(report)
     try:
-        for relative, expected in sync_manifests.expected_manifests().items():
-            report.check(f"{relative} matches release metadata", sync_manifests.read_json(relative) == expected)
+        drift = sync_manifests.sync(check=True)
+        report.check("distribution manifests and generated Claude runtime match canonical sources", not drift, ", ".join(drift))
+        report.check("Claude marketplace root contains only its catalog",
+                     not (ROOT / ".claude-plugin/plugin.json").exists())
     except (OSError, ValueError, KeyError, TypeError) as exc:
         report.check("distribution manifests are readable and complete", False, str(exc))
     frontmatters = validate_skill_and_modules(report)

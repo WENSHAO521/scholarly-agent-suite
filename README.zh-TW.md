@@ -81,6 +81,10 @@
 重新同步功能取得新版，若客戶端提供自動更新，可在該市集啟用。
 要移除時，在 Plugins 解除安裝外掛，也可移除市集。組織管理的市集另有權限及儲存庫可見性限制。
 
+Claude 市集指向自動生成的 `plugins/scholarly-agent-suite/`。
+若同步驗證失敗，請依照 [Desktop 與 Cowork 驗收步驟](docs/platform-acceptance.md)
+記錄可取得的錯誤代碼及驗證詳情。Claude Code 安裝成功後，仍需分別確認 Desktop 的同步結果。
+
 ### Claude Code
 
 在 Claude Code 工作階段執行以下指令。
@@ -121,6 +125,7 @@ Git 市集可用 `codex plugin marketplace upgrade scholarly-agent-suite` 更新
 `~/.claude/skills/` 或 Codex 的 `~/.agents/skills/`。
 更新或移除時，取代或刪除該資料夾，再重新開啟工作階段。完整資料夾內含
 七個模組、Python 工具、工作流程、協定及共用政策。本機執行 Python 工具需 Python 3.10 以上。
+發行頁面的 `scholarly-agent-claude-plugin-v<版本>.zip` 可供接受 ZIP 的 Claude 外掛上傳流程使用。
 
 ### 故障排除
 

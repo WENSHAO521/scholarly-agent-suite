@@ -6,6 +6,30 @@ Suite versioning follows `docs/development.md#suite-versioning` /
 have no versions of their own; `COMPONENTS.json` records where each module
 was merged from.
 
+## v2.6.1 -- 2026-11-26
+
+v2.6.1 PREPARED -- NOT PUBLISHED
+
+### Changed
+
+- The Claude marketplace now points to the dedicated generated
+  `plugins/scholarly-agent-suite/` runtime directory. Its Skill files are
+  generated from the canonical `skills/scholarly-agent/` source, with
+  drift and file-count checks in validation and packaging.
+- The release contains separate Claude plugin, Claude.ai Skill, and Codex
+  plugin ZIPs, each with a checksum. Native Claude Code and Codex smoke tests
+  install their respective artifacts and verify module loading and resources.
+- Added separate manual acceptance steps for Claude Desktop, Cowork,
+  Claude.ai, and updating a marketplace. A Claude Code success is recorded
+  separately from the outcome of an account-backed sync.
+
+### Investigation
+
+- The v2.6.0 Desktop dialog showed one plugin validation failure. Its
+  detailed validation error and error code were not exposed in the dialog
+  or the locally inspected logs. This layout change addresses a plausible
+  compatibility issue, and Desktop sync still requires independent verification.
+
 ## v2.6.0 -- 2026-11-26
 
 v2.6.0 PREPARED -- NOT PUBLISHED

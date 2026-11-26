@@ -61,7 +61,8 @@ def test_platform_manifests_share_brand_version_and_skill_root():
         assert sync_manifests.read_json(path) == manifest, path
     marketplace = expected[sync_manifests.MARKETPLACE]["plugins"][0]
     codex_source = expected[sync_manifests.CODEX_MARKETPLACE]["plugins"][0]["source"]
-    assert (ROOT / marketplace["source"]).resolve() == (ROOT / codex_source["path"]).resolve() == ROOT
+    assert (ROOT / marketplace["source"]).resolve() == ROOT / sync_manifests.CLAUDE_ROOT
+    assert (ROOT / codex_source["path"]).resolve() == ROOT
     assert marketplace["version"] == load_manifest()["version"]
 
 

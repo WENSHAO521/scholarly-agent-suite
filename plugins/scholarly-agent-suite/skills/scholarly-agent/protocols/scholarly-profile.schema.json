@@ -1,0 +1,50 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://scholarly-agent-suite/protocols/scholarly-profile.schema.json",
+  "title": "SCHOLARLY_PROFILE_V1",
+  "description": "Produced by scholarly-corpus-builder. A structured, evidence-backed profile of a discipline, journal, historical scholar, or author voice, built from a sampled corpus. Carries measured features, confidence, and limitations -- never raw private reasoning.",
+  "type": "object",
+  "required": ["protocol", "profile_type", "target", "sample_size", "confidence", "provenance"],
+  "properties": {
+    "protocol": { "const": "SCHOLARLY_PROFILE_V1" },
+    "profile_type": {
+      "type": "string",
+      "enum": ["discipline", "journal", "historical-scholar", "author-voice", "book"]
+    },
+    "target": {
+      "type": "string",
+      "description": "The discipline name, journal title/ISSN, scholar name, or author identifier profiled."
+    },
+    "sample_size": { "type": "integer", "minimum": 0 },
+    "measured_features": {
+      "type": "object",
+      "description": "Directly observed style/structure features (e.g. lexical, rhetorical, sectioning).",
+      "additionalProperties": true
+    },
+    "inferred_features": {
+      "type": "object",
+      "description": "Features derived from measured_features via analysis; must be distinguishable from measured_features.",
+      "additionalProperties": true
+    },
+    "confidence": {
+      "type": "string",
+      "enum": ["low", "moderate", "high"]
+    },
+    "stability": {
+      "type": "string",
+      "enum": ["untested", "stable", "unstable"],
+      "description": "Result of split-corpus stability testing, if performed."
+    },
+    "biases": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Known sampling or source biases (e.g. OA-only, single-decade window)."
+    },
+    "freshness": {
+      "type": "string",
+      "enum": ["current", "aging", "stale"]
+    },
+    "provenance": { "$ref": "provenance.schema.json#" }
+  },
+  "additionalProperties": false
+}

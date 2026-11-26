@@ -133,6 +133,12 @@ To uninstall, remove Scholarly Agent Suite from Plugins and, optionally,
 remove its marketplace. Organization-managed marketplace syncing has its
 own permissions and repository visibility requirements.
 
+The Claude marketplace distributes the generated
+`plugins/scholarly-agent-suite/` directory. If validation fails, follow the
+separate [Desktop and Cowork acceptance steps](docs/platform-acceptance.md)
+and record the error code and validation details when available. A successful
+Claude Code install does not establish that Desktop synchronization succeeded.
+
 ### Claude Code
 
 Run these commands in a Claude Code session:
@@ -175,6 +181,8 @@ to `~/.claude/skills/` for Claude Code or `~/.agents/skills/` for Codex.
 Replace or remove that folder to update or uninstall, then restart the session.
 Use the complete folder so the seven modules, Python tools, workflows,
 protocols, and shared policies stay together. Local Python tools need Python 3.10+.
+The separate `scholarly-agent-claude-plugin-v<version>.zip` is a Claude
+plugin archive for plugin-upload workflows that accept ZIPs.
 
 ### Troubleshooting
 
@@ -224,6 +232,7 @@ skills/scholarly-agent/   the one Skill
 workflows/                generated read-only mirror of the workflow recipes
 assets/                   README diagrams (not shipped in the runtime package)
 scripts/                  validation, packaging, and workflow-mirror tools
+plugins/                  generated Claude marketplace runtime
 tests/, evals/            tests and dispatch fixtures
 docs/                     maintainer documentation
 ```
@@ -236,7 +245,7 @@ repositories; v2.0.0 merged them (see [`CHANGELOG.md`](CHANGELOG.md)).
 Layout rules, versioning, testing, packaging, and known limitations are in
 [`docs/development.md`](docs/development.md). Releases are packaged and
 published automatically: merging a new `VERSION` to `master` builds the
-runtime ZIP and the claude.ai Skill ZIP and publishes them as a GitHub release (see
+Codex plugin, Claude plugin, and Claude.ai Skill ZIPs and publishes them as a GitHub release (see
 [`RELEASE_CHECKLIST.md`](RELEASE_CHECKLIST.md)).
 
 ## Roadmap
