@@ -22,6 +22,7 @@ sys.path.insert(0, str(ROOT / "scripts"))
 from schema_lite import validate as schema_validate  # noqa: E402
 from workflow_manifest import CANONICAL_WORKFLOWS_DIR, REQUIRED_WORKFLOWS  # noqa: E402
 import sync_workflows  # noqa: E402
+import sync_manifests  # noqa: E402
 
 SKILL_NAME = "scholarly-agent"
 SKILL_DIR = ROOT / "skills" / SKILL_NAME
@@ -257,6 +258,11 @@ def validate_no_double_nesting(report: Report) -> None:
 def main() -> int:
     report = Report()
     validate_plugin_manifest(report)
+    try:
+        for relative, expected in sync_manifests.expected_manifests().items():
+            report.check(f"{relative} matches release metadata", sync_manifests.read_json(relative) == expected)
+    except (OSError, ValueError, KeyError, TypeError) as exc:
+        report.check("distribution manifests are readable and complete", False, str(exc))
     frontmatters = validate_skill_and_modules(report)
     validate_components_json(report)
     validate_protocols(report)

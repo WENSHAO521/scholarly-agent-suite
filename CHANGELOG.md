@@ -6,6 +6,22 @@ Suite versioning follows `docs/development.md#suite-versioning` /
 have no versions of their own; `COMPONENTS.json` records where each module
 was merged from.
 
+## v2.6.0 -- 2026-11-26
+
+v2.6.0 PREPARED -- NOT PUBLISHED
+
+### Added
+
+- Claude Desktop and Claude Code marketplace at the repository root, plus a
+  Codex marketplace. Both plugins load the same Scholarly Agent Skill.
+- A release metadata generator that derives all manifest versions from
+  `VERSION` and checks the committed files for drift.
+- Native installation, Skill discovery, resource integrity, and uninstall checks
+  for Claude Code and Codex, plus Python regression jobs on Linux, Windows,
+  and macOS. Both existing ZIP formats remain available.
+- English and Traditional Chinese instructions for installation, updating,
+  removal, and marketplace troubleshooting.
+
 ## v2.5.0 -- 2026-11-13
 
 v2.5.0 PREPARED -- NOT PUBLISHED

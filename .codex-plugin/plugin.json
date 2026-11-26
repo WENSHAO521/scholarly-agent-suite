@@ -1,6 +1,6 @@
 {
   "name": "scholarly-agent-suite",
-  "version": "2.5.0",
+  "version": "2.6.0",
   "description": "Evidence-first academic research and writing agent: one Skill with modules for execution planning, research evidence, scholarly writing, publication strategy, pre-submission peer review, prose polishing in any language, and scholarly translation between any languages.",
   "author": {
     "name": "WENSHAO521",
@@ -25,7 +25,7 @@
   "interface": {
     "displayName": "Scholarly Agent Suite",
     "shortDescription": "Evidence-first academic research, writing, and publication strategy",
-    "longDescription": "An evidence-first, cross-disciplinary academic agent packaged as a single Skill, scholarly-agent. A dispatcher loads only the internal modules a request needs -- adaptive-model-router (execution planning), scholarly-corpus-builder (research evidence and style profiles), scholarly-voice-engine (scholarly writing), and journal-fit-engine (publication strategy) -- and hands data between them through versioned JSON protocols, with a non-negotiable integrity policy against fabricated citations, metrics, or acceptance predictions.",
+    "longDescription": "An evidence-first academic agent with seven modules for execution planning, research evidence, scholarly writing, publication strategy, pre-submission peer review, prose polishing, and scholarly translation. One Skill loads the modules needed for each request and passes data through versioned JSON protocols under a shared academic integrity policy.",
     "category": "research",
     "capabilities": [
       "workflow_orchestration",

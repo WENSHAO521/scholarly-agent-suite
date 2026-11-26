@@ -58,9 +58,13 @@ Rules that keep this layout honest (all checked by `validate_suite.py` and
 
 ## Suite versioning
 
-The Suite follows semantic versioning on its own `VERSION`
-(== `.codex-plugin/plugin.json` `version` == `COMPONENTS.json`
-`suite_version` == the release tag without `v`). Modules no longer carry
+The Suite follows semantic versioning using the root `VERSION`. After
+editing it, run `python scripts/sync_manifests.py` and commit the generated
+metadata with the version bump. The script copies shared branding from
+`.codex-plugin/plugin.json` to the Claude plugin and marketplace, generates
+the Codex marketplace, and updates `COMPONENTS.json` `suite_version`.
+CI and release reject drift with `python scripts/sync_manifests.py --check`.
+Modules no longer carry
 independent versions; a module change is a Suite change. A breaking change to
 any shared protocol in `skills/scholarly-agent/protocols/` requires a new
 major protocol version and a Suite major version (see
@@ -74,6 +78,24 @@ validation, tests, and a two-build determinism check, with
 `scripts/release_notes.py` extracting the CHANGELOG section as release
 notes. Pushes that do not change `VERSION` publish nothing; a hand-pushed
 `v*` tag must match `VERSION`; an existing release is never overwritten.
+
+## Marketplace maintenance
+
+The repository root is the plugin root on both platforms. Keep the Claude
+catalog in `.claude-plugin/marketplace.json` and the Codex catalog in
+`.agents/plugins/marketplace.json`. Both select the root and discover
+`skills/scholarly-agent/SKILL.md` there. Anchor runtime file references at
+the installed Skill folder and keep each workflow, protocol, and Python
+package it needs within that folder. Treat ZIPs as generated release outputs.
+
+After building the ZIPs, run `python scripts/smoke_plugins.py` with both
+native clients on PATH. The smoke test uses isolated profiles and an
+unrelated working directory, checks the installed resource files, and
+exercises uninstall. GitHub Actions runs this check before publication.
+Claude Desktop and Claude.ai account UI checks are recorded separately in
+`RELEASE_CHECKLIST.md`. For a GitHub-synced organization marketplace,
+use a version-bump pull request and see Claude's organization sync requirements
+for repository visibility and webhook permissions.
 
 ## Development model
 
@@ -167,7 +189,8 @@ Python 3.11 job.
 
 `scripts/package_suite.py` builds two ZIPs. The first is a self-contained runtime ZIP
 (`dist/scholarly-agent-suite-v<version>.zip`) containing only
-`.codex-plugin/`, `skills/` (the one Skill, including its modules,
+`.claude-plugin/`, `.codex-plugin/`, `.agents/plugins/marketplace.json`,
+`skills/` (the one Skill, including its modules,
 protocols, and shared policy), `workflows/`, `README.md`, `LICENSE`,
 `VERSION`, and `COMPONENTS.json`. It excludes `tests/`, `evals/`,
 `.github/`, `docs/`, `assets/`, and development scripts, and writes a

@@ -1,0 +1,25 @@
+{
+  "name": "scholarly-agent-suite",
+  "version": "2.6.0",
+  "description": "Evidence-first academic research and writing agent: one Skill with modules for execution planning, research evidence, scholarly writing, publication strategy, pre-submission peer review, prose polishing in any language, and scholarly translation between any languages.",
+  "author": {
+    "name": "WENSHAO521",
+    "email": "wainixueer3334@gmail.com",
+    "url": "https://github.com/WENSHAO521"
+  },
+  "homepage": "https://github.com/WENSHAO521/scholarly-agent-suite",
+  "repository": "https://github.com/WENSHAO521/scholarly-agent-suite",
+  "license": "MIT",
+  "keywords": [
+    "academic",
+    "scholarly-writing",
+    "research",
+    "corpus",
+    "publication-strategy",
+    "peer-review",
+    "polishing",
+    "translation",
+    "orchestration"
+  ],
+  "displayName": "Scholarly Agent Suite"
+}
